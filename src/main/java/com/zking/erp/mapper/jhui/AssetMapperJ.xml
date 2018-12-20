@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.zking.erp.mapper.jhui.AssetMapperJ" >
+  <resultMap id="BaseResultMap" type="com.zking.erp.model.jhui.Asset" >
+    <constructor >
+      <idArg column="id" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="assetnameID" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="location" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="labels" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="status" jdbcType="INTEGER" javaType="java.lang.Integer" />
+      <arg column="userID" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="price" jdbcType="DOUBLE" javaType="java.lang.Double" />
+      <arg column="purchasedate" jdbcType="TIMESTAMP" javaType="java.util.Date" />
+      <arg column="periodofvalidity" jdbcType="TIMESTAMP" javaType="java.util.Date" />
+      <arg column="warrantydate" jdbcType="TIMESTAMP" javaType="java.util.Date" />
+      <arg column="assetnum" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="serialnum" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="supplier" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="description" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="addMonth" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="createtime" jdbcType="TIMESTAMP" javaType="java.util.Date" />
+      <arg column="creator" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="updatetime" jdbcType="TIMESTAMP" javaType="java.util.Date" />
+      <arg column="updator" jdbcType="VARCHAR" javaType="java.lang.String" />
+    </constructor>
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, assetnameID, location, labels, status, userID, price, purchasedate, periodofvalidity, 
+    warrantydate, assetnum, serialnum, supplier, description, addMonth, createtime, creator, 
+    updatetime, updator
+  </sql>
+
+</mapper>

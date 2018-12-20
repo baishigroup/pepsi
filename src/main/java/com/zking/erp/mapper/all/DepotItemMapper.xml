@@ -1,0 +1,307 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.zking.erp.mapper.all.DepotItemMapper" >
+  <resultMap id="BaseResultMap" type="com.zking.erp.model.all.DepotItem" >
+    <constructor >
+      <idArg column="Id" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="HeaderId" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="MaterialId" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="MUnit" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="OperNumber" jdbcType="DOUBLE" javaType="java.lang.Double" />
+      <arg column="BasicNumber" jdbcType="DOUBLE" javaType="java.lang.Double" />
+      <arg column="UnitPrice" jdbcType="DOUBLE" javaType="java.lang.Double" />
+      <arg column="TaxUnitPrice" jdbcType="DOUBLE" javaType="java.lang.Double" />
+      <arg column="AllPrice" jdbcType="DOUBLE" javaType="java.lang.Double" />
+      <arg column="Remark" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="Img" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="Incidentals" jdbcType="DOUBLE" javaType="java.lang.Double" />
+      <arg column="DepotId" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="AnotherDepotId" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="TaxRate" jdbcType="DOUBLE" javaType="java.lang.Double" />
+      <arg column="TaxMoney" jdbcType="DOUBLE" javaType="java.lang.Double" />
+      <arg column="TaxLastMoney" jdbcType="DOUBLE" javaType="java.lang.Double" />
+      <arg column="OtherField1" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="OtherField2" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="OtherField3" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="OtherField4" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="OtherField5" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="MType" jdbcType="VARCHAR" javaType="java.lang.String" />
+    </constructor>
+  </resultMap>
+  <sql id="Base_Column_List" >
+    Id, HeaderId, MaterialId, MUnit, OperNumber, BasicNumber, UnitPrice, TaxUnitPrice, 
+    AllPrice, Remark, Img, Incidentals, DepotId, AnotherDepotId, TaxRate, TaxMoney, TaxLastMoney, 
+    OtherField1, OtherField2, OtherField3, OtherField4, OtherField5, MType
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from depotitem
+    where Id = #{id,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from depotitem
+    where Id = #{id,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="com.zking.erp.model.all.DepotItem" >
+    insert into depotitem (Id, HeaderId, MaterialId, 
+      MUnit, OperNumber, BasicNumber, 
+      UnitPrice, TaxUnitPrice, AllPrice, 
+      Remark, Img, Incidentals, 
+      DepotId, AnotherDepotId, TaxRate, 
+      TaxMoney, TaxLastMoney, OtherField1, 
+      OtherField2, OtherField3, OtherField4, 
+      OtherField5, MType)
+    values (#{id,jdbcType=VARCHAR}, #{headerid,jdbcType=VARCHAR}, #{materialid,jdbcType=VARCHAR}, 
+      #{munit,jdbcType=VARCHAR}, #{opernumber,jdbcType=DOUBLE}, #{basicnumber,jdbcType=DOUBLE}, 
+      #{unitprice,jdbcType=DOUBLE}, #{taxunitprice,jdbcType=DOUBLE}, #{allprice,jdbcType=DOUBLE}, 
+      #{remark,jdbcType=VARCHAR}, #{img,jdbcType=VARCHAR}, #{incidentals,jdbcType=DOUBLE}, 
+      #{depotid,jdbcType=VARCHAR}, #{anotherdepotid,jdbcType=VARCHAR}, #{taxrate,jdbcType=DOUBLE}, 
+      #{taxmoney,jdbcType=DOUBLE}, #{taxlastmoney,jdbcType=DOUBLE}, #{otherfield1,jdbcType=VARCHAR}, 
+      #{otherfield2,jdbcType=VARCHAR}, #{otherfield3,jdbcType=VARCHAR}, #{otherfield4,jdbcType=VARCHAR}, 
+      #{otherfield5,jdbcType=VARCHAR}, #{mtype,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.zking.erp.model.all.DepotItem" >
+    insert into depotitem
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        Id,
+      </if>
+      <if test="headerid != null" >
+        HeaderId,
+      </if>
+      <if test="materialid != null" >
+        MaterialId,
+      </if>
+      <if test="munit != null" >
+        MUnit,
+      </if>
+      <if test="opernumber != null" >
+        OperNumber,
+      </if>
+      <if test="basicnumber != null" >
+        BasicNumber,
+      </if>
+      <if test="unitprice != null" >
+        UnitPrice,
+      </if>
+      <if test="taxunitprice != null" >
+        TaxUnitPrice,
+      </if>
+      <if test="allprice != null" >
+        AllPrice,
+      </if>
+      <if test="remark != null" >
+        Remark,
+      </if>
+      <if test="img != null" >
+        Img,
+      </if>
+      <if test="incidentals != null" >
+        Incidentals,
+      </if>
+      <if test="depotid != null" >
+        DepotId,
+      </if>
+      <if test="anotherdepotid != null" >
+        AnotherDepotId,
+      </if>
+      <if test="taxrate != null" >
+        TaxRate,
+      </if>
+      <if test="taxmoney != null" >
+        TaxMoney,
+      </if>
+      <if test="taxlastmoney != null" >
+        TaxLastMoney,
+      </if>
+      <if test="otherfield1 != null" >
+        OtherField1,
+      </if>
+      <if test="otherfield2 != null" >
+        OtherField2,
+      </if>
+      <if test="otherfield3 != null" >
+        OtherField3,
+      </if>
+      <if test="otherfield4 != null" >
+        OtherField4,
+      </if>
+      <if test="otherfield5 != null" >
+        OtherField5,
+      </if>
+      <if test="mtype != null" >
+        MType,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=VARCHAR},
+      </if>
+      <if test="headerid != null" >
+        #{headerid,jdbcType=VARCHAR},
+      </if>
+      <if test="materialid != null" >
+        #{materialid,jdbcType=VARCHAR},
+      </if>
+      <if test="munit != null" >
+        #{munit,jdbcType=VARCHAR},
+      </if>
+      <if test="opernumber != null" >
+        #{opernumber,jdbcType=DOUBLE},
+      </if>
+      <if test="basicnumber != null" >
+        #{basicnumber,jdbcType=DOUBLE},
+      </if>
+      <if test="unitprice != null" >
+        #{unitprice,jdbcType=DOUBLE},
+      </if>
+      <if test="taxunitprice != null" >
+        #{taxunitprice,jdbcType=DOUBLE},
+      </if>
+      <if test="allprice != null" >
+        #{allprice,jdbcType=DOUBLE},
+      </if>
+      <if test="remark != null" >
+        #{remark,jdbcType=VARCHAR},
+      </if>
+      <if test="img != null" >
+        #{img,jdbcType=VARCHAR},
+      </if>
+      <if test="incidentals != null" >
+        #{incidentals,jdbcType=DOUBLE},
+      </if>
+      <if test="depotid != null" >
+        #{depotid,jdbcType=VARCHAR},
+      </if>
+      <if test="anotherdepotid != null" >
+        #{anotherdepotid,jdbcType=VARCHAR},
+      </if>
+      <if test="taxrate != null" >
+        #{taxrate,jdbcType=DOUBLE},
+      </if>
+      <if test="taxmoney != null" >
+        #{taxmoney,jdbcType=DOUBLE},
+      </if>
+      <if test="taxlastmoney != null" >
+        #{taxlastmoney,jdbcType=DOUBLE},
+      </if>
+      <if test="otherfield1 != null" >
+        #{otherfield1,jdbcType=VARCHAR},
+      </if>
+      <if test="otherfield2 != null" >
+        #{otherfield2,jdbcType=VARCHAR},
+      </if>
+      <if test="otherfield3 != null" >
+        #{otherfield3,jdbcType=VARCHAR},
+      </if>
+      <if test="otherfield4 != null" >
+        #{otherfield4,jdbcType=VARCHAR},
+      </if>
+      <if test="otherfield5 != null" >
+        #{otherfield5,jdbcType=VARCHAR},
+      </if>
+      <if test="mtype != null" >
+        #{mtype,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.zking.erp.model.all.DepotItem" >
+    update depotitem
+    <set >
+      <if test="headerid != null" >
+        HeaderId = #{headerid,jdbcType=VARCHAR},
+      </if>
+      <if test="materialid != null" >
+        MaterialId = #{materialid,jdbcType=VARCHAR},
+      </if>
+      <if test="munit != null" >
+        MUnit = #{munit,jdbcType=VARCHAR},
+      </if>
+      <if test="opernumber != null" >
+        OperNumber = #{opernumber,jdbcType=DOUBLE},
+      </if>
+      <if test="basicnumber != null" >
+        BasicNumber = #{basicnumber,jdbcType=DOUBLE},
+      </if>
+      <if test="unitprice != null" >
+        UnitPrice = #{unitprice,jdbcType=DOUBLE},
+      </if>
+      <if test="taxunitprice != null" >
+        TaxUnitPrice = #{taxunitprice,jdbcType=DOUBLE},
+      </if>
+      <if test="allprice != null" >
+        AllPrice = #{allprice,jdbcType=DOUBLE},
+      </if>
+      <if test="remark != null" >
+        Remark = #{remark,jdbcType=VARCHAR},
+      </if>
+      <if test="img != null" >
+        Img = #{img,jdbcType=VARCHAR},
+      </if>
+      <if test="incidentals != null" >
+        Incidentals = #{incidentals,jdbcType=DOUBLE},
+      </if>
+      <if test="depotid != null" >
+        DepotId = #{depotid,jdbcType=VARCHAR},
+      </if>
+      <if test="anotherdepotid != null" >
+        AnotherDepotId = #{anotherdepotid,jdbcType=VARCHAR},
+      </if>
+      <if test="taxrate != null" >
+        TaxRate = #{taxrate,jdbcType=DOUBLE},
+      </if>
+      <if test="taxmoney != null" >
+        TaxMoney = #{taxmoney,jdbcType=DOUBLE},
+      </if>
+      <if test="taxlastmoney != null" >
+        TaxLastMoney = #{taxlastmoney,jdbcType=DOUBLE},
+      </if>
+      <if test="otherfield1 != null" >
+        OtherField1 = #{otherfield1,jdbcType=VARCHAR},
+      </if>
+      <if test="otherfield2 != null" >
+        OtherField2 = #{otherfield2,jdbcType=VARCHAR},
+      </if>
+      <if test="otherfield3 != null" >
+        OtherField3 = #{otherfield3,jdbcType=VARCHAR},
+      </if>
+      <if test="otherfield4 != null" >
+        OtherField4 = #{otherfield4,jdbcType=VARCHAR},
+      </if>
+      <if test="otherfield5 != null" >
+        OtherField5 = #{otherfield5,jdbcType=VARCHAR},
+      </if>
+      <if test="mtype != null" >
+        MType = #{mtype,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where Id = #{id,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.zking.erp.model.all.DepotItem" >
+    update depotitem
+    set HeaderId = #{headerid,jdbcType=VARCHAR},
+      MaterialId = #{materialid,jdbcType=VARCHAR},
+      MUnit = #{munit,jdbcType=VARCHAR},
+      OperNumber = #{opernumber,jdbcType=DOUBLE},
+      BasicNumber = #{basicnumber,jdbcType=DOUBLE},
+      UnitPrice = #{unitprice,jdbcType=DOUBLE},
+      TaxUnitPrice = #{taxunitprice,jdbcType=DOUBLE},
+      AllPrice = #{allprice,jdbcType=DOUBLE},
+      Remark = #{remark,jdbcType=VARCHAR},
+      Img = #{img,jdbcType=VARCHAR},
+      Incidentals = #{incidentals,jdbcType=DOUBLE},
+      DepotId = #{depotid,jdbcType=VARCHAR},
+      AnotherDepotId = #{anotherdepotid,jdbcType=VARCHAR},
+      TaxRate = #{taxrate,jdbcType=DOUBLE},
+      TaxMoney = #{taxmoney,jdbcType=DOUBLE},
+      TaxLastMoney = #{taxlastmoney,jdbcType=DOUBLE},
+      OtherField1 = #{otherfield1,jdbcType=VARCHAR},
+      OtherField2 = #{otherfield2,jdbcType=VARCHAR},
+      OtherField3 = #{otherfield3,jdbcType=VARCHAR},
+      OtherField4 = #{otherfield4,jdbcType=VARCHAR},
+      OtherField5 = #{otherfield5,jdbcType=VARCHAR},
+      MType = #{mtype,jdbcType=VARCHAR}
+    where Id = #{id,jdbcType=VARCHAR}
+  </update>
+</mapper>

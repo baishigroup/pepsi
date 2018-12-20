@@ -1,0 +1,392 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.zking.erp.mapper.all.DepotHeadMapper" >
+  <resultMap id="BaseResultMap" type="com.zking.erp.model.all.DepotHead" >
+    <constructor >
+      <idArg column="Id" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="Type" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="SubType" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="ProjectId" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="DefaultNumber" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="checker" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="Number" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="OperPersonName" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="checktime" jdbcType="TIMESTAMP" javaType="java.util.Date" />
+      <arg column="CreateTime" jdbcType="TIMESTAMP" javaType="java.util.Date" />
+      <arg column="OperTime" jdbcType="TIMESTAMP" javaType="java.util.Date" />
+      <arg column="OrganId" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="HandsPersonId" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="AccountId" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="ChangeAmount" jdbcType="DOUBLE" javaType="java.lang.Double" />
+      <arg column="AllocationProjectId" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="TotalPrice" jdbcType="DOUBLE" javaType="java.lang.Double" />
+      <arg column="PayType" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="Remark" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="Salesman" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="AccountIdList" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="AccountMoneyList" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="Discount" jdbcType="DOUBLE" javaType="java.lang.Double" />
+      <arg column="DiscountMoney" jdbcType="DOUBLE" javaType="java.lang.Double" />
+      <arg column="DiscountLastMoney" jdbcType="DOUBLE" javaType="java.lang.Double" />
+      <arg column="OtherMoney" jdbcType="DOUBLE" javaType="java.lang.Double" />
+      <arg column="OtherMoneyList" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="OtherMoneyItem" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="AccountDay" jdbcType="INTEGER" javaType="java.lang.Integer" />
+      <arg column="Status" jdbcType="INTEGER" javaType="java.lang.Integer" />
+    </constructor>
+  </resultMap>
+  <sql id="Base_Column_List" >
+    Id, Type, SubType, ProjectId, DefaultNumber, checker, Number, OperPersonName, checktime, 
+    CreateTime, OperTime, OrganId, HandsPersonId, AccountId, ChangeAmount, AllocationProjectId, 
+    TotalPrice, PayType, Remark, Salesman, AccountIdList, AccountMoneyList, Discount, 
+    DiscountMoney, DiscountLastMoney, OtherMoney, OtherMoneyList, OtherMoneyItem, AccountDay, 
+    Status
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from depothead
+    where Id = #{id,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from depothead
+    where Id = #{id,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="com.zking.erp.model.all.DepotHead" >
+    insert into depothead (Id, Type, SubType, 
+      ProjectId, DefaultNumber, checker, 
+      Number, OperPersonName, checktime, 
+      CreateTime, OperTime, OrganId, 
+      HandsPersonId, AccountId, ChangeAmount, 
+      AllocationProjectId, TotalPrice, PayType, 
+      Remark, Salesman, AccountIdList, 
+      AccountMoneyList, Discount, DiscountMoney, 
+      DiscountLastMoney, OtherMoney, OtherMoneyList, 
+      OtherMoneyItem, AccountDay, Status
+      )
+    values (#{id,jdbcType=VARCHAR}, #{type,jdbcType=VARCHAR}, #{subtype,jdbcType=VARCHAR}, 
+      #{projectid,jdbcType=VARCHAR}, #{defaultnumber,jdbcType=VARCHAR}, #{checker,jdbcType=VARCHAR}, 
+      #{number,jdbcType=VARCHAR}, #{operpersonname,jdbcType=VARCHAR}, #{checktime,jdbcType=TIMESTAMP}, 
+      #{createtime,jdbcType=TIMESTAMP}, #{opertime,jdbcType=TIMESTAMP}, #{organid,jdbcType=VARCHAR}, 
+      #{handspersonid,jdbcType=VARCHAR}, #{accountid,jdbcType=VARCHAR}, #{changeamount,jdbcType=DOUBLE}, 
+      #{allocationprojectid,jdbcType=VARCHAR}, #{totalprice,jdbcType=DOUBLE}, #{paytype,jdbcType=VARCHAR}, 
+      #{remark,jdbcType=VARCHAR}, #{salesman,jdbcType=VARCHAR}, #{accountidlist,jdbcType=VARCHAR}, 
+      #{accountmoneylist,jdbcType=VARCHAR}, #{discount,jdbcType=DOUBLE}, #{discountmoney,jdbcType=DOUBLE}, 
+      #{discountlastmoney,jdbcType=DOUBLE}, #{othermoney,jdbcType=DOUBLE}, #{othermoneylist,jdbcType=VARCHAR}, 
+      #{othermoneyitem,jdbcType=VARCHAR}, #{accountday,jdbcType=INTEGER}, #{status,jdbcType=INTEGER}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.zking.erp.model.all.DepotHead" >
+    insert into depothead
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        Id,
+      </if>
+      <if test="type != null" >
+        Type,
+      </if>
+      <if test="subtype != null" >
+        SubType,
+      </if>
+      <if test="projectid != null" >
+        ProjectId,
+      </if>
+      <if test="defaultnumber != null" >
+        DefaultNumber,
+      </if>
+      <if test="checker != null" >
+        checker,
+      </if>
+      <if test="number != null" >
+        Number,
+      </if>
+      <if test="operpersonname != null" >
+        OperPersonName,
+      </if>
+      <if test="checktime != null" >
+        checktime,
+      </if>
+      <if test="createtime != null" >
+        CreateTime,
+      </if>
+      <if test="opertime != null" >
+        OperTime,
+      </if>
+      <if test="organid != null" >
+        OrganId,
+      </if>
+      <if test="handspersonid != null" >
+        HandsPersonId,
+      </if>
+      <if test="accountid != null" >
+        AccountId,
+      </if>
+      <if test="changeamount != null" >
+        ChangeAmount,
+      </if>
+      <if test="allocationprojectid != null" >
+        AllocationProjectId,
+      </if>
+      <if test="totalprice != null" >
+        TotalPrice,
+      </if>
+      <if test="paytype != null" >
+        PayType,
+      </if>
+      <if test="remark != null" >
+        Remark,
+      </if>
+      <if test="salesman != null" >
+        Salesman,
+      </if>
+      <if test="accountidlist != null" >
+        AccountIdList,
+      </if>
+      <if test="accountmoneylist != null" >
+        AccountMoneyList,
+      </if>
+      <if test="discount != null" >
+        Discount,
+      </if>
+      <if test="discountmoney != null" >
+        DiscountMoney,
+      </if>
+      <if test="discountlastmoney != null" >
+        DiscountLastMoney,
+      </if>
+      <if test="othermoney != null" >
+        OtherMoney,
+      </if>
+      <if test="othermoneylist != null" >
+        OtherMoneyList,
+      </if>
+      <if test="othermoneyitem != null" >
+        OtherMoneyItem,
+      </if>
+      <if test="accountday != null" >
+        AccountDay,
+      </if>
+      <if test="status != null" >
+        Status,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=VARCHAR},
+      </if>
+      <if test="type != null" >
+        #{type,jdbcType=VARCHAR},
+      </if>
+      <if test="subtype != null" >
+        #{subtype,jdbcType=VARCHAR},
+      </if>
+      <if test="projectid != null" >
+        #{projectid,jdbcType=VARCHAR},
+      </if>
+      <if test="defaultnumber != null" >
+        #{defaultnumber,jdbcType=VARCHAR},
+      </if>
+      <if test="checker != null" >
+        #{checker,jdbcType=VARCHAR},
+      </if>
+      <if test="number != null" >
+        #{number,jdbcType=VARCHAR},
+      </if>
+      <if test="operpersonname != null" >
+        #{operpersonname,jdbcType=VARCHAR},
+      </if>
+      <if test="checktime != null" >
+        #{checktime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createtime != null" >
+        #{createtime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="opertime != null" >
+        #{opertime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="organid != null" >
+        #{organid,jdbcType=VARCHAR},
+      </if>
+      <if test="handspersonid != null" >
+        #{handspersonid,jdbcType=VARCHAR},
+      </if>
+      <if test="accountid != null" >
+        #{accountid,jdbcType=VARCHAR},
+      </if>
+      <if test="changeamount != null" >
+        #{changeamount,jdbcType=DOUBLE},
+      </if>
+      <if test="allocationprojectid != null" >
+        #{allocationprojectid,jdbcType=VARCHAR},
+      </if>
+      <if test="totalprice != null" >
+        #{totalprice,jdbcType=DOUBLE},
+      </if>
+      <if test="paytype != null" >
+        #{paytype,jdbcType=VARCHAR},
+      </if>
+      <if test="remark != null" >
+        #{remark,jdbcType=VARCHAR},
+      </if>
+      <if test="salesman != null" >
+        #{salesman,jdbcType=VARCHAR},
+      </if>
+      <if test="accountidlist != null" >
+        #{accountidlist,jdbcType=VARCHAR},
+      </if>
+      <if test="accountmoneylist != null" >
+        #{accountmoneylist,jdbcType=VARCHAR},
+      </if>
+      <if test="discount != null" >
+        #{discount,jdbcType=DOUBLE},
+      </if>
+      <if test="discountmoney != null" >
+        #{discountmoney,jdbcType=DOUBLE},
+      </if>
+      <if test="discountlastmoney != null" >
+        #{discountlastmoney,jdbcType=DOUBLE},
+      </if>
+      <if test="othermoney != null" >
+        #{othermoney,jdbcType=DOUBLE},
+      </if>
+      <if test="othermoneylist != null" >
+        #{othermoneylist,jdbcType=VARCHAR},
+      </if>
+      <if test="othermoneyitem != null" >
+        #{othermoneyitem,jdbcType=VARCHAR},
+      </if>
+      <if test="accountday != null" >
+        #{accountday,jdbcType=INTEGER},
+      </if>
+      <if test="status != null" >
+        #{status,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.zking.erp.model.all.DepotHead" >
+    update depothead
+    <set >
+      <if test="type != null" >
+        Type = #{type,jdbcType=VARCHAR},
+      </if>
+      <if test="subtype != null" >
+        SubType = #{subtype,jdbcType=VARCHAR},
+      </if>
+      <if test="projectid != null" >
+        ProjectId = #{projectid,jdbcType=VARCHAR},
+      </if>
+      <if test="defaultnumber != null" >
+        DefaultNumber = #{defaultnumber,jdbcType=VARCHAR},
+      </if>
+      <if test="checker != null" >
+        checker = #{checker,jdbcType=VARCHAR},
+      </if>
+      <if test="number != null" >
+        Number = #{number,jdbcType=VARCHAR},
+      </if>
+      <if test="operpersonname != null" >
+        OperPersonName = #{operpersonname,jdbcType=VARCHAR},
+      </if>
+      <if test="checktime != null" >
+        checktime = #{checktime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createtime != null" >
+        CreateTime = #{createtime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="opertime != null" >
+        OperTime = #{opertime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="organid != null" >
+        OrganId = #{organid,jdbcType=VARCHAR},
+      </if>
+      <if test="handspersonid != null" >
+        HandsPersonId = #{handspersonid,jdbcType=VARCHAR},
+      </if>
+      <if test="accountid != null" >
+        AccountId = #{accountid,jdbcType=VARCHAR},
+      </if>
+      <if test="changeamount != null" >
+        ChangeAmount = #{changeamount,jdbcType=DOUBLE},
+      </if>
+      <if test="allocationprojectid != null" >
+        AllocationProjectId = #{allocationprojectid,jdbcType=VARCHAR},
+      </if>
+      <if test="totalprice != null" >
+        TotalPrice = #{totalprice,jdbcType=DOUBLE},
+      </if>
+      <if test="paytype != null" >
+        PayType = #{paytype,jdbcType=VARCHAR},
+      </if>
+      <if test="remark != null" >
+        Remark = #{remark,jdbcType=VARCHAR},
+      </if>
+      <if test="salesman != null" >
+        Salesman = #{salesman,jdbcType=VARCHAR},
+      </if>
+      <if test="accountidlist != null" >
+        AccountIdList = #{accountidlist,jdbcType=VARCHAR},
+      </if>
+      <if test="accountmoneylist != null" >
+        AccountMoneyList = #{accountmoneylist,jdbcType=VARCHAR},
+      </if>
+      <if test="discount != null" >
+        Discount = #{discount,jdbcType=DOUBLE},
+      </if>
+      <if test="discountmoney != null" >
+        DiscountMoney = #{discountmoney,jdbcType=DOUBLE},
+      </if>
+      <if test="discountlastmoney != null" >
+        DiscountLastMoney = #{discountlastmoney,jdbcType=DOUBLE},
+      </if>
+      <if test="othermoney != null" >
+        OtherMoney = #{othermoney,jdbcType=DOUBLE},
+      </if>
+      <if test="othermoneylist != null" >
+        OtherMoneyList = #{othermoneylist,jdbcType=VARCHAR},
+      </if>
+      <if test="othermoneyitem != null" >
+        OtherMoneyItem = #{othermoneyitem,jdbcType=VARCHAR},
+      </if>
+      <if test="accountday != null" >
+        AccountDay = #{accountday,jdbcType=INTEGER},
+      </if>
+      <if test="status != null" >
+        Status = #{status,jdbcType=INTEGER},
+      </if>
+    </set>
+    where Id = #{id,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.zking.erp.model.all.DepotHead" >
+    update depothead
+    set Type = #{type,jdbcType=VARCHAR},
+      SubType = #{subtype,jdbcType=VARCHAR},
+      ProjectId = #{projectid,jdbcType=VARCHAR},
+      DefaultNumber = #{defaultnumber,jdbcType=VARCHAR},
+      checker = #{checker,jdbcType=VARCHAR},
+      Number = #{number,jdbcType=VARCHAR},
+      OperPersonName = #{operpersonname,jdbcType=VARCHAR},
+      checktime = #{checktime,jdbcType=TIMESTAMP},
+      CreateTime = #{createtime,jdbcType=TIMESTAMP},
+      OperTime = #{opertime,jdbcType=TIMESTAMP},
+      OrganId = #{organid,jdbcType=VARCHAR},
+      HandsPersonId = #{handspersonid,jdbcType=VARCHAR},
+      AccountId = #{accountid,jdbcType=VARCHAR},
+      ChangeAmount = #{changeamount,jdbcType=DOUBLE},
+      AllocationProjectId = #{allocationprojectid,jdbcType=VARCHAR},
+      TotalPrice = #{totalprice,jdbcType=DOUBLE},
+      PayType = #{paytype,jdbcType=VARCHAR},
+      Remark = #{remark,jdbcType=VARCHAR},
+      Salesman = #{salesman,jdbcType=VARCHAR},
+      AccountIdList = #{accountidlist,jdbcType=VARCHAR},
+      AccountMoneyList = #{accountmoneylist,jdbcType=VARCHAR},
+      Discount = #{discount,jdbcType=DOUBLE},
+      DiscountMoney = #{discountmoney,jdbcType=DOUBLE},
+      DiscountLastMoney = #{discountlastmoney,jdbcType=DOUBLE},
+      OtherMoney = #{othermoney,jdbcType=DOUBLE},
+      OtherMoneyList = #{othermoneylist,jdbcType=VARCHAR},
+      OtherMoneyItem = #{othermoneyitem,jdbcType=VARCHAR},
+      AccountDay = #{accountday,jdbcType=INTEGER},
+      Status = #{status,jdbcType=INTEGER}
+    where Id = #{id,jdbcType=VARCHAR}
+  </update>
+</mapper>

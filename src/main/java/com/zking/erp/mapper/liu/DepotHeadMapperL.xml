@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.zking.erp.mapper.liu.DepotHeadMapperL" >
+  <resultMap id="BaseResultMap" type="com.zking.erp.model.liu.DepotHead" >
+    <constructor >
+      <idArg column="Id" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="Type" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="SubType" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="ProjectId" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="DefaultNumber" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="checker" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="Number" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="OperPersonName" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="checktime" jdbcType="TIMESTAMP" javaType="java.util.Date" />
+      <arg column="CreateTime" jdbcType="TIMESTAMP" javaType="java.util.Date" />
+      <arg column="OperTime" jdbcType="TIMESTAMP" javaType="java.util.Date" />
+      <arg column="OrganId" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="HandsPersonId" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="AccountId" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="ChangeAmount" jdbcType="DOUBLE" javaType="java.lang.Double" />
+      <arg column="AllocationProjectId" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="TotalPrice" jdbcType="DOUBLE" javaType="java.lang.Double" />
+      <arg column="PayType" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="Remark" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="Salesman" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="AccountIdList" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="AccountMoneyList" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="Discount" jdbcType="DOUBLE" javaType="java.lang.Double" />
+      <arg column="DiscountMoney" jdbcType="DOUBLE" javaType="java.lang.Double" />
+      <arg column="DiscountLastMoney" jdbcType="DOUBLE" javaType="java.lang.Double" />
+      <arg column="OtherMoney" jdbcType="DOUBLE" javaType="java.lang.Double" />
+      <arg column="OtherMoneyList" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="OtherMoneyItem" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="AccountDay" jdbcType="INTEGER" javaType="java.lang.Integer" />
+      <arg column="Status" jdbcType="INTEGER" javaType="java.lang.Integer" />
+    </constructor>
+  </resultMap>
+  <sql id="Base_Column_List" >
+    Id, Type, SubType, ProjectId, DefaultNumber, checker, Number, OperPersonName, checktime, 
+    CreateTime, OperTime, OrganId, HandsPersonId, AccountId, ChangeAmount, AllocationProjectId, 
+    TotalPrice, PayType, Remark, Salesman, AccountIdList, AccountMoneyList, Discount, 
+    DiscountMoney, DiscountLastMoney, OtherMoney, OtherMoneyList, OtherMoneyItem, AccountDay, 
+    Status
+  </sql>
+
+</mapper>

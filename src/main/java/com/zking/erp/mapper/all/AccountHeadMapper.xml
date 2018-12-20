@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.zking.erp.mapper.all.AccountHeadMapper" >
+  <resultMap id="BaseResultMap" type="com.zking.erp.model.all.AccountHead" >
+    <constructor >
+      <idArg column="Id" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="Type" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="OrganId" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="HandsPersonId" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="ChangeAmount" jdbcType="DOUBLE" javaType="java.lang.Double" />
+      <arg column="TotalPrice" jdbcType="DOUBLE" javaType="java.lang.Double" />
+      <arg column="AccountId" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="BillNo" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="BillTime" jdbcType="TIMESTAMP" javaType="java.util.Date" />
+      <arg column="Remark" jdbcType="VARCHAR" javaType="java.lang.String" />
+    </constructor>
+  </resultMap>
+  <sql id="Base_Column_List" >
+    Id, Type, OrganId, HandsPersonId, ChangeAmount, TotalPrice, AccountId, BillNo, BillTime, 
+    Remark
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from accounthead
+    where Id = #{id,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from accounthead
+    where Id = #{id,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="com.zking.erp.model.all.AccountHead" >
+    insert into accounthead (Id, Type, OrganId, 
+      HandsPersonId, ChangeAmount, TotalPrice, 
+      AccountId, BillNo, BillTime, 
+      Remark)
+    values (#{id,jdbcType=VARCHAR}, #{type,jdbcType=VARCHAR}, #{organid,jdbcType=VARCHAR}, 
+      #{handspersonid,jdbcType=VARCHAR}, #{changeamount,jdbcType=DOUBLE}, #{totalprice,jdbcType=DOUBLE}, 
+      #{accountid,jdbcType=VARCHAR}, #{billno,jdbcType=VARCHAR}, #{billtime,jdbcType=TIMESTAMP}, 
+      #{remark,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.zking.erp.model.all.AccountHead" >
+    insert into accounthead
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        Id,
+      </if>
+      <if test="type != null" >
+        Type,
+      </if>
+      <if test="organid != null" >
+        OrganId,
+      </if>
+      <if test="handspersonid != null" >
+        HandsPersonId,
+      </if>
+      <if test="changeamount != null" >
+        ChangeAmount,
+      </if>
+      <if test="totalprice != null" >
+        TotalPrice,
+      </if>
+      <if test="accountid != null" >
+        AccountId,
+      </if>
+      <if test="billno != null" >
+        BillNo,
+      </if>
+      <if test="billtime != null" >
+        BillTime,
+      </if>
+      <if test="remark != null" >
+        Remark,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=VARCHAR},
+      </if>
+      <if test="type != null" >
+        #{type,jdbcType=VARCHAR},
+      </if>
+      <if test="organid != null" >
+        #{organid,jdbcType=VARCHAR},
+      </if>
+      <if test="handspersonid != null" >
+        #{handspersonid,jdbcType=VARCHAR},
+      </if>
+      <if test="changeamount != null" >
+        #{changeamount,jdbcType=DOUBLE},
+      </if>
+      <if test="totalprice != null" >
+        #{totalprice,jdbcType=DOUBLE},
+      </if>
+      <if test="accountid != null" >
+        #{accountid,jdbcType=VARCHAR},
+      </if>
+      <if test="billno != null" >
+        #{billno,jdbcType=VARCHAR},
+      </if>
+      <if test="billtime != null" >
+        #{billtime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="remark != null" >
+        #{remark,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.zking.erp.model.all.AccountHead" >
+    update accounthead
+    <set >
+      <if test="type != null" >
+        Type = #{type,jdbcType=VARCHAR},
+      </if>
+      <if test="organid != null" >
+        OrganId = #{organid,jdbcType=VARCHAR},
+      </if>
+      <if test="handspersonid != null" >
+        HandsPersonId = #{handspersonid,jdbcType=VARCHAR},
+      </if>
+      <if test="changeamount != null" >
+        ChangeAmount = #{changeamount,jdbcType=DOUBLE},
+      </if>
+      <if test="totalprice != null" >
+        TotalPrice = #{totalprice,jdbcType=DOUBLE},
+      </if>
+      <if test="accountid != null" >
+        AccountId = #{accountid,jdbcType=VARCHAR},
+      </if>
+      <if test="billno != null" >
+        BillNo = #{billno,jdbcType=VARCHAR},
+      </if>
+      <if test="billtime != null" >
+        BillTime = #{billtime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="remark != null" >
+        Remark = #{remark,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where Id = #{id,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.zking.erp.model.all.AccountHead" >
+    update accounthead
+    set Type = #{type,jdbcType=VARCHAR},
+      OrganId = #{organid,jdbcType=VARCHAR},
+      HandsPersonId = #{handspersonid,jdbcType=VARCHAR},
+      ChangeAmount = #{changeamount,jdbcType=DOUBLE},
+      TotalPrice = #{totalprice,jdbcType=DOUBLE},
+      AccountId = #{accountid,jdbcType=VARCHAR},
+      BillNo = #{billno,jdbcType=VARCHAR},
+      BillTime = #{billtime,jdbcType=TIMESTAMP},
+      Remark = #{remark,jdbcType=VARCHAR}
+    where Id = #{id,jdbcType=VARCHAR}
+  </update>
+</mapper>

@@ -1,0 +1,261 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.zking.erp.mapper.all.AssetMapper" >
+  <resultMap id="BaseResultMap" type="com.zking.erp.model.all.Asset" >
+    <constructor >
+      <idArg column="id" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="assetnameID" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="location" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="labels" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="status" jdbcType="INTEGER" javaType="java.lang.Integer" />
+      <arg column="userID" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="price" jdbcType="DOUBLE" javaType="java.lang.Double" />
+      <arg column="purchasedate" jdbcType="TIMESTAMP" javaType="java.util.Date" />
+      <arg column="periodofvalidity" jdbcType="TIMESTAMP" javaType="java.util.Date" />
+      <arg column="warrantydate" jdbcType="TIMESTAMP" javaType="java.util.Date" />
+      <arg column="assetnum" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="serialnum" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="supplier" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="description" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="addMonth" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="createtime" jdbcType="TIMESTAMP" javaType="java.util.Date" />
+      <arg column="creator" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="updatetime" jdbcType="TIMESTAMP" javaType="java.util.Date" />
+      <arg column="updator" jdbcType="VARCHAR" javaType="java.lang.String" />
+    </constructor>
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, assetnameID, location, labels, status, userID, price, purchasedate, periodofvalidity, 
+    warrantydate, assetnum, serialnum, supplier, description, addMonth, createtime, creator, 
+    updatetime, updator
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from asset
+    where id = #{id,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from asset
+    where id = #{id,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="com.zking.erp.model.all.Asset" >
+    insert into asset (id, assetnameID, location, 
+      labels, status, userID, 
+      price, purchasedate, periodofvalidity, 
+      warrantydate, assetnum, serialnum, 
+      supplier, description, addMonth, 
+      createtime, creator, updatetime, 
+      updator)
+    values (#{id,jdbcType=VARCHAR}, #{assetnameid,jdbcType=VARCHAR}, #{location,jdbcType=VARCHAR}, 
+      #{labels,jdbcType=VARCHAR}, #{status,jdbcType=INTEGER}, #{userid,jdbcType=VARCHAR}, 
+      #{price,jdbcType=DOUBLE}, #{purchasedate,jdbcType=TIMESTAMP}, #{periodofvalidity,jdbcType=TIMESTAMP}, 
+      #{warrantydate,jdbcType=TIMESTAMP}, #{assetnum,jdbcType=VARCHAR}, #{serialnum,jdbcType=VARCHAR}, 
+      #{supplier,jdbcType=VARCHAR}, #{description,jdbcType=VARCHAR}, #{addmonth,jdbcType=VARCHAR}, 
+      #{createtime,jdbcType=TIMESTAMP}, #{creator,jdbcType=VARCHAR}, #{updatetime,jdbcType=TIMESTAMP}, 
+      #{updator,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.zking.erp.model.all.Asset" >
+    insert into asset
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="assetnameid != null" >
+        assetnameID,
+      </if>
+      <if test="location != null" >
+        location,
+      </if>
+      <if test="labels != null" >
+        labels,
+      </if>
+      <if test="status != null" >
+        status,
+      </if>
+      <if test="userid != null" >
+        userID,
+      </if>
+      <if test="price != null" >
+        price,
+      </if>
+      <if test="purchasedate != null" >
+        purchasedate,
+      </if>
+      <if test="periodofvalidity != null" >
+        periodofvalidity,
+      </if>
+      <if test="warrantydate != null" >
+        warrantydate,
+      </if>
+      <if test="assetnum != null" >
+        assetnum,
+      </if>
+      <if test="serialnum != null" >
+        serialnum,
+      </if>
+      <if test="supplier != null" >
+        supplier,
+      </if>
+      <if test="description != null" >
+        description,
+      </if>
+      <if test="addmonth != null" >
+        addMonth,
+      </if>
+      <if test="createtime != null" >
+        createtime,
+      </if>
+      <if test="creator != null" >
+        creator,
+      </if>
+      <if test="updatetime != null" >
+        updatetime,
+      </if>
+      <if test="updator != null" >
+        updator,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=VARCHAR},
+      </if>
+      <if test="assetnameid != null" >
+        #{assetnameid,jdbcType=VARCHAR},
+      </if>
+      <if test="location != null" >
+        #{location,jdbcType=VARCHAR},
+      </if>
+      <if test="labels != null" >
+        #{labels,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null" >
+        #{status,jdbcType=INTEGER},
+      </if>
+      <if test="userid != null" >
+        #{userid,jdbcType=VARCHAR},
+      </if>
+      <if test="price != null" >
+        #{price,jdbcType=DOUBLE},
+      </if>
+      <if test="purchasedate != null" >
+        #{purchasedate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="periodofvalidity != null" >
+        #{periodofvalidity,jdbcType=TIMESTAMP},
+      </if>
+      <if test="warrantydate != null" >
+        #{warrantydate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="assetnum != null" >
+        #{assetnum,jdbcType=VARCHAR},
+      </if>
+      <if test="serialnum != null" >
+        #{serialnum,jdbcType=VARCHAR},
+      </if>
+      <if test="supplier != null" >
+        #{supplier,jdbcType=VARCHAR},
+      </if>
+      <if test="description != null" >
+        #{description,jdbcType=VARCHAR},
+      </if>
+      <if test="addmonth != null" >
+        #{addmonth,jdbcType=VARCHAR},
+      </if>
+      <if test="createtime != null" >
+        #{createtime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="creator != null" >
+        #{creator,jdbcType=VARCHAR},
+      </if>
+      <if test="updatetime != null" >
+        #{updatetime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updator != null" >
+        #{updator,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.zking.erp.model.all.Asset" >
+    update asset
+    <set >
+      <if test="assetnameid != null" >
+        assetnameID = #{assetnameid,jdbcType=VARCHAR},
+      </if>
+      <if test="location != null" >
+        location = #{location,jdbcType=VARCHAR},
+      </if>
+      <if test="labels != null" >
+        labels = #{labels,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null" >
+        status = #{status,jdbcType=INTEGER},
+      </if>
+      <if test="userid != null" >
+        userID = #{userid,jdbcType=VARCHAR},
+      </if>
+      <if test="price != null" >
+        price = #{price,jdbcType=DOUBLE},
+      </if>
+      <if test="purchasedate != null" >
+        purchasedate = #{purchasedate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="periodofvalidity != null" >
+        periodofvalidity = #{periodofvalidity,jdbcType=TIMESTAMP},
+      </if>
+      <if test="warrantydate != null" >
+        warrantydate = #{warrantydate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="assetnum != null" >
+        assetnum = #{assetnum,jdbcType=VARCHAR},
+      </if>
+      <if test="serialnum != null" >
+        serialnum = #{serialnum,jdbcType=VARCHAR},
+      </if>
+      <if test="supplier != null" >
+        supplier = #{supplier,jdbcType=VARCHAR},
+      </if>
+      <if test="description != null" >
+        description = #{description,jdbcType=VARCHAR},
+      </if>
+      <if test="addmonth != null" >
+        addMonth = #{addmonth,jdbcType=VARCHAR},
+      </if>
+      <if test="createtime != null" >
+        createtime = #{createtime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="creator != null" >
+        creator = #{creator,jdbcType=VARCHAR},
+      </if>
+      <if test="updatetime != null" >
+        updatetime = #{updatetime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updator != null" >
+        updator = #{updator,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.zking.erp.model.all.Asset" >
+    update asset
+    set assetnameID = #{assetnameid,jdbcType=VARCHAR},
+      location = #{location,jdbcType=VARCHAR},
+      labels = #{labels,jdbcType=VARCHAR},
+      status = #{status,jdbcType=INTEGER},
+      userID = #{userid,jdbcType=VARCHAR},
+      price = #{price,jdbcType=DOUBLE},
+      purchasedate = #{purchasedate,jdbcType=TIMESTAMP},
+      periodofvalidity = #{periodofvalidity,jdbcType=TIMESTAMP},
+      warrantydate = #{warrantydate,jdbcType=TIMESTAMP},
+      assetnum = #{assetnum,jdbcType=VARCHAR},
+      serialnum = #{serialnum,jdbcType=VARCHAR},
+      supplier = #{supplier,jdbcType=VARCHAR},
+      description = #{description,jdbcType=VARCHAR},
+      addMonth = #{addmonth,jdbcType=VARCHAR},
+      createtime = #{createtime,jdbcType=TIMESTAMP},
+      creator = #{creator,jdbcType=VARCHAR},
+      updatetime = #{updatetime,jdbcType=TIMESTAMP},
+      updator = #{updator,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+</mapper>

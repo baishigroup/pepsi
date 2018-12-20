@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.zking.erp.mapper.all.MaterialPropertyMapper" >
+  <resultMap id="BaseResultMap" type="com.zking.erp.model.all.MaterialProperty" >
+    <constructor >
+      <idArg column="id" jdbcType="VARBINARY" javaType="byte[]" />
+      <arg column="nativeName" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="enabled" jdbcType="INTEGER" javaType="java.lang.Integer" />
+      <arg column="sort" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="anotherName" jdbcType="VARCHAR" javaType="java.lang.String" />
+    </constructor>
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, nativeName, enabled, sort, anotherName
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="byte[]" >
+    select 
+    <include refid="Base_Column_List" />
+    from materialproperty
+    where id = #{id,jdbcType=VARBINARY}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="byte[]" >
+    delete from materialproperty
+    where id = #{id,jdbcType=VARBINARY}
+  </delete>
+  <insert id="insert" parameterType="com.zking.erp.model.all.MaterialProperty" >
+    insert into materialproperty (id, nativeName, enabled, 
+      sort, anotherName)
+    values (#{id,jdbcType=VARBINARY}, #{nativename,jdbcType=VARCHAR}, #{enabled,jdbcType=INTEGER}, 
+      #{sort,jdbcType=VARCHAR}, #{anothername,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.zking.erp.model.all.MaterialProperty" >
+    insert into materialproperty
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="nativename != null" >
+        nativeName,
+      </if>
+      <if test="enabled != null" >
+        enabled,
+      </if>
+      <if test="sort != null" >
+        sort,
+      </if>
+      <if test="anothername != null" >
+        anotherName,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=VARBINARY},
+      </if>
+      <if test="nativename != null" >
+        #{nativename,jdbcType=VARCHAR},
+      </if>
+      <if test="enabled != null" >
+        #{enabled,jdbcType=INTEGER},
+      </if>
+      <if test="sort != null" >
+        #{sort,jdbcType=VARCHAR},
+      </if>
+      <if test="anothername != null" >
+        #{anothername,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.zking.erp.model.all.MaterialProperty" >
+    update materialproperty
+    <set >
+      <if test="nativename != null" >
+        nativeName = #{nativename,jdbcType=VARCHAR},
+      </if>
+      <if test="enabled != null" >
+        enabled = #{enabled,jdbcType=INTEGER},
+      </if>
+      <if test="sort != null" >
+        sort = #{sort,jdbcType=VARCHAR},
+      </if>
+      <if test="anothername != null" >
+        anotherName = #{anothername,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=VARBINARY}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.zking.erp.model.all.MaterialProperty" >
+    update materialproperty
+    set nativeName = #{nativename,jdbcType=VARCHAR},
+      enabled = #{enabled,jdbcType=INTEGER},
+      sort = #{sort,jdbcType=VARCHAR},
+      anotherName = #{anothername,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=VARBINARY}
+  </update>
+</mapper>

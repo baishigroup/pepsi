@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zking.erp.mapper.jhui.AppMapperJ">
+  <resultMap id="BaseResultMap" type="com.zking.erp.model.jhui.App">
+    <constructor>
+      <idArg column="id" javaType="java.lang.Long" jdbcType="BIGINT" />
+      <arg column="number" javaType="java.lang.String" jdbcType="VARCHAR" />
+      <arg column="name" javaType="java.lang.String" jdbcType="VARCHAR" />
+      <arg column="type" javaType="java.lang.String" jdbcType="VARCHAR" />
+      <arg column="icon" javaType="java.lang.String" jdbcType="VARCHAR" />
+      <arg column="url" javaType="java.lang.String" jdbcType="VARCHAR" />
+      <arg column="width" javaType="java.lang.String" jdbcType="VARCHAR" />
+      <arg column="height" javaType="java.lang.String" jdbcType="VARCHAR" />
+      <arg column="resize" javaType="java.lang.Boolean" jdbcType="BIT" />
+      <arg column="openmax" javaType="java.lang.Boolean" jdbcType="BIT" />
+      <arg column="flash" javaType="java.lang.Boolean" jdbcType="BIT" />
+      <arg column="zl" javaType="java.lang.String" jdbcType="VARCHAR" />
+      <arg column="sort" javaType="java.lang.String" jdbcType="VARCHAR" />
+      <arg column="remark" javaType="java.lang.String" jdbcType="VARCHAR" />
+      <arg column="enabled" javaType="java.lang.Boolean" jdbcType="BIT" />
+    </constructor>
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, number, name, type, icon, url, width, height, resize, openmax, flash, zl, sort,
+    remark, enabled
+  </sql>
+
+
+  <select id="queryAppByfindDesk"
+          parameterType="com.zking.erp.model.jhui.App" resultType="com.zking.erp.model.jhui.App">
+      select  <include refid="Base_Column_List"/> from
+      app app0_ where 1=1 and app0_.ZL=#{zl} and app0_.Enabled=1 order by app0_.Sort asc
+  </select>
+
+
+
+</mapper>

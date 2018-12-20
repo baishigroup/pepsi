@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.zking.erp.mapper.jhui.UserBusinessMapperJ" >
+  <resultMap id="BaseResultMap" type="com.zking.erp.model.jhui.UserBusiness" >
+    <constructor >
+      <idArg column="Id" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="Type" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="KeyId" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="Value" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="BtnStr" jdbcType="VARCHAR" javaType="java.lang.String" />
+    </constructor>
+  </resultMap>
+  <sql id="Base_Column_List" >
+    Id, Type, KeyId, Value, BtnStr
+  </sql>
+  <select id="queryUserBusinessByTypeByKeyId" resultType="com.zking.erp.model.jhui.UserBusiness"
+          parameterType="com.zking.erp.model.jhui.UserBusiness">
+    SELECT
+    <include refid="Base_Column_List"/>
+     FROM userbusiness userbusine0_ WHERE 1=1
+    AND userbusine0_.Type=#{type} AND userbusine0_.KeyId=#{keyid}
+
+  </select>
+
+</mapper>

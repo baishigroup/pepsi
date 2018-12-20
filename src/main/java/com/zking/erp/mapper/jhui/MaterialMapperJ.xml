@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.zking.erp.mapper.jhui.MaterialMapperJ" >
+  <resultMap id="BaseResultMap" type="com.zking.erp.model.jhui.Material" >
+    <constructor >
+      <idArg column="Id" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="CategoryId" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="Name" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="Mfrs" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="Packing" jdbcType="DOUBLE" javaType="java.lang.Double" />
+      <arg column="SafetyStock" jdbcType="DOUBLE" javaType="java.lang.Double" />
+      <arg column="Model" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="Standard" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="Color" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="Unit" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="Remark" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="RetailPrice" jdbcType="DOUBLE" javaType="java.lang.Double" />
+      <arg column="LowPrice" jdbcType="DOUBLE" javaType="java.lang.Double" />
+      <arg column="PresetPriceOne" jdbcType="DOUBLE" javaType="java.lang.Double" />
+      <arg column="PresetPriceTwo" jdbcType="DOUBLE" javaType="java.lang.Double" />
+      <arg column="UnitId" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="FirstOutUnit" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="FirstInUnit" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="PriceStrategy" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="Enabled" jdbcType="INTEGER" javaType="java.lang.Integer" />
+      <arg column="OtherField1" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="OtherField2" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="OtherField3" jdbcType="VARCHAR" javaType="java.lang.String" />
+    </constructor>
+  </resultMap>
+  <sql id="Base_Column_List" >
+    Id, CategoryId, Name, Mfrs, Packing, SafetyStock, Model, Standard, Color, Unit, Remark, 
+    RetailPrice, LowPrice, PresetPriceOne, PresetPriceTwo, UnitId, FirstOutUnit, FirstInUnit, 
+    PriceStrategy, Enabled, OtherField1, OtherField2, OtherField3
+  </sql>
+
+</mapper>

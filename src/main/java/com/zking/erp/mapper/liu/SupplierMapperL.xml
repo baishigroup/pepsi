@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.zking.erp.mapper.liu.SupplierMapperL" >
+  <resultMap id="BaseResultMap" type="com.zking.erp.model.liu.Supplier" >
+    <constructor >
+      <idArg column="id" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="supplier" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="contacts" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="phonenum" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="email" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="description" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="isystem" jdbcType="INTEGER" javaType="java.lang.Integer" />
+      <arg column="type" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="enabled" jdbcType="INTEGER" javaType="java.lang.Integer" />
+      <arg column="AdvanceIn" jdbcType="DOUBLE" javaType="java.lang.Double" />
+      <arg column="BeginNeedGet" jdbcType="DOUBLE" javaType="java.lang.Double" />
+      <arg column="BeginNeedPay" jdbcType="DOUBLE" javaType="java.lang.Double" />
+      <arg column="AllNeedGet" jdbcType="DOUBLE" javaType="java.lang.Double" />
+      <arg column="AllNeedPay" jdbcType="DOUBLE" javaType="java.lang.Double" />
+      <arg column="fax" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="telephone" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="address" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="taxNum" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="bankName" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="accountNumber" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="taxRate" jdbcType="DOUBLE" javaType="java.lang.Double" />
+    </constructor>
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, supplier, contacts, phonenum, email, description, isystem, type, enabled, AdvanceIn, 
+    BeginNeedGet, BeginNeedPay, AllNeedGet, AllNeedPay, fax, telephone, address, taxNum, 
+    bankName, accountNumber, taxRate
+  </sql>
+
+</mapper>

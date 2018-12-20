@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.zking.erp.mapper.liu.AccountMapperL" >
+  <resultMap id="BaseResultMap" type="com.zking.erp.model.liu.Account" >
+    <constructor >
+      <idArg column="Id" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="Name" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="SerialNo" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="InitialAmount" jdbcType="DOUBLE" javaType="java.lang.Double" />
+      <arg column="CurrentAmount" jdbcType="DOUBLE" javaType="java.lang.Double" />
+      <arg column="Remark" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="IsDefault" jdbcType="INTEGER" javaType="java.lang.Integer" />
+    </constructor>
+  </resultMap>
+  <sql id="Base_Column_List" >
+    Id, Name, SerialNo, InitialAmount, CurrentAmount, Remark, IsDefault
+  </sql>
+
+</mapper>

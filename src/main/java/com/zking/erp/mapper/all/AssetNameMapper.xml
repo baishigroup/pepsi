@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.zking.erp.mapper.all.AssetNameMapper" >
+  <resultMap id="BaseResultMap" type="com.zking.erp.model.all.AssetName" >
+    <constructor >
+      <idArg column="id" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="assetname" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="assetcategoryID" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="isystem" jdbcType="INTEGER" javaType="java.lang.Integer" />
+      <arg column="description" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="isconsumables" jdbcType="INTEGER" javaType="java.lang.Integer" />
+    </constructor>
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, assetname, assetcategoryID, isystem, description, isconsumables
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from assetname
+    where id = #{id,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from assetname
+    where id = #{id,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="com.zking.erp.model.all.AssetName" >
+    insert into assetname (id, assetname, assetcategoryID, 
+      isystem, description, isconsumables
+      )
+    values (#{id,jdbcType=VARCHAR}, #{assetname,jdbcType=VARCHAR}, #{assetcategoryid,jdbcType=VARCHAR}, 
+      #{isystem,jdbcType=INTEGER}, #{description,jdbcType=VARCHAR}, #{isconsumables,jdbcType=INTEGER}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.zking.erp.model.all.AssetName" >
+    insert into assetname
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="assetname != null" >
+        assetname,
+      </if>
+      <if test="assetcategoryid != null" >
+        assetcategoryID,
+      </if>
+      <if test="isystem != null" >
+        isystem,
+      </if>
+      <if test="description != null" >
+        description,
+      </if>
+      <if test="isconsumables != null" >
+        isconsumables,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=VARCHAR},
+      </if>
+      <if test="assetname != null" >
+        #{assetname,jdbcType=VARCHAR},
+      </if>
+      <if test="assetcategoryid != null" >
+        #{assetcategoryid,jdbcType=VARCHAR},
+      </if>
+      <if test="isystem != null" >
+        #{isystem,jdbcType=INTEGER},
+      </if>
+      <if test="description != null" >
+        #{description,jdbcType=VARCHAR},
+      </if>
+      <if test="isconsumables != null" >
+        #{isconsumables,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.zking.erp.model.all.AssetName" >
+    update assetname
+    <set >
+      <if test="assetname != null" >
+        assetname = #{assetname,jdbcType=VARCHAR},
+      </if>
+      <if test="assetcategoryid != null" >
+        assetcategoryID = #{assetcategoryid,jdbcType=VARCHAR},
+      </if>
+      <if test="isystem != null" >
+        isystem = #{isystem,jdbcType=INTEGER},
+      </if>
+      <if test="description != null" >
+        description = #{description,jdbcType=VARCHAR},
+      </if>
+      <if test="isconsumables != null" >
+        isconsumables = #{isconsumables,jdbcType=INTEGER},
+      </if>
+    </set>
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.zking.erp.model.all.AssetName" >
+    update assetname
+    set assetname = #{assetname,jdbcType=VARCHAR},
+      assetcategoryID = #{assetcategoryid,jdbcType=VARCHAR},
+      isystem = #{isystem,jdbcType=INTEGER},
+      description = #{description,jdbcType=VARCHAR},
+      isconsumables = #{isconsumables,jdbcType=INTEGER}
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+</mapper>

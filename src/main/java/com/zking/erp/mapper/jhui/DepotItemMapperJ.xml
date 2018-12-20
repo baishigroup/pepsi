@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.zking.erp.mapper.jhui.DepotItemMapperJ" >
+  <resultMap id="BaseResultMap" type="com.zking.erp.model.jhui.DepotItem" >
+    <constructor >
+      <idArg column="Id" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="HeaderId" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="MaterialId" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="MUnit" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="OperNumber" jdbcType="DOUBLE" javaType="java.lang.Double" />
+      <arg column="BasicNumber" jdbcType="DOUBLE" javaType="java.lang.Double" />
+      <arg column="UnitPrice" jdbcType="DOUBLE" javaType="java.lang.Double" />
+      <arg column="TaxUnitPrice" jdbcType="DOUBLE" javaType="java.lang.Double" />
+      <arg column="AllPrice" jdbcType="DOUBLE" javaType="java.lang.Double" />
+      <arg column="Remark" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="Img" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="Incidentals" jdbcType="DOUBLE" javaType="java.lang.Double" />
+      <arg column="DepotId" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="AnotherDepotId" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="TaxRate" jdbcType="DOUBLE" javaType="java.lang.Double" />
+      <arg column="TaxMoney" jdbcType="DOUBLE" javaType="java.lang.Double" />
+      <arg column="TaxLastMoney" jdbcType="DOUBLE" javaType="java.lang.Double" />
+      <arg column="OtherField1" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="OtherField2" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="OtherField3" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="OtherField4" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="OtherField5" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="MType" jdbcType="VARCHAR" javaType="java.lang.String" />
+    </constructor>
+  </resultMap>
+  <sql id="Base_Column_List" >
+    Id, HeaderId, MaterialId, MUnit, OperNumber, BasicNumber, UnitPrice, TaxUnitPrice, 
+    AllPrice, Remark, Img, Incidentals, DepotId, AnotherDepotId, TaxRate, TaxMoney, TaxLastMoney, 
+    OtherField1, OtherField2, OtherField3, OtherField4, OtherField5, MType
+  </sql>
+
+</mapper>

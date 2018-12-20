@@ -1,0 +1,285 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.zking.erp.mapper.all.SupplierMapper" >
+  <resultMap id="BaseResultMap" type="com.zking.erp.model.all.Supplier" >
+    <constructor >
+      <idArg column="id" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="supplier" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="contacts" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="phonenum" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="email" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="description" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="isystem" jdbcType="INTEGER" javaType="java.lang.Integer" />
+      <arg column="type" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="enabled" jdbcType="INTEGER" javaType="java.lang.Integer" />
+      <arg column="AdvanceIn" jdbcType="DOUBLE" javaType="java.lang.Double" />
+      <arg column="BeginNeedGet" jdbcType="DOUBLE" javaType="java.lang.Double" />
+      <arg column="BeginNeedPay" jdbcType="DOUBLE" javaType="java.lang.Double" />
+      <arg column="AllNeedGet" jdbcType="DOUBLE" javaType="java.lang.Double" />
+      <arg column="AllNeedPay" jdbcType="DOUBLE" javaType="java.lang.Double" />
+      <arg column="fax" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="telephone" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="address" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="taxNum" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="bankName" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="accountNumber" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="taxRate" jdbcType="DOUBLE" javaType="java.lang.Double" />
+    </constructor>
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, supplier, contacts, phonenum, email, description, isystem, type, enabled, AdvanceIn, 
+    BeginNeedGet, BeginNeedPay, AllNeedGet, AllNeedPay, fax, telephone, address, taxNum, 
+    bankName, accountNumber, taxRate
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from supplier
+    where id = #{id,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from supplier
+    where id = #{id,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="com.zking.erp.model.all.Supplier" >
+    insert into supplier (id, supplier, contacts, 
+      phonenum, email, description, 
+      isystem, type, enabled, 
+      AdvanceIn, BeginNeedGet, BeginNeedPay, 
+      AllNeedGet, AllNeedPay, fax, 
+      telephone, address, taxNum, 
+      bankName, accountNumber, taxRate
+      )
+    values (#{id,jdbcType=VARCHAR}, #{supplier,jdbcType=VARCHAR}, #{contacts,jdbcType=VARCHAR}, 
+      #{phonenum,jdbcType=VARCHAR}, #{email,jdbcType=VARCHAR}, #{description,jdbcType=VARCHAR}, 
+      #{isystem,jdbcType=INTEGER}, #{type,jdbcType=VARCHAR}, #{enabled,jdbcType=INTEGER}, 
+      #{advancein,jdbcType=DOUBLE}, #{beginneedget,jdbcType=DOUBLE}, #{beginneedpay,jdbcType=DOUBLE}, 
+      #{allneedget,jdbcType=DOUBLE}, #{allneedpay,jdbcType=DOUBLE}, #{fax,jdbcType=VARCHAR}, 
+      #{telephone,jdbcType=VARCHAR}, #{address,jdbcType=VARCHAR}, #{taxnum,jdbcType=VARCHAR}, 
+      #{bankname,jdbcType=VARCHAR}, #{accountnumber,jdbcType=VARCHAR}, #{taxrate,jdbcType=DOUBLE}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.zking.erp.model.all.Supplier" >
+    insert into supplier
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="supplier != null" >
+        supplier,
+      </if>
+      <if test="contacts != null" >
+        contacts,
+      </if>
+      <if test="phonenum != null" >
+        phonenum,
+      </if>
+      <if test="email != null" >
+        email,
+      </if>
+      <if test="description != null" >
+        description,
+      </if>
+      <if test="isystem != null" >
+        isystem,
+      </if>
+      <if test="type != null" >
+        type,
+      </if>
+      <if test="enabled != null" >
+        enabled,
+      </if>
+      <if test="advancein != null" >
+        AdvanceIn,
+      </if>
+      <if test="beginneedget != null" >
+        BeginNeedGet,
+      </if>
+      <if test="beginneedpay != null" >
+        BeginNeedPay,
+      </if>
+      <if test="allneedget != null" >
+        AllNeedGet,
+      </if>
+      <if test="allneedpay != null" >
+        AllNeedPay,
+      </if>
+      <if test="fax != null" >
+        fax,
+      </if>
+      <if test="telephone != null" >
+        telephone,
+      </if>
+      <if test="address != null" >
+        address,
+      </if>
+      <if test="taxnum != null" >
+        taxNum,
+      </if>
+      <if test="bankname != null" >
+        bankName,
+      </if>
+      <if test="accountnumber != null" >
+        accountNumber,
+      </if>
+      <if test="taxrate != null" >
+        taxRate,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=VARCHAR},
+      </if>
+      <if test="supplier != null" >
+        #{supplier,jdbcType=VARCHAR},
+      </if>
+      <if test="contacts != null" >
+        #{contacts,jdbcType=VARCHAR},
+      </if>
+      <if test="phonenum != null" >
+        #{phonenum,jdbcType=VARCHAR},
+      </if>
+      <if test="email != null" >
+        #{email,jdbcType=VARCHAR},
+      </if>
+      <if test="description != null" >
+        #{description,jdbcType=VARCHAR},
+      </if>
+      <if test="isystem != null" >
+        #{isystem,jdbcType=INTEGER},
+      </if>
+      <if test="type != null" >
+        #{type,jdbcType=VARCHAR},
+      </if>
+      <if test="enabled != null" >
+        #{enabled,jdbcType=INTEGER},
+      </if>
+      <if test="advancein != null" >
+        #{advancein,jdbcType=DOUBLE},
+      </if>
+      <if test="beginneedget != null" >
+        #{beginneedget,jdbcType=DOUBLE},
+      </if>
+      <if test="beginneedpay != null" >
+        #{beginneedpay,jdbcType=DOUBLE},
+      </if>
+      <if test="allneedget != null" >
+        #{allneedget,jdbcType=DOUBLE},
+      </if>
+      <if test="allneedpay != null" >
+        #{allneedpay,jdbcType=DOUBLE},
+      </if>
+      <if test="fax != null" >
+        #{fax,jdbcType=VARCHAR},
+      </if>
+      <if test="telephone != null" >
+        #{telephone,jdbcType=VARCHAR},
+      </if>
+      <if test="address != null" >
+        #{address,jdbcType=VARCHAR},
+      </if>
+      <if test="taxnum != null" >
+        #{taxnum,jdbcType=VARCHAR},
+      </if>
+      <if test="bankname != null" >
+        #{bankname,jdbcType=VARCHAR},
+      </if>
+      <if test="accountnumber != null" >
+        #{accountnumber,jdbcType=VARCHAR},
+      </if>
+      <if test="taxrate != null" >
+        #{taxrate,jdbcType=DOUBLE},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.zking.erp.model.all.Supplier" >
+    update supplier
+    <set >
+      <if test="supplier != null" >
+        supplier = #{supplier,jdbcType=VARCHAR},
+      </if>
+      <if test="contacts != null" >
+        contacts = #{contacts,jdbcType=VARCHAR},
+      </if>
+      <if test="phonenum != null" >
+        phonenum = #{phonenum,jdbcType=VARCHAR},
+      </if>
+      <if test="email != null" >
+        email = #{email,jdbcType=VARCHAR},
+      </if>
+      <if test="description != null" >
+        description = #{description,jdbcType=VARCHAR},
+      </if>
+      <if test="isystem != null" >
+        isystem = #{isystem,jdbcType=INTEGER},
+      </if>
+      <if test="type != null" >
+        type = #{type,jdbcType=VARCHAR},
+      </if>
+      <if test="enabled != null" >
+        enabled = #{enabled,jdbcType=INTEGER},
+      </if>
+      <if test="advancein != null" >
+        AdvanceIn = #{advancein,jdbcType=DOUBLE},
+      </if>
+      <if test="beginneedget != null" >
+        BeginNeedGet = #{beginneedget,jdbcType=DOUBLE},
+      </if>
+      <if test="beginneedpay != null" >
+        BeginNeedPay = #{beginneedpay,jdbcType=DOUBLE},
+      </if>
+      <if test="allneedget != null" >
+        AllNeedGet = #{allneedget,jdbcType=DOUBLE},
+      </if>
+      <if test="allneedpay != null" >
+        AllNeedPay = #{allneedpay,jdbcType=DOUBLE},
+      </if>
+      <if test="fax != null" >
+        fax = #{fax,jdbcType=VARCHAR},
+      </if>
+      <if test="telephone != null" >
+        telephone = #{telephone,jdbcType=VARCHAR},
+      </if>
+      <if test="address != null" >
+        address = #{address,jdbcType=VARCHAR},
+      </if>
+      <if test="taxnum != null" >
+        taxNum = #{taxnum,jdbcType=VARCHAR},
+      </if>
+      <if test="bankname != null" >
+        bankName = #{bankname,jdbcType=VARCHAR},
+      </if>
+      <if test="accountnumber != null" >
+        accountNumber = #{accountnumber,jdbcType=VARCHAR},
+      </if>
+      <if test="taxrate != null" >
+        taxRate = #{taxrate,jdbcType=DOUBLE},
+      </if>
+    </set>
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.zking.erp.model.all.Supplier" >
+    update supplier
+    set supplier = #{supplier,jdbcType=VARCHAR},
+      contacts = #{contacts,jdbcType=VARCHAR},
+      phonenum = #{phonenum,jdbcType=VARCHAR},
+      email = #{email,jdbcType=VARCHAR},
+      description = #{description,jdbcType=VARCHAR},
+      isystem = #{isystem,jdbcType=INTEGER},
+      type = #{type,jdbcType=VARCHAR},
+      enabled = #{enabled,jdbcType=INTEGER},
+      AdvanceIn = #{advancein,jdbcType=DOUBLE},
+      BeginNeedGet = #{beginneedget,jdbcType=DOUBLE},
+      BeginNeedPay = #{beginneedpay,jdbcType=DOUBLE},
+      AllNeedGet = #{allneedget,jdbcType=DOUBLE},
+      AllNeedPay = #{allneedpay,jdbcType=DOUBLE},
+      fax = #{fax,jdbcType=VARCHAR},
+      telephone = #{telephone,jdbcType=VARCHAR},
+      address = #{address,jdbcType=VARCHAR},
+      taxNum = #{taxnum,jdbcType=VARCHAR},
+      bankName = #{bankname,jdbcType=VARCHAR},
+      accountNumber = #{accountnumber,jdbcType=VARCHAR},
+      taxRate = #{taxrate,jdbcType=DOUBLE}
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+</mapper>

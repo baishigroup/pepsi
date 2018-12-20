@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.zking.erp.mapper.jhui.UserMapperJ" >
+  <resultMap id="BaseResultMap" type="com.zking.erp.model.jhui.User" >
+    <constructor >
+      <idArg column="id" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="username" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="loginame" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="password" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="position" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="department" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="email" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="phonenum" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="ismanager" jdbcType="TINYINT" javaType="java.lang.Byte" />
+      <arg column="isystem" jdbcType="TINYINT" javaType="java.lang.Byte" />
+      <arg column="status" jdbcType="TINYINT" javaType="java.lang.Byte" />
+      <arg column="description" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="remark" jdbcType="VARCHAR" javaType="java.lang.String" />
+    </constructor>
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, username, loginame, password, position, department, email, phonenum, ismanager, 
+    isystem, status, description, remark
+  </sql>
+    <select id="queryByLogin" resultType="com.zking.erp.model.jhui.User"
+            parameterType="com.zking.erp.model.jhui.User">
+      SELECT <include refid="Base_Column_List"/>
+      FROM USER basicuser0_ WHERE 1=1  AND basicuser0_.loginame=#{loginame}
+      <if test="password != null" >
+        AND basicuser0_.password=#{password}
+      </if>
+
+    </select>
+
+</mapper>
