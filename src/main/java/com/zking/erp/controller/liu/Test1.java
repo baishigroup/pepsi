@@ -1,4 +1,4 @@
 package com.zking.erp.controller.liu;
 
-public class Test {
+public class Test1 {
 }

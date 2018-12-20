@@ -1,4 +1,4 @@
 package com.zking.erp.service.wu;
 
-public class Test {
+public class Test1 {
 }
