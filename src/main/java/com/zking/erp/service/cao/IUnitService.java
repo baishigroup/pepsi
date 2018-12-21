@@ -1,12 +1,12 @@
-package com.zking.erp.mapper.cao;
+package com.zking.erp.service.cao;
 
 import com.zking.erp.model.cao.Unit;
+import com.zking.erp.util.PageBean;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
-@Repository
-public interface UnitMapperC {
+public interface IUnitService {
     /**
      * 添加计量单位
      * @param unit
@@ -33,6 +33,6 @@ public interface UnitMapperC {
      * @param unit
      * @return
      */
-    List<Unit> queryUnitPager(Unit unit);
+    List<Unit> queryUnitPager(Unit unit, PageBean pageBean);
 
 }

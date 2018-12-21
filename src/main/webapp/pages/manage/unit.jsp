@@ -83,7 +83,6 @@
     //初始化界面
     $(function () {
         initTableData();
-        ininPager();
         initForm();
     });
 
@@ -99,6 +98,7 @@
     //初始化表格数据
     function initTableData() {
         $('#tableData').datagrid({
+            url: '<%=path %>/cao/unit/findBy.do',
             //title:'计量单位列表',
             //iconCls:'icon-save',
             //width:700,
@@ -114,13 +114,13 @@
             //fitColumns:true,
             //单击行是否选中
             checkOnSelect: false,
-            url: '<%=path %>/unit/findBy.action?pageSize=' + initPageSize,
             pagination: true,
             //交替出现背景
             striped: true,
             //loadFilter: pagerFilter,
-            pageSize: initPageSize,
-            pageList: initPageNum,
+            pageList:[2,5,10,15],
+            pageSize: 10,
+            pageNumber: 1,
             columns: [[
                 {field: 'id', width: 35, align: "center", checkbox: true},
                 {
@@ -179,27 +179,6 @@
         }
     });
 
-    //分页信息处理
-    function ininPager() {
-        try {
-            var opts = $("#tableData").datagrid('options');
-            var pager = $("#tableData").datagrid('getPager');
-            pager.pagination({
-                onSelectPage: function (pageNum, pageSize) {
-                    opts.pageNumber = pageNum;
-                    opts.pageSize = pageSize;
-                    pager.pagination('refresh', {
-                        pageNumber: pageNum,
-                        pageSize: pageSize
-                    });
-                    showUnitDetails(pageNum, pageSize);
-                }
-            });
-        }
-        catch (e) {
-            $.messager.alert('异常处理提示', "分页信息异常 :  " + e.name + ": " + e.message, 'error');
-        }
-    }
 
     //删除计量单位
     function deleteUnit(unitID) {
@@ -296,7 +275,7 @@
         $("#unitName").text("");
         orgUnit = "";
         unitID = 0;
-        url = '<%=path %>/unit/create.action';
+        url = '<%=path %>/cao/unit/create.do';
     }
 
     //保存信息
@@ -317,7 +296,7 @@
                     dataType: "json",
                     async: false,
                     data: ({
-                        UName: name,
+                        uname: name,
                         clientIp: '<%=clientIp %>'
                     }),
                     success: function (tipInfo) {
@@ -325,7 +304,7 @@
                             $('#unitDlg').dialog('close');
 
                             var opts = $("#tableData").datagrid('options');
-                            showUnitDetails(opts.pageNumber, opts.pageSize);
+                            showUnitDetails();
                         }
                         else {
                             $.messager.show({
@@ -404,28 +383,18 @@
     //搜索处理
     $("#searchBtn").unbind().bind({
         click: function () {
-            showUnitDetails(1, initPageSize);
-            var opts = $("#tableData").datagrid('options');
-            var pager = $("#tableData").datagrid('getPager');
-            opts.pageNumber = 1;
-            opts.pageSize = initPageSize;
-            pager.pagination('refresh',
-                {
-                    pageNumber: 1,
-                    pageSize: initPageSize
-                });
+            showUnitDetails( );
+
         }
     });
 
-    function showUnitDetails(pageNo, pageSize) {
+    function showUnitDetails( ) {
         $.ajax({
             type: "post",
-            url: "<%=path %>/unit/findBy.action",
+            url: "<%=path %>/cao/unit/findBy.do",
             dataType: "json",
             data: ({
-                UName: $.trim($("#searchName").val()),
-                pageNo: pageNo,
-                pageSize: pageSize
+                uname: $.trim($("#searchName").val()),
             }),
             success: function (data) {
                 $("#tableData").datagrid('loadData', data);

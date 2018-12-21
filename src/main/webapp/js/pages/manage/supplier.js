@@ -31,13 +31,14 @@
     function getPersonList(){
         $.ajax({
             type:"post",
-            url: path + "/person/getBasicData.action",
+            url: path + "/cao/person/getBasicData.do",
             dataType: "json",
             success: function (systemInfo)
             {
-                var msgTip = systemInfo.showModel.msgTip;
+                console.log("成功");
+                var msgTip = systemInfo.message;
                 if(msgTip !== "exceptoin"){
-                    var personList = systemInfo.showModel.map.personList;
+                    var personList = systemInfo.personList;
                     var personID,options;
                     if(personList !=null)
                     {
@@ -182,30 +183,30 @@
 
 
     //分页信息处理
-    function ininPager() {
-        try
-        {
-            var opts = $("#tableData").datagrid('options');
-            var pager = $("#tableData").datagrid('getPager');
-            pager.pagination({
-                onSelectPage:function(pageNum, pageSize)
-                {
-                    opts.pageNumber = pageNum;
-                    opts.pageSize = pageSize;
-                    pager.pagination('refresh',
-                        {
-                            pageNumber:pageNum,
-                            pageSize:pageSize
-                        });
-                    showSupplierDetails(pageNum,pageSize);
-                }
-            });
-        }
-        catch (e)
-        {
-            $.messager.alert('异常处理提示',"分页信息异常 :  " + e.name + ": " + e.message,'error');
-        }
-    }
+    // function ininPager() {
+    //     try
+    //     {
+    //         var opts = $("#tableData").datagrid('options');
+    //         var pager = $("#tableData").datagrid('getPager');
+    //         pager.pagination({
+    //             onSelectPage:function(pageNum, pageSize)
+    //             {
+    //                 opts.pageNumber = pageNum;
+    //                 opts.pageSize = pageSize;
+    //                 pager.pagination('refresh',
+    //                     {
+    //                         pageNumber:pageNum,
+    //                         pageSize:pageSize
+    //                     });
+    //                 showSupplierDetails(pageNum,pageSize);
+    //             }
+    //         });
+    //     }
+    //     catch (e)
+    //     {
+    //         $.messager.alert('异常处理提示',"分页信息异常 :  " + e.name + ": " + e.message,'error');
+    //     }
+    // }
 
     //删除信息
     function deleteSupplier(supplierInfo) {
@@ -481,7 +482,7 @@
                 setTimeout(function(){
                     $.messager.progress('close');
                     var opts = $("#tableData").datagrid('options');
-                    showSupplierDetails(opts.pageNumber,opts.pageSize);
+                    showSupplierDetails( );
                 },3300);
             }
         });
@@ -534,7 +535,7 @@
                     if (res) {
                         $('#supplierDlg').dialog('close');
                         var opts = $("#tableData").datagrid('options');
-                        showSupplierDetails(opts.pageNumber,opts.pageSize);
+                        showSupplierDetails( );
                     }
                 }
             });
@@ -566,16 +567,8 @@
         $("#searchBtn").unbind().bind({
             click:function()
             {
-                showSupplierDetails(1,initPageSize);
-                var opts = $("#tableData").datagrid('options');
-                var pager = $("#tableData").datagrid('getPager');
-                opts.pageNumber = 1;
-                opts.pageSize = initPageSize;
-                pager.pagination('refresh',
-                    {
-                        pageNumber:1,
-                        pageSize:initPageSize
-                    });
+                showSupplierDetails( );
+
             }
         });
 
@@ -731,7 +724,7 @@
     }
 
 
-    function showSupplierDetails(pageNo,pageSize) {
+    function showSupplierDetails( ) {
         $.ajax({
             type:"post",
             url: path + "/supplier/findBy.action",
@@ -741,9 +734,7 @@
                 type: listType,
                 phonenum:$.trim($("#searchPhonenum").val()),
                 telephone:$.trim($("#searchTelephone").val()),
-                description:$.trim($("#searchDesc").val()),
-                pageNo:pageNo,
-                pageSize:pageSize
+                description:$.trim($("#searchDesc").val())
             }),
             success: function (data)
             {

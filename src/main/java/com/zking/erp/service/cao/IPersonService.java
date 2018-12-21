@@ -1,12 +1,12 @@
-package com.zking.erp.mapper.cao;
+package com.zking.erp.service.cao;
 
 import com.zking.erp.model.cao.Person;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
-@Repository
-public interface PersonMapperC {
+
+public interface IPersonService {
 
     /**
      * 查看所有经手人

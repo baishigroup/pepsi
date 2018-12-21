@@ -11,5 +11,9 @@
   <sql id="Base_Column_List" >
     Id, Type, Name
   </sql>
+    <select id="queryPersonAll" resultType="com.zking.erp.model.cao.Person">
+      SELECT <include refid="Base_Column_List"/>
+      FROM person person0_ WHERE 1=1 ORDER BY person0_.Id ASC
+    </select>
 
 </mapper>

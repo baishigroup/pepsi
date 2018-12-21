@@ -12,5 +12,22 @@
   <sql id="Base_Column_List" >
     Id, Name, CategoryLevel, ParentId
   </sql>
+    <insert id="insertMaterialCate" parameterType="com.zking.erp.model.cao.MaterialCategory">
+      INSERT into materialcategory(id,name,categorylevel,parentid)
+      VALUES (#{id,jdbcType=VARCHAR},#{name,jdbcType=VARCHAR},
+      #{categorylevel},#{parentid,jdbcType=VARCHAR}, )
+    </insert>
+  <update id="updateMaterialCateById" parameterType="com.zking.erp.model.cao.MaterialCategory">
+    UPDATE materialcategory set name=#{name},categorylevel=#{categorylevel},parentid=#{parentid}
+    WHERE  id=#{id}
+  </update>
+  <delete id="deleteMaterialCateById" parameterType="java.lang.String">
+    DELETE  FROM materialcategory where id=#{id}
+  </delete>
+  <select id="queryMaterialCate" resultType="com.zking.erp.model.cao.MaterialCategory"
+          parameterType="com.zking.erp.model.cao.MaterialCategory">
+    SELECT <include refid="Base_Column_List"/>
+    FROM materialcategory where 1=1
+  </select>
 
 </mapper>

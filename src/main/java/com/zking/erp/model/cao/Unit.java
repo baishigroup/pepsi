@@ -15,6 +15,10 @@ public class Unit implements Serializable{
         this.uname = uname;
     }
 
+    public Unit(String uname) {
+        this.uname = uname;
+    }
+
     public Unit() {
         super();
     }
