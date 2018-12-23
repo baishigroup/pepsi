@@ -13,7 +13,7 @@
   <sql id="Base_Column_List" >
     id, UName
   </sql>
-    <insert id="insertUnit" parameterType="com.zking.erp.model.cao.Unit">
+  <insert id="insertUnit" parameterType="com.zking.erp.model.cao.Unit">
       insert into unit(id,uname) VALUES (#{id},#{uname})
     </insert>
   <update id="updateUnitById" parameterType="com.zking.erp.model.cao.Unit">
@@ -21,6 +21,12 @@
   </update>
   <delete id="deleteUnitById" parameterType="java.lang.String">
     delete from unit where id=#{id}
+  </delete>
+  <delete id="deleteUnitByIds" parameterType="com.zking.erp.model.cao.Unit">
+    delete from unit
+    <foreach collection="ids" item="id" open=" where id in(" close=")" separator="," index="idx">
+      #{id}
+    </foreach>
   </delete>
   <select id="queryUnitPager" resultMap="UnitResult"
           parameterType="com.zking.erp.model.cao.Unit">

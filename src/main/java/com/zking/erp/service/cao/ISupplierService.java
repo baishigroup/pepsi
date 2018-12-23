@@ -1,12 +1,11 @@
-package com.zking.erp.mapper.cao;
+package com.zking.erp.service.cao;
 
+import com.zking.erp.model.cao.Person;
 import com.zking.erp.model.cao.Supplier;
-import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
-@Repository
-public interface SupplierMapperC {
+public interface ISupplierService {
     /**
      * 新增供应商信息
      * @param supplier
@@ -41,5 +40,6 @@ public interface SupplierMapperC {
      * @return
      */
     List<Supplier> querySupplierPager(Supplier supplier);
+
 
 }

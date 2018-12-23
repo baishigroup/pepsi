@@ -1,10 +1,8 @@
 package com.zking.erp.service.cao;
 
 import com.zking.erp.model.cao.Person;
-import org.springframework.stereotype.Repository;
 
 import java.util.List;
-
 
 public interface IPersonService {
 

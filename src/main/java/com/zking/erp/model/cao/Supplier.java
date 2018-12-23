@@ -3,6 +3,7 @@ package com.zking.erp.model.cao;
 import lombok.ToString;
 
 import java.io.Serializable;
+import java.util.List;
 
 @ToString
 public class Supplier implements Serializable{
@@ -47,6 +48,17 @@ public class Supplier implements Serializable{
     private String accountnumber;
 
     private Double taxrate;
+
+    //根据ID批量删除
+    private List<String> ids;
+
+    public List<String> getIds() {
+        return ids;
+    }
+
+    public void setIds(List<String> ids) {
+        this.ids = ids;
+    }
 
     public Supplier(String id, String supplier, String contacts, String phonenum, String email, String description, Integer isystem, String type, Integer enabled, Double advancein, Double beginneedget, Double beginneedpay, Double allneedget, Double allneedpay, String fax, String telephone, String address, String taxnum, String bankname, String accountnumber, Double taxrate) {
         this.id = id;

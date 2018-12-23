@@ -130,7 +130,7 @@
                         var rowInfo = rec.id + 'AaBb' + rec.UName;
                         if (1 == value) {
                             str += '<img title="编辑" src="<%=path%>/js/easyui-1.3.5/themes/icons/pencil.png" style="cursor: pointer;" onclick="editUnit(\'' + rowInfo + '\');"/>&nbsp;&nbsp;&nbsp;';
-                            str += '<img title="删除" src="<%=path%>/js/easyui-1.3.5/themes/icons/edit_remove.png" style="cursor: pointer;" onclick="deleteUnit(' + rec.id + ');"/>';
+                            str += '<img title="删除" src="<%=path%>/js/easyui-1.3.5/themes/icons/edit_remove.png" style="cursor: pointer;" onclick="deleteUnit(\'' + rec.id + '\');"/>';
                         }
                         return str;
                     }
@@ -186,14 +186,14 @@
             if (r) {
                 $.ajax({
                     type: "post",
-                    url: "<%=path %>/unit/delete.action",
+                    url: "<%=path %>/cao/unit/delete.do",
                     dataType: "json",
                     data: ({
-                        unitID: unitID,
+                        id: unitID,
                         clientIp: '<%=clientIp %>'
                     }),
                     success: function (tipInfo) {
-                        var msg = tipInfo.showModel.msgTip;
+                        var msg = tipInfo.message;
                         if (msg == '成功') {
                             //加载完以后重新初始化
                             $("#searchBtn").click();
@@ -227,20 +227,20 @@
                             ids += row[i].id;
                             break;
                         }
-                        //alert(row[i].id);
+                        alert(row[i].id);
                         ids += row[i].id + ",";
                     }
                     $.ajax({
                         type: "post",
-                        url: "<%=path %>/unit/batchDelete.action",
+                        url: "<%=path %>/cao/unit/batchDelete.do",
                         dataType: "json",
                         async: false,
                         data: ({
-                            unitIDs: ids,
+                            ids: ids,
                             clientIp: '<%=clientIp %>'
                         }),
                         success: function (tipInfo) {
-                            var msg = tipInfo.showModel.msgTip;
+                            var msg = tipInfo.message;
                             if (msg == '成功') {
                                 //加载完以后重新初始化
                                 $("#searchBtn").click();
@@ -300,7 +300,10 @@
                         clientIp: '<%=clientIp %>'
                     }),
                     success: function (tipInfo) {
-                        if (tipInfo) {
+                        var f = tipInfo.message;
+                        console.log(f);
+                        alert(f);
+                        if (f) {
                             $('#unitDlg').dialog('close');
 
                             var opts = $("#tableData").datagrid('options');
@@ -344,7 +347,7 @@
         lastNum = lastNum.replace(")", "");
         $("#otherNum").val(lastNum);
         $("#unitName").text(basicName);
-        url = '<%=path %>/unit/update.action?unitID=' + unitInfo[0];
+        url = '<%=path %>/cao/unit/update.do?id=' + unitInfo[0];
     }
 
     //检查名称是否存在 ++ 重名无法提示问题需要跟进
@@ -356,12 +359,12 @@
         if (name.length > 0 && (orgUnit.length == 0 || name != orgUnit)) {
             $.ajax({
                 type: "post",
-                url: "<%=path %>/unit/checkIsNameExist.action",
+                url: "<%=path %>/cao/unit/checkIsNameExist.do",
                 dataType: "json",
                 async: false,
                 data: ({
                     unitID: unitID,
-                    UName: name
+                    uname: name
                 }),
                 success: function (tipInfo) {
                     flag = tipInfo;

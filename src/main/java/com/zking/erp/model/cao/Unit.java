@@ -3,12 +3,24 @@ package com.zking.erp.model.cao;
 import lombok.ToString;
 
 import java.io.Serializable;
+import java.util.List;
 
 @ToString
 public class Unit implements Serializable{
     private String id;
 
     private String uname;
+
+    //根据ID批量删除
+    private List<String> ids;
+
+    public List<String> getIds() {
+        return ids;
+    }
+
+    public void setIds(List<String> ids) {
+        this.ids = ids;
+    }
 
     public Unit(String id, String uname) {
         this.id = id;

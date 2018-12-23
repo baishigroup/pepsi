@@ -29,6 +29,13 @@ public interface IUnitService {
     int deleteUnitById(String id);
 
     /**
+     * 批量删除（根据ID）
+     * @param unit
+     * @return
+     */
+    int deleteUnitByIds(Unit unit);
+
+    /**
      * 根据条件查询计量单位
      * @param unit
      * @return

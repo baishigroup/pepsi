@@ -31,5 +31,47 @@
     BeginNeedGet, BeginNeedPay, AllNeedGet, AllNeedPay, fax, telephone, address, taxNum, 
     bankName, accountNumber, taxRate
   </sql>
+  <insert id="insertSupplier" parameterType="com.zking.erp.model.cao.Supplier">
+      INSERT INTO supplier (id ,supplier, TYPE, contacts, phonenum, fax, telephone, email,
+      address, AdvanceIn, taxNum , bankName , accountNumber, taxRate, BeginNeedGet, BeginNeedPay,
+       AllNeedGet, AllNeedPay, description, isystem, enabled) VALUES(#{id},#{supplier},#{type},
+       #{contacts},#{phonenum},#{fax},#{telephone},#{email},#{address},#{advancein},#{taxnum},
+       #{bankname},#{accountnumber},#{taxrate},#{beginneedget},#{beginneedpay},#{allneedget},
+       #{allneedpay},#{description},#{isystem},#{enabled})
+    </insert>
+  <update id="updateSupplierById" parameterType="com.zking.erp.model.cao.Supplier">
+    UPDATE supplier SET supplier=#{supplier}, TYPE=#{type}, contacts=#{contacts},
+    phonenum=#{phonenum}, fax=#{fax}, telephone=#{telephone}, email=#{email}, address=#{address},
+    AdvanceIn=#{advancein}, taxNum =#{taxnum}, bankName =#{bankname}, accountNumber=#{accountnumber},
+    taxRate=#{taxrate}, BeginNeedGet=#{beginneedget}, BeginNeedPay=#{beginneedpay},
+    AllNeedGet=#{allneedget}, AllNeedPay=#{allneedpay}, description=#{description},
+    isystem=#{isystem}, enabled=#{enabled} WHERE id=#{id}
+  </update>
+  <delete id="deleteSupplierById">
+    delete from supplier where id=#{id}
+  </delete>
+  <delete id="deleteSupplierByIds" parameterType="com.zking.erp.model.cao.Supplier">
+    delete from supplier
+    <foreach collection="ids" item="id" open=" where id in(" close=")" separator="," index="idx">
+      #{id}
+    </foreach>
+  </delete>
+  <select id="querySupplierPager" resultType="com.zking.erp.model.cao.Supplier"
+          parameterType="com.zking.erp.model.cao.Supplier">
+    select <include refid="Base_Column_List"/>
+    from supplier where 1=1
+    <if test="null!=supplier and ''!=supplier">
+      and supplier like concat(concat('%',#{supplier}),'%')
+    </if>
+    <if test="null!=telephone and ''!=telephone">
+      and telephone like concat(concat('%',#{telephone}),'%')
+    </if>
+    <if test="null!=phonenum and ''!=phonenum">
+      and phonenum like concat(concat('%',#{phonenum}),'%')
+    </if>
+    <if test="null!=description and ''!=description">
+      and description like concat(concat('%',#{description}),'%')
+    </if>
+  </select>
 
 </mapper>

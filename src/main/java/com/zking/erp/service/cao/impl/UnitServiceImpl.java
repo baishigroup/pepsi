@@ -33,6 +33,11 @@ public class UnitServiceImpl implements IUnitService {
     }
 
     @Override
+    public int deleteUnitByIds(Unit unit) {
+        return unitMapperC.deleteUnitByIds(unit);
+    }
+
+    @Override
     @Transactional(readOnly = true)
     public List<Unit> queryUnitPager(Unit unit, PageBean pageBean) {
         return unitMapperC.queryUnitPager(unit);
