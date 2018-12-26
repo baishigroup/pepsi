@@ -17,6 +17,22 @@ public class UserBusiness implements Serializable{
 
     private String btnstr;
 
+    /**
+     * 角色名称
+     */
+    private String Type = "";
+
+
+    /**
+     * 用户IP，用户记录操作日志
+     */
+    private String clientIp = "";
+
+    /**
+     * 分类ID
+     */
+    private String userBusinessID = "01";
+
     public UserBusiness(String id, String type, String keyid, String value, String btnstr) {
         this.id = id;
         this.type = type;
@@ -29,6 +45,21 @@ public class UserBusiness implements Serializable{
         super();
     }
 
+    public String getUserBusinessID() {
+        return userBusinessID;
+    }
+
+    public void setUserBusinessID(String userBusinessID) {
+        this.userBusinessID = userBusinessID;
+    }
+
+    public String getClientIp() {
+        return clientIp;
+    }
+
+    public void setClientIp(String clientIp) {
+        this.clientIp = clientIp;
+    }
 
     public String getId() {
         return id;

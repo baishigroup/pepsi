@@ -16,6 +16,24 @@ public class Role implements Serializable{
 
     private String description;
 
+    /**
+     * 用户IP，用户记录操作日志
+     */
+    private String clientIp = "";
+
+    /**
+     * 分类ID
+     */
+    private String roleID = "01";
+
+    /**
+     * 分类IDs 批量操作使用
+     */
+    private String roleIDs = "";
+
+    private String[] ids=null;
+
+
     public Role(String id, String name, String type, String value, String description) {
         this.id = id;
         this.name = name;
@@ -26,6 +44,30 @@ public class Role implements Serializable{
 
     public Role() {
         super();
+    }
+
+    public String getRoleID() {
+        return roleID;
+    }
+
+    public void setRoleID(String roleID) {
+        this.roleID = roleID;
+    }
+
+    public String getRoleIDs() {
+        return roleIDs;
+    }
+
+    public void setRoleIDs(String roleIDs) {
+        this.roleIDs = roleIDs;
+    }
+
+    public String getClientIp() {
+        return clientIp;
+    }
+
+    public void setClientIp(String clientIp) {
+        this.clientIp = clientIp;
     }
 
     public String getId() {
@@ -66,6 +108,14 @@ public class Role implements Serializable{
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public String[] getIds() {
+        return ids;
+    }
+
+    public void setIds(String[] ids) {
+        this.ids = ids;
     }
 
     @Override

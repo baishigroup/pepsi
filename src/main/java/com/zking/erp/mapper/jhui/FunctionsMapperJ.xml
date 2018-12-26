@@ -22,5 +22,19 @@
     SELECT <include refid="Base_Column_List"/>
     FROM functions functions0_ WHERE 1=1 AND functions0_.Enabled=1 AND functions0_.PNumber=#{pnumber} ORDER BY functions0_.Sort ASC
   </select>
+    <select id="queryFunctionsByRole" resultType="com.zking.erp.model.jhui.Functions"
+            parameterType="com.zking.erp.model.jhui.Functions">
+      SELECT <include refid="Base_Column_List"/>
+      from functions functions0_ where 1=1 and functions0_.Enabled=1 and functions0_.PNumber=#{pnumber} order by functions0_.Sort asc
+    </select>
+  <select id="queryFunctionByIds" resultType="com.zking.erp.model.jhui.Functions"
+          parameterType="com.zking.erp.model.jhui.Functions">
+    SELECT <include refid="Base_Column_List"/>
+    from functions functions0_ where 1=1 and functions0_.Enabled=1
+    <foreach collection="ids" item="id" open=" and functions0_.Id in(" close=")" separator="," index="idx">
+      #{id}
+    </foreach>
+    order by functions0_.Sort asc
+  </select>
 
 </mapper>

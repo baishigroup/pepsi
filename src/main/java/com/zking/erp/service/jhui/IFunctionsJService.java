@@ -8,10 +8,16 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
-public interface IFunctionsService {
+public interface IFunctionsJService {
     /**
      * 根据上级编号查询页面菜单
      * @return
      */
      List<Functions> queryMenuByPNumber(FunctionsVo functionsVo);
+
+    List<Functions> queryFunctionsByRole(Functions functions);
+
+    List<Functions> queryFunctionByIds(Functions functions);
+
+
 }

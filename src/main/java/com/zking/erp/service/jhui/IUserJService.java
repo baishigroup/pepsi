@@ -2,7 +2,7 @@ package com.zking.erp.service.jhui;
 
 import com.zking.erp.model.jhui.User;
 
-public interface IUserService {
+public interface IUserJService {
 
     /**
      * 判断用户名是否符合登录条件
@@ -20,5 +20,12 @@ public interface IUserService {
      *
      */
     public User getUser(String username)  ;
+
+    /**
+     * 修改用户密码
+     * @param user
+     * @return
+     */
+    int updateById(User user);
 
 }

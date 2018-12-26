@@ -3,6 +3,8 @@ package com.zking.erp.model.jhui;
 import lombok.ToString;
 
 import java.io.Serializable;
+import java.util.List;
+import java.util.Map;
 
 @ToString
 public class AccountItem implements Serializable{
@@ -18,6 +20,17 @@ public class AccountItem implements Serializable{
 
     private String remark;
 
+    private String AccountName;
+
+    private String InOutItemName;
+
+    private String Inserted = "";   //json插入记录
+    private String Deleted = "";    //json删除记录
+    private String Updated = "";    //json修改记录
+
+    private String ListType ;   //单据类型
+
+
     public AccountItem(String id, String headerid, String accountid, String inoutitemid, Double eachamount, String remark) {
         this.id = id;
         this.headerid = headerid;
@@ -29,6 +42,61 @@ public class AccountItem implements Serializable{
 
     public AccountItem() {
         super();
+    }
+
+
+    public String getInserted() {
+        return Inserted;
+    }
+
+    public void setInserted(String inserted) {
+        Inserted = inserted;
+    }
+
+
+
+
+    public String getDeleted() {
+        return Deleted;
+    }
+
+    public void setDeleted(String deleted) {
+        Deleted = deleted;
+    }
+
+    public String getUpdated() {
+        return Updated;
+    }
+
+    public void setUpdated(String updated) {
+        Updated = updated;
+    }
+
+    public String getListType() {
+        return ListType;
+    }
+
+    public void setListType(String listType) {
+        ListType = listType;
+    }
+
+
+
+
+    public String getAccountName() {
+        return AccountName;
+    }
+
+    public void setAccountName(String accountName) {
+        AccountName = accountName;
+    }
+
+    public String getInOutItemName() {
+        return InOutItemName;
+    }
+
+    public void setInOutItemName(String inOutItemName) {
+        InOutItemName = inOutItemName;
     }
 
     public String getId() {

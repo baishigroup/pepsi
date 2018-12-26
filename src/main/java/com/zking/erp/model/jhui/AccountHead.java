@@ -25,7 +25,36 @@ public class AccountHead implements Serializable{
 
     private Date billtime;
 
+    //前端修改
+    private String billtime2;
+
     private String remark;
+
+    private String OrganName;
+
+    private String HandsPersonName;
+
+    private String AccountName;
+
+    private String BeginTime; //查询开始时间
+    private String EndTime;  //查询结束时间
+    private String MonthTime;  //查询月份
+
+    /**
+     * 用户IP，用户记录操作日志
+     */
+    private String clientIp = "";
+
+    /**
+     * 分类ID
+     */
+    private String accountHeadID = "01";
+
+    /**
+     * 分类IDs 批量操作使用
+     */
+    private String accountHeadIDs = "";
+    private String[] ids=null;
 
     public AccountHead(String id, String type, String organid, String handspersonid, Double changeamount, Double totalprice, String accountid, String billno, Date billtime, String remark) {
         this.id = id;
@@ -42,6 +71,94 @@ public class AccountHead implements Serializable{
 
     public AccountHead() {
         super();
+    }
+
+    public String[] getIds() {
+        return ids;
+    }
+
+    public void setIds(String[] ids) {
+        this.ids = ids;
+    }
+
+    public String getBilltime2() {
+        return billtime2;
+    }
+
+    public void setBilltime2(String billtime2) {
+        this.billtime2 = billtime2;
+    }
+
+    public String getAccountHeadID() {
+        return accountHeadID;
+    }
+
+    public void setAccountHeadID(String accountHeadID) {
+        this.accountHeadID = accountHeadID;
+    }
+
+    public String getAccountHeadIDs() {
+        return accountHeadIDs;
+    }
+
+    public void setAccountHeadIDs(String accountHeadIDs) {
+        this.accountHeadIDs = accountHeadIDs;
+    }
+
+    public String getClientIp() {
+        return clientIp;
+    }
+
+    public void setClientIp(String clientIp) {
+        this.clientIp = clientIp;
+    }
+
+    public String getOrganName() {
+        return OrganName;
+    }
+
+    public void setOrganName(String organName) {
+        OrganName = organName;
+    }
+
+    public String getHandsPersonName() {
+        return HandsPersonName;
+    }
+
+    public void setHandsPersonName(String handsPersonName) {
+        HandsPersonName = handsPersonName;
+    }
+
+    public String getAccountName() {
+        return AccountName;
+    }
+
+    public void setAccountName(String accountName) {
+        AccountName = accountName;
+    }
+
+    public String getBeginTime() {
+        return BeginTime;
+    }
+
+    public void setBeginTime(String beginTime) {
+        BeginTime = beginTime;
+    }
+
+    public String getEndTime() {
+        return EndTime;
+    }
+
+    public void setEndTime(String endTime) {
+        EndTime = endTime;
+    }
+
+    public String getMonthTime() {
+        return MonthTime;
+    }
+
+    public void setMonthTime(String monthTime) {
+        MonthTime = monthTime;
     }
 
     public String getId() {

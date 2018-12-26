@@ -67,9 +67,8 @@
     };
 
     $(function () {
-
         $('#tt').tree({
-            url: '<%=path%>/app/findRoleAPP.action?UBType=' + type + '&UBKeyId=' + url_id,
+            url: '<%=path%>/app/findRoleAPP.do?UBType=' + type + '&UBKeyId=' + url_id,
             animate: true,
             checkbox: true
         });
@@ -78,19 +77,18 @@
         $("#btnOK").click(
             function () {
                 if (!checkRoleAPP()) {
-                    url = '<%=path%>/userBusiness/create.action';
+                    url = '<%=path%>/userBusiness/create.do';
                 }
                 else {
-                    url = '<%=path%>/userBusiness/update.action';
+                    url = '<%=path%>/userBusiness/update.do';
                 }
 
                 if (confirm("您确定要保存吗？")) {
-
                     $.ajax({
                         type: "post",
                         url: url,
                         data: {
-                            Type: type, KeyId: url_id, Value: GetNode('child'), clientIp: '<%=clientIp %>'
+                            type: type, keyid: url_id, value: GetNode('child'), clientIp: '<%=clientIp %>'
                         },
                         dataType: "json",
                         async: false,
@@ -116,15 +114,15 @@
         //开始ajax名称检验，是否存在
         $.ajax({
             type: "post",
-            url: "<%=path %>/userBusiness/checkIsValueExist.action",
+            url: "<%=path %>/userBusiness/checkIsValueExist.do",
             dataType: "json",
             async: false,
             data: ({
-                Type: type,
-                KeyId: url_id
+                type: type,
+                keyid: url_id
             }),
             success: function (tipInfo) {
-                flag = tipInfo;
+                flag = tipInfo.flag;
             },
             //此处添加错误处理
             error: function () {

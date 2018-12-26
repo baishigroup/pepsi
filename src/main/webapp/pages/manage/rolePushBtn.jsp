@@ -42,7 +42,6 @@
     $(function () {
         initJSON();
         initTableData();
-        ininPager();
         showDetails(1, initPageSize);
         bindEvent();
     });
@@ -108,54 +107,33 @@
         });
     }
 
-    //分页信息处理
-    function ininPager() {
-        try {
-            var opts = $("#tableData").datagrid('options');
-            var pager = $("#tableData").datagrid('getPager');
-            pager.pagination({
-                onSelectPage: function (pageNum, pageSize) {
-                    opts.pageNumber = pageNum;
-                    opts.pageSize = pageSize;
-                    pager.pagination('refresh',
-                        {
-                            pageNumber: pageNum,
-                            pageSize: pageSize
-                        });
-                    showDetails(pageNum, pageSize);
-                }
-            });
-        }
-        catch (e) {
-            $.messager.alert('异常处理提示', "分页信息异常 :  " + e.name + ": " + e.message, 'error');
-        }
-    }
 
-    function showDetails(pageNo, pageSize) {
+
+    function showDetails() {
         $.ajax({
-            url: "<%=path%>/userBusiness/getBasicData.action",
+            url: "<%=path%>/userBusiness/getBasicData.do",
             type: "get",
             data: {
-                Type: 'RoleFunctions',
-                KeyId: keyId
+                type: 'RoleFunctions',
+                keyid: keyId
             },
             success: function (res) {
-                if (res && res.showModel && res.showModel.map && res.showModel.map.userBusinessList && res.showModel.map.userBusinessList[0]) {
-                    userBusinessId = res.showModel.map.userBusinessList[0].id;
-                    roleBtnStr = res.showModel.map.userBusinessList[0].btnStr;
-                    var getValue = res.showModel.map.userBusinessList[0].value;
+                if (res  && res.userBusinessList && res.userBusinessList[0]) {
+                    userBusinessId = res.userBusinessList[0].id;
+                    roleBtnStr = res.userBusinessList[0].btnstr;
+                    var getValue = res.userBusinessList[0].value;
                     getValue = getValue.substring(1, getValue.length - 1);
                     if (getValue.indexOf("][")) {
                         var arr = getValue.split("][");
                         arr = arr.toString();
                         $.ajax({
-                            url: "<%=path%>/functions/findByIds.action",
+                            url: "<%=path%>/functions/findByIds.do",
                             type: "get",
                             data: {
                                 FunctionsIDs: arr
                             },
                             success: function (rec) {
-                                $("#tableData").datagrid('loadData', JSON.parse(rec));
+                                $("#tableData").datagrid('loadData', rec);
                             },
                             error: function () {
                                 $.messager.alert('提示', '查询数据异常，请稍后再试！', 'error');
@@ -187,10 +165,10 @@
                                 $(this).find("[field='Id']").attr("data-btn", roleBtnStrArr[i].btnStr);
                                 //加载勾选状态
                                 $(this).find("[field='PushBtnList']").find("input").each(function () {
-                                    var thisValue = $(this).val(); //勾选的值
-                                    if (roleBtnStrArr[i].btnStr.indexOf(thisValue) > -1) {
-                                        $(this).prop("checked", "checked");
-                                    }
+                                        var thisValue = $(this).val(); //勾选的值
+                                        if (roleBtnStrArr[i].btnStr.indexOf(thisValue) > -1) {
+                                            $(this).prop("checked", "checked");
+                                        }
                                 });
                             }
                         }
@@ -234,13 +212,14 @@
                     btnStr = JSON.stringify(bindArr);
                 }
                 $.ajax({
-                    url: "<%=path%>/userBusiness/updateBtnStr.action",
+                    url: "<%=path%>/userBusiness/updateBtnStr.do",
                     type: "get",
                     data: {
                         UserBusinessID: userBusinessId,
-                        BtnStr: btnStr
+                        Btnstr: btnStr
                     },
                     success: function (res) {
+                        var res=res.flag;
                         if (res) {
                             self.parent.$.colorbox.close();
                             alert("操作成功！");

@@ -32,6 +32,10 @@ public class User implements Serializable{
 
     private String remark;
 
+    //修改密码时的原始密码
+    private String orgpwd = "";
+
+
     /**
      * 用户IP，用户记录操作日志
      */
@@ -55,6 +59,14 @@ public class User implements Serializable{
 
     public User() {
         super();
+    }
+
+    public String getOrgpwd() {
+        return orgpwd;
+    }
+
+    public void setOrgpwd(String orgpwd) {
+        this.orgpwd = orgpwd;
     }
 
     public String getClientIp() {

@@ -14,5 +14,43 @@
   <sql id="Base_Column_List" >
     Id, HeaderId, AccountId, InOutItemId, EachAmount, Remark
   </sql>
+    <select id="queryAccountItemByHeaderId" resultType="com.zking.erp.model.jhui.AccountItem"
+            parameterType="com.zking.erp.model.jhui.AccountItem">
+      SELECT accountite0_.Id  , accountite0_.HeaderId  , accountite0_.AccountId ,account0_.Name AccountName , accountite0_.InOutItemId  ,
+      inoutitem0_.Name InOutItemName, accountite0_.EachAmount  , accountite0_.Remark  FROM accountitem accountite0_  LEFT JOIN inoutitem inoutitem0_
+      ON accountite0_.InOutItemId=inoutitem0_.id  LEFT JOIN account account0_ ON  accountite0_.AccountId=account0_.id
+      WHERE 1=1  AND  accountite0_.HeaderId=#{headerid}  ORDER BY accountite0_.Id ASC
+    </select>
+
+  <insert id="insert" parameterType="com.zking.erp.model.jhui.AccountItem" >
+    insert into accountitem (Id, HeaderId, AccountId,
+    InOutItemId, EachAmount, Remark
+    )
+    values (#{id,jdbcType=VARCHAR}, #{headerid,jdbcType=VARCHAR}, #{accountid,jdbcType=VARCHAR},
+    #{inoutitemid,jdbcType=VARCHAR}, #{eachamount,jdbcType=DOUBLE}, #{remark,jdbcType=VARCHAR}
+    )
+  </insert>
+
+  <delete id="deleteById" parameterType="java.lang.String" >
+    delete from accountitem
+    where Id = #{id,jdbcType=VARCHAR}
+  </delete>
+
+  <update id="updateById" parameterType="com.zking.erp.model.jhui.AccountItem" >
+    update accountitem
+    set HeaderId = #{headerid,jdbcType=VARCHAR},
+    AccountId = #{accountid,jdbcType=VARCHAR},
+    InOutItemId = #{inoutitemid,jdbcType=VARCHAR},
+    EachAmount = #{eachamount,jdbcType=DOUBLE},
+    Remark = #{remark,jdbcType=VARCHAR}
+    where Id = #{id,jdbcType=VARCHAR}
+  </update>
+
+  <select id="get" resultType="com.zking.erp.model.jhui.AccountItem" parameterType="java.lang.String" >
+    select
+    <include refid="Base_Column_List" />
+    from accountitem
+    where Id = #{id,jdbcType=VARCHAR}
+  </select>
 
 </mapper>

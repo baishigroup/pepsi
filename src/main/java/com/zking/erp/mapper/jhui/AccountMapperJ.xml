@@ -15,5 +15,13 @@
   <sql id="Base_Column_List" >
     Id, Name, SerialNo, InitialAmount, CurrentAmount, Remark, IsDefault
   </sql>
+    <select id="queryAccout" resultType="com.zking.erp.model.jhui.Account">
+      SELECT <include refid="Base_Column_List"/>
+      FROM account account0_ WHERE 1=1
+      <if test="type!= null and type!=''" >
+        AND accounthea0_.Type=#{type}
+      </if>
+      ORDER BY account0_.Id ASC
+    </select>
 
 </mapper>

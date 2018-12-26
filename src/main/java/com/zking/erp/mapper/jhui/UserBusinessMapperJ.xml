@@ -22,4 +22,39 @@
 
   </select>
 
+  <select id="checkIsUserBusinessExist" resultType="com.zking.erp.model.jhui.UserBusiness">
+    SELECT  *
+    FROM userbusiness userbusine0_ WHERE 1=1
+    <if test="param6 != null and param6!=''" >
+      AND (userbusine0_.Value LIKE concat(concat('%',#{param6}),'%'))
+    </if>
+    <if test="param2 != null and param2!=''" >
+      AND (userbusine0_.Type LIKE concat(concat('%',#{param2}),'%'))
+    </if>
+    <if test="param4 != null and param4!=''" >
+      AND (userbusine0_.KeyId LIKE concat(concat('%',#{param4}),'%'))
+    </if>
+  </select>
+
+  <select id="queryUserBusinessById" resultType="com.zking.erp.model.jhui.UserBusiness" parameterType="java.lang.String">
+    SELECT <include refid="Base_Column_List"/>
+    FROM userbusiness where id=#{id}
+  </select>
+
+  <insert id="insert" parameterType="com.zking.erp.model.jhui.UserBusiness" >
+    insert into userbusiness (Id, Type, keyid,
+    Value, BtnStr)
+    values (#{id,jdbcType=VARCHAR}, #{type,jdbcType=VARCHAR}, #{keyid,jdbcType=VARCHAR},
+    #{value,jdbcType=VARCHAR}, #{btnstr,jdbcType=VARCHAR})
+  </insert>
+
+  <update id="updateByPrimaryKey" parameterType="com.zking.erp.model.jhui.UserBusiness" >
+    update userbusiness
+    set Type = #{type,jdbcType=VARCHAR},
+    keyid = #{keyid,jdbcType=VARCHAR},
+    Value = #{value,jdbcType=VARCHAR},
+    BtnStr = #{btnstr,jdbcType=VARCHAR}
+    where Id = #{id,jdbcType=VARCHAR}
+  </update>
+
 </mapper>

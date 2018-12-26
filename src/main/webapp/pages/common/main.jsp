@@ -1,3 +1,4 @@
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@page import="com.zking.erp.util.Tools" %>
 <%@ page language="java" pageEncoding="utf-8" %>
 <%
@@ -95,7 +96,7 @@
     $(function () {
         $('#loginOut').click(function () {
             if (confirm("确认要退出系统吗？"))
-                location.href = '<%=path%>/user/logout.action?clientIp=<%=clientIp%>';
+                location.href = '<%=path%>/user/logout.do?clientIp=<%=clientIp%>';
         })
         //IE下禁止选中
         document.body.onselectstart = document.body.ondrag = function () {
@@ -118,18 +119,25 @@
             HROS.base.init();
         }
 
-        //判断是否存在session，如果不存在就跳到登录界面
-        <%--function UserOut() {--%>
-            <%--alert(${sessionScope.user});--%>
-            <%--if (""==${sessionScope.user}||null==${sessionScope.user}) {--%>
-                    <%--alert(${sessionScope.user});--%>
-                <%--&lt;%&ndash;location.href = '<%=path%>/login.jsp';&ndash;%&gt;--%>
-                <%--}--%>
-        <%--}--%>
+        <%--//判断是否存在session，如果不存在就跳到登录界面--%>
+        function UserOut() {
+            var kid = "${sessionScope.user.id}";
+            if (""==kid) {
+                top.location.href = '../../';
+            }
+        }
 
-        <%--setInterval(UserOut, 5000); //每5秒检测一次--%>
+        setInterval(UserOut, 5000); //每5秒检测一次
     });
 
 </script>
+<c:if test="${empty user.id}">
+<script>
+    $(function () {
+        top.location.href = '../../';
+        });
+</script>
+</c:if>
+
 </body>
 </html>

@@ -90,7 +90,7 @@
                 return;
             $.ajax({
                 type: "post",
-                url: "<%=path %>/user/updatePwd.action",
+                url: "<%=path %>/user/updatePwd.do",
                 dataType: "json",
                 async: false,
                 data: ({
@@ -98,7 +98,8 @@
                     password: $.trim($("#password").val()),
                     orgpwd: $.trim($("#orgpassword").val())
                 }),
-                success: function (tipInfo) {
+                success: function (data) {
+                    var tipInfo=data.flag;
                     if (1 == tipInfo)
                     //回退到上次访问页面
                         history.go(-1);

@@ -13,5 +13,63 @@
   <sql id="Base_Column_List" >
     Id, Name, type, value, description
   </sql>
+  <select id="queryRolePager" resultType="com.zking.erp.model.jhui.Role"
+          parameterType="com.zking.erp.model.jhui.Role">
+    SELECT <include refid="Base_Column_List"/>
+    from role  where 1=1
+    <if test="name!= null and name!=''" >
+      AND name=#{name}
+    </if>
+    order by Id asc
+  </select>
+
+  <insert id="insert" parameterType="com.zking.erp.model.jhui.Role" >
+    insert into role (Id, Name, type,
+    value, description)
+    values (#{id,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR}, #{type,jdbcType=VARCHAR},
+    #{value,jdbcType=VARCHAR}, #{description,jdbcType=VARCHAR})
+  </insert>
+
+  <select id="selectById" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select
+    <include refid="Base_Column_List" />
+    from role
+    where Id = #{id,jdbcType=VARCHAR}
+  </select>
+
+  <update id="updateById" parameterType="com.zking.erp.model.jhui.Role" >
+    update role
+    set Name = #{name,jdbcType=VARCHAR},
+    type = #{type,jdbcType=VARCHAR},
+    value = #{value,jdbcType=VARCHAR},
+    description = #{description,jdbcType=VARCHAR}
+    where Id = #{id,jdbcType=VARCHAR}
+  </update>
+
+  <delete id="deleteById" parameterType="java.lang.String" >
+    delete from role
+    where Id = #{id,jdbcType=VARCHAR}
+  </delete>
+
+  <delete id="delete" parameterType="com.zking.erp.model.jhui.Role">
+    delete from role
+    where 1=1
+    <foreach collection="id" item="id" open=" and id in(" close=")" separator="," index="idx">
+      #{id}
+    </foreach>
+  </delete>
+
+  <select id="checkIsNameExist" resultType="com.zking.erp.model.jhui.Role">
+    SELECT  *
+    FROM role   WHERE 1=1
+    <if test="param2 != null and param2!=''" >
+      AND (name LIKE concat(concat('%',#{param2}),'%'))
+    </if>
+    <if test="param4 != null and param4!=''" >
+      AND (id != #{param4})
+    </if>
+
+  </select>
+
 
 </mapper>

@@ -131,7 +131,6 @@
     //初始化界面
     $(function () {
         initTableData();
-        ininPager();
         initForm();
     });
 
@@ -163,13 +162,14 @@
             //fitColumns:true,
             //单击行是否选中
             checkOnSelect: false,
-            url: '<%=path %>/app/findBy.action?pageSize=' + initPageSize,
+            url: '<%=path %>/app/findBy.do',
             pagination: true,
             //交替出现背景
             striped: true,
             //loadFilter: pagerFilter,
-            pageSize: initPageSize,
-            pageList: initPageNum,
+            pageList:[2,5,10],
+            pageSize:10,		// 初始化每页显示条数
+            pageNumber:1,	// 初始化页码
             columns: [[
                 {field: 'Id', width: 35, align: "center", checkbox: true},
                 {title: '代号', field: 'Number', width: 50},
@@ -216,7 +216,7 @@
                             + 'AaBb' + rec.Flash + 'AaBb' + rec.ZL + 'AaBb' + rec.Sort + 'AaBb' + rec.Remark + 'AaBb' + rec.Enabled;
                         if (1 == value) {
                             str += '<img src="<%=path%>/js/easyui-1.3.5/themes/icons/pencil.png" style="cursor: pointer;" onclick="editApp(\'' + rowInfo + '\');"/>&nbsp;<a onclick="editApp(\'' + rowInfo + '\');" style="text-decoration:none;color:black;" href="javascript:void(0)">编辑</a>&nbsp;&nbsp;';
-                            str += '<img src="<%=path%>/js/easyui-1.3.5/themes/icons/edit_remove.png" style="cursor: pointer;" onclick="deleteApp(' + rec.Id + ');"/>&nbsp;<a onclick="deleteApp(' + rec.Id + ');" style="text-decoration:none;color:black;" href="javascript:void(0)">删除</a>&nbsp;&nbsp;';
+                            str += '<img src="<%=path%>/js/easyui-1.3.5/themes/icons/edit_remove.png" style="cursor: pointer;" onclick="deleteApp(\'' + rec.Id + '\');"/>&nbsp;<a onclick="deleteApp(\'' + rec.Id + '\');" style="text-decoration:none;color:black;" href="javascript:void(0)">删除</a>&nbsp;&nbsp;';
                         }
                         return str;
                     }
@@ -265,28 +265,6 @@
         }
     });
 
-    //分页信息处理
-    function ininPager() {
-        try {
-            var opts = $("#tableData").datagrid('options');
-            var pager = $("#tableData").datagrid('getPager');
-            pager.pagination({
-                onSelectPage: function (pageNum, pageSize) {
-                    opts.pageNumber = pageNum;
-                    opts.pageSize = pageSize;
-                    pager.pagination('refresh',
-                        {
-                            pageNumber: pageNum,
-                            pageSize: pageSize
-                        });
-                    showAppDetails(pageNum, pageSize);
-                }
-            });
-        }
-        catch (e) {
-            $.messager.alert('异常处理提示', "分页信息异常 :  " + e.name + ": " + e.message, 'error');
-        }
-    }
 
     //删除应用信息
     function deleteApp(appID) {
@@ -294,14 +272,14 @@
             if (r) {
                 $.ajax({
                     type: "post",
-                    url: "<%=path %>/app/delete.action",
+                    url: "<%=path %>/app/delete.do",
                     dataType: "json",
                     data: ({
                         appID: appID,
                         clientIp: '<%=clientIp %>'
                     }),
                     success: function (tipInfo) {
-                        var msg = tipInfo.showModel.msgTip;
+                        var msg = tipInfo.message;
                         if (msg == '成功') {
                             //加载完以后重新初始化
                             $("#searchBtn").click();
@@ -326,6 +304,10 @@
             $.messager.alert('删除提示', '没有记录被选中！', 'info');
             return;
         }
+        if (row.length == 1) {
+            deleteApp(row[0].Id)
+            return;
+        }
         if (row.length > 0) {
             $.messager.confirm('删除确认', '确定要删除选中的' + row.length + '条应用信息吗？', function (r) {
                 if (r) {
@@ -340,7 +322,7 @@
                     }
                     $.ajax({
                         type: "post",
-                        url: "<%=path %>/app/batchDelete.action",
+                        url: "<%=path %>/app/batchDelete.do",
                         dataType: "json",
                         async: false,
                         data: ({
@@ -348,7 +330,7 @@
                             clientIp: '<%=clientIp %>'
                         }),
                         success: function (tipInfo) {
-                            var msg = tipInfo.showModel.msgTip;
+                            var msg = tipInfo.message;
                             if (msg == '成功') {
                                 //加载完以后重新初始化
                                 $("#searchBtn").click();
@@ -383,7 +365,7 @@
 
         orgApp = "";
         appID = 0;
-        url = '<%=path %>/app/create.action';
+        url = '<%=path %>/app/create.do';
         $("#Icon").empty();//清除上传控件数据
         $(".fileUploadContent").initUpload({
             "uploadUrl": "<%=path %>/app/uploadImg.action",//上传文件信息地址
@@ -431,11 +413,11 @@
                         clientIp: '<%=clientIp %>'
                     }),
                     success: function (tipInfo) {
+                        var tipInfo=tipInfo.flag;
                         if (tipInfo) {
                             $('#appDlg').dialog('close');
 
-                            var opts = $("#tableData").datagrid('options');
-                            showAppDetails(opts.pageNumber, opts.pageSize);
+                            showAppDetails( );
                         }
                         else {
                             $.messager.show({
@@ -479,7 +461,7 @@
         appID = appInfo[0];
         //焦点在名称输入框==定焦在输入文字后面
         $("#name").val("").focus().val(appInfo[1]);
-        url = '<%=path %>/app/update.action?appID=' + appInfo[0];
+        url = '<%=path %>/app/update.do?appID=' + appInfo[0];
     }
 
     //检查名称是否存在 ++ 重名无法提示问题需要跟进
@@ -491,7 +473,7 @@
         if (name.length > 0 && (orgApp.length == 0 || name != orgApp)) {
             $.ajax({
                 type: "post",
-                url: "<%=path %>/app/checkIsNameExist.action",
+                url: "<%=path %>/app/checkIsNameExist.do",
                 dataType: "json",
                 async: false,
                 data: ({
@@ -499,8 +481,8 @@
                     name: name
                 }),
                 success: function (tipInfo) {
-                    flag = tipInfo;
-                    if (tipInfo) {
+                    flag = tipInfo.flag;
+                    if (flag) {
                         $.messager.alert('提示', '应用名称已经存在', 'info');
                         //alert("应用名称已经存在");
                         //$("#name").val("");
@@ -520,32 +502,24 @@
     //搜索处理
     $("#searchBtn").unbind().bind({
         click: function () {
-            showAppDetails(1, initPageSize);
-            var opts = $("#tableData").datagrid('options');
-            var pager = $("#tableData").datagrid('getPager');
-            opts.pageNumber = 1;
-            opts.pageSize = initPageSize;
-            pager.pagination('refresh',
-                {
-                    pageNumber: 1,
-                    pageSize: initPageSize
-                });
+            showAppDetails( );
         }
     });
 
-    function showAppDetails(pageNo, pageSize) {
+    function showAppDetails( ) {
         $.ajax({
             type: "post",
-            url: "<%=path %>/app/findBy.action",
+            url: "<%=path %>/app/findBy.do",
             dataType: "json",
             data: ({
                 Name: $.trim($("#searchName").val()),
                 Type: $.trim($("#searchType").val()),
-                pageNo: pageNo,
-                pageSize: pageSize
             }),
             success: function (data) {
                 $("#tableData").datagrid('loadData', data);
+                $('#tableData').datagrid({
+                		pageNumber : 1
+                	});
             },
             //此处添加错误处理
             error: function () {

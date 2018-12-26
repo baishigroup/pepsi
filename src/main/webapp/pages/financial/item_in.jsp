@@ -59,7 +59,7 @@
 <!-- 数据显示table -->
 <div id="tablePanel" class="easyui-panel" style="padding:1px;top:300px;" title="收入单列表" iconCls="icon-list"
      collapsible="true" closable="false">
-    <table id="tableData" style="top:300px;border-bottom-color:#FFFFFF"></table>
+    <table id="tableData"  style="top:300px;border-bottom-color:#FFFFFF"></table>
 </div>
 
 <div id="accountHeadDlg" class="easyui-dialog" style="width:1200px;padding:10px 20px;top:20px"

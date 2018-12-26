@@ -78,7 +78,6 @@
     //初始化界面
     $(function () {
         initTableData();
-        ininPager();
         initForm();
         browserFit();
     });
@@ -116,19 +115,17 @@
             //动画效果
             animate: false,
             //选中单行
-            singleSelect: true,
+            singleSelect: false,
             collapsible: false,
             //selectOnCheck:false,
             //fitColumns:true,
             //单击行是否选中
             //checkOnSelect : false,
-            url: '<%=path %>/role/findBy.action?pageSize=' + initPageSize,
+            url: '<%=path %>/role/findBy.do',
             pagination: true,
             //交替出现背景
             striped: true,
             //loadFilter: pagerFilter,
-            pageSize: initPageSize,
-            pageList: initPageNum,
             columns: [[
                 {field: 'Id', width: 35, align: "center", checkbox: true},
                 {title: '角色名称', field: 'Name', width: 200},
@@ -138,7 +135,7 @@
                         var rowInfo = rec.Id + 'AaBb' + rec.Name;
                         if (1 == value) {
                             str += '<img src="<%=path%>/js/easyui-1.3.5/themes/icons/pencil.png" style="cursor: pointer;" onclick="editRole(\'' + rowInfo + '\');"/>&nbsp;<a onclick="editRole(\'' + rowInfo + '\');" style="text-decoration:none;color:black;" href="javascript:void(0)">编辑</a>&nbsp;&nbsp;';
-                            str += '<img src="<%=path%>/js/easyui-1.3.5/themes/icons/edit_remove.png" style="cursor: pointer;" onclick="deleteRole(' + rec.Id + ');"/>&nbsp;<a onclick="deleteRole(' + rec.Id + ');" style="text-decoration:none;color:black;" href="javascript:void(0)">删除</a>&nbsp;&nbsp;';
+                            str += '<img src="<%=path%>/js/easyui-1.3.5/themes/icons/edit_remove.png" style="cursor: pointer;" onclick="deleteRole(\'' + rec.Id + '\');"/>&nbsp;<a onclick="deleteRole(\'' + rec.Id + '\');" style="text-decoration:none;color:black;" href="javascript:void(0)">删除</a>&nbsp;&nbsp;';
                         }
                         return str;
                     }
@@ -186,28 +183,7 @@
         }
     });
 
-    //分页信息处理
-    function ininPager() {
-        try {
-            var opts = $("#tableData").datagrid('options');
-            var pager = $("#tableData").datagrid('getPager');
-            pager.pagination({
-                onSelectPage: function (pageNum, pageSize) {
-                    opts.pageNumber = pageNum;
-                    opts.pageSize = pageSize;
-                    pager.pagination('refresh',
-                        {
-                            pageNumber: pageNum,
-                            pageSize: pageSize
-                        });
-                    showRoleDetails(pageNum, pageSize);
-                }
-            });
-        }
-        catch (e) {
-            $.messager.alert('异常处理提示', "分页信息异常 :  " + e.name + ": " + e.message, 'error');
-        }
-    }
+
 
     //删除供应商信息
     function deleteRole(roleID) {
@@ -215,14 +191,14 @@
             if (r) {
                 $.ajax({
                     type: "post",
-                    url: "<%=path %>/role/delete.action",
+                    url: "<%=path %>/role/delete.do",
                     dataType: "json",
                     data: ({
                         roleID: roleID,
                         clientIp: '<%=clientIp %>'
                     }),
                     success: function (tipInfo) {
-                        var msg = tipInfo.showModel.msgTip;
+                        var msg = tipInfo.message;
                         if (msg == '成功') {
                             //加载完以后重新初始化
                             $("#searchBtn").click();
@@ -247,6 +223,10 @@
             $.messager.alert('删除提示', '没有记录被选中！', 'info');
             return;
         }
+        if (row.length == 1) {
+            deleteRole(row[0].Id)
+            return;
+        }
         if (row.length > 0) {
             $.messager.confirm('删除确认', '确定要删除选中的' + row.length + '条角色信息吗？', function (r) {
                 if (r) {
@@ -261,7 +241,7 @@
                     }
                     $.ajax({
                         type: "post",
-                        url: "<%=path %>/role/batchDelete.action",
+                        url: "<%=path %>/role/batchDelete.do",
                         dataType: "json",
                         async: false,
                         data: ({
@@ -269,7 +249,7 @@
                             clientIp: '<%=clientIp %>'
                         }),
                         success: function (tipInfo) {
-                            var msg = tipInfo.showModel.msgTip;
+                            var msg = tipInfo.message;
                             if (msg == '成功') {
                                 //加载完以后重新初始化
                                 $("#searchBtn").click();
@@ -306,7 +286,7 @@
 
         orgRole = "";
         roleID = 0;
-        url = '<%=path %>/role/create.action';
+        url = '<%=path %>/role/create.do';
     }
 
     //保存信息
@@ -329,9 +309,7 @@
                     success: function (tipInfo) {
                         if (tipInfo) {
                             $('#roleDlg').dialog('close');
-
-                            var opts = $("#tableData").datagrid('options');
-                            showRoleDetails(opts.pageNumber, opts.pageSize);
+                            showRoleDetails();
                         }
                         else {
                             $.messager.show({
@@ -363,7 +341,7 @@
         roleID = roleInfo[0];
         //焦点在名称输入框==定焦在输入文字后面
         $("#name").val("").focus().val(roleInfo[1]);
-        url = '<%=path %>/role/update.action?roleID=' + roleInfo[0];
+        url = '<%=path %>/role/update.do?roleID=' + roleInfo[0];
     }
 
     //检查名称是否存在 ++ 重名无法提示问题需要跟进
@@ -375,7 +353,7 @@
         if (name.length > 0 && (orgRole.length == 0 || name != orgRole)) {
             $.ajax({
                 type: "post",
-                url: "<%=path %>/role/checkIsNameExist.action",
+                url: "<%=path %>/role/checkIsNameExist.do",
                 dataType: "json",
                 async: false,
                 data: ({
@@ -383,8 +361,8 @@
                     name: name
                 }),
                 success: function (tipInfo) {
-                    flag = tipInfo;
-                    if (tipInfo) {
+                    flag = tipInfo.flag;
+                    if (flag) {
                         $.messager.alert('提示', '角色名称已经存在', 'info');
                         //alert("角色名称已经存在");
                         //$("#name").val("");
@@ -404,28 +382,17 @@
     //搜索处理
     $("#searchBtn").unbind().bind({
         click: function () {
-            showRoleDetails(1, initPageSize);
-            var opts = $("#tableData").datagrid('options');
-            var pager = $("#tableData").datagrid('getPager');
-            opts.pageNumber = 1;
-            opts.pageSize = initPageSize;
-            pager.pagination('refresh',
-                {
-                    pageNumber: 1,
-                    pageSize: initPageSize
-                });
+            showRoleDetails();
         }
     });
 
-    function showRoleDetails(pageNo, pageSize) {
+    function showRoleDetails() {
         $.ajax({
             type: "post",
-            url: "<%=path %>/role/findBy.action",
+            url: "<%=path %>/role/findBy.do",
             dataType: "json",
             data: ({
                 name: $.trim($("#searchName").val()),
-                pageNo: pageNo,
-                pageSize: pageSize
             }),
             success: function (data) {
                 $("#tableData").datagrid('loadData', data);

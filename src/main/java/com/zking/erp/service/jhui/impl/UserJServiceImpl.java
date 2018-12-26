@@ -2,16 +2,14 @@ package com.zking.erp.service.jhui.impl;
 
 import com.zking.erp.mapper.jhui.UserMapperJ;
 import com.zking.erp.model.jhui.User;
-import com.zking.erp.service.jhui.IUserService;
+import com.zking.erp.service.jhui.IUserJService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-
 @Service
 @Transactional
-public class UserServiceImpl implements IUserService {
+public class UserJServiceImpl implements IUserJService {
 
     @Autowired
     private UserMapperJ userMapperJ;
@@ -65,5 +63,11 @@ public class UserServiceImpl implements IUserService {
 //        else
 //            return
 //        }
+    }
+
+    @Transactional
+    @Override
+    public int updateById(User user) {
+        return userMapperJ.updateById(user);
     }
 }

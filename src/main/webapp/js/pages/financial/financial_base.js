@@ -1,5 +1,6 @@
 	//初始化界面
 	$(function(){
+		var uuid=null;
 		var accountList = null;
 		var accountID = null;
 		var supplierList = null;
@@ -27,18 +28,28 @@
 		initSystemData_account(); //账户数据
 		initSelectInfo_account(); //账户信息
 		initSupplier(); //供应商
-		initTableData();
-		ininPager();
+		initTableData();//初始化datagrid表格
+		// ininPager();
+        // showAccountHeadDetails();//账户表分页数据(在点击查询时调用)
 		initForm();	
 		bindEvent();//绑定操作事件
 		$("#searchBtn").click();	
 	});
+
+    //用于生成uuid
+    function S4() {
+        return (((1+Math.random())*0x10000)|0).toString(16).substring(1);
+    }
+    function guid() {
+        return (S4()+S4()+"-"+S4()+"-"+S4()+"-"+S4()+"-"+S4()+S4()+S4());
+    }
+
 	//根据单据名称获取类型
 	function getType(){
 		listTitle = $("#tablePanel").prev().text();
-		var supUrl = path + "/supplier/findBySelect_sup.action"; //供应商接口
-		var cusUrl = path + "/supplier/findBySelect_cus.action"; //客户接口
-		var retailUrl = path + "/supplier/findBySelect_retail.action"; //散户接口
+		var supUrl = path + "/supplier/findSupplierByType.do?type=供应商"; //供应商接口
+		var cusUrl = path + "/supplier/findSupplierByType.do?type=客户"; //客户接口
+		var retailUrl = path + "/supplier/findSupplierByType.do?type=会员"; //散户接口
 		if(listTitle === "收入单列表"){
 			listType = "收入"; 
 			itemType = false; //显示当前列
@@ -98,19 +109,19 @@
 	function initSystemData_account(){
 		$.ajax({
 			type:"post",
-			url: path + "/account/getAccount.action",
+			url: path + "/account/getAccount.do",
 			//设置为同步
 			async:false,
 			dataType: "json",
 			success: function (systemInfo)
 			{
-				accountList = systemInfo.showModel.map.accountList;
-				var msgTip = systemInfo.showModel.msgTip;
-				if(msgTip == "exceptoin")
-				{
-					$.messager.alert('提示','查找账户信息异常,请与管理员联系！','error');
-					return;
-				}	
+				accountList = systemInfo.accountList;
+				// var msgTip = systemInfo.showModel.msgTip;
+				// if(msgTip == "exceptoin")
+				// {
+				// 	$.messager.alert('提示','查找账户信息异常,请与管理员联系！','error');
+				// 	return;
+				// }
 			}
 		});				
 	}
@@ -149,22 +160,22 @@
 		var type = "财务员";
 		$.ajax({
 			type:"post",
-			url: path + "/person/getPersonByType.action",
+			url: path + "/person/getPersonByType.do",
 			data: {
-				Type: type
+                type: type
 			},
 			//设置为同步
 			async:false,
 			dataType: "json",
 			success: function (systemInfo)
 			{
-				personList = systemInfo.showModel.map.personList;
-				var msgTip = systemInfo.showModel.msgTip;
-				if(msgTip == "exceptoin")
-				{
-					$.messager.alert('提示','查找系统基础信息异常,请与管理员联系！','error');
-					return;
-				}	
+				personList = systemInfo.personList;
+				// var msgTip = systemInfo.showModel.msgTip;
+				// if(msgTip == "exceptoin")
+				// {
+				// 	$.messager.alert('提示','查找系统基础信息异常,请与管理员联系！','error');
+				// 	return;
+				// }
 			}
 		});				
 	}
@@ -219,6 +230,7 @@
 			organNameHidden = true;
 		}
 		$('#tableData').datagrid({
+			url:"",
 			//width:700,
 			height:heightInfo,
 			rownumbers: false,
@@ -231,12 +243,13 @@
 			//fitColumns:true,
 			//单击行是否选中
 			//checkOnSelect : false,
-			pagination: true,
 			//交替出现背景
 			striped : true,
 			//loadFilter: pagerFilter,
-			pageSize: 5,
-			pageList: initPageNum,
+            pagination:true,	// 是否分页
+			pageList:[2,5,10],
+            pageSize:10,		// 初始化每页显示条数
+            pageNumber:1,	// 初始化页码
 			columns:[[
 				{ field: 'Id',width:35,align:"center",checkbox:true},
 				{ title: '操作',field: 'op',align:"center",width:90,formatter:function(value,rec) {
@@ -244,12 +257,13 @@
 						var rowInfo = rec.Id + 'AaBb' + rec.BillNo+ 'AaBb' + rec.BillTime+ 'AaBb' + rec.Remark
 							+ 'AaBb' + rec.AccountId+ 'AaBb' + rec.AccountName + 'AaBb' + rec.OrganId + 'AaBb' + rec.OrganName
 							+ 'AaBb' + rec.HandsPersonId + 'AaBb' + rec.HandsPersonName + 'AaBb' + rec.ChangeAmount + 'AaBb' + rec.TotalPrice;
+						//
 						if(1 == value)
 						{
 							var orgId =  rec.OrganId ?  rec.OrganId : 0;
 							str += '<img title="查看" src="' + path + '/js/easyui-1.3.5/themes/icons/list.png" style="cursor: pointer;" onclick="showAccountHead(\'' + rowInfo + '\');"/>&nbsp;&nbsp;&nbsp;';
 							str += '<img title="编辑" src="' + path + '/js/easyui-1.3.5/themes/icons/pencil.png" style="cursor: pointer;" onclick="editAccountHead(\'' + rowInfo + '\''+',' + rec.Status + ');"/>&nbsp;&nbsp;&nbsp;';
-							str += '<img title="删除" src="' + path + '/js/easyui-1.3.5/themes/icons/edit_remove.png" style="cursor: pointer;" onclick="deleteAccountHead('+ rec.Id +',' + orgId +',' + rec.TotalPrice + ');"/>';
+							str += '<img title="删除" src="' + path + '/js/easyui-1.3.5/themes/icons/edit_remove.png" style="cursor: pointer;" onclick="deleteAccountHead(\'' + rec.Id + '\''+','  + orgId +',' + rec.TotalPrice + ');"/>';
 						}
 						return str;
 					}
@@ -321,7 +335,7 @@
                       valueField:'Id',
                       textField:'InOutItemName',
                       method:'get',
-                      url: path + "/inOutItem/findBySelect.action?type=" + inOrOut
+                      url: path + "/inOutItem/findBySelect.do?type=" + inOrOut
                   }
 	            }
 			  },
@@ -335,7 +349,7 @@
                       valueField:'Id',
                       textField:'AccountName',
                       method:'get',
-                      url: path + "/account/findBySelect.action"
+                      url: path + "/account/findBySelect.do"
                   }
 	            }
 			  },
@@ -377,14 +391,15 @@
 				return;
 			}    
 		});
+        showAccountHeadDetails();
 		$.ajax({
 			type:"post",
-			url: path + '/accountItem/findBy.action?HeaderId=' + accountHeadID,
+			url: path + '/accountItem/findBy.do?headerid=' + accountHeadID,
 			dataType: "json",
 			success: function (res) {
 				var EachAmount = 0;
 				if(type === "edit") {
-					EachAmount = TotalPrice;							
+					EachAmount = TotalPrice;
 				}
 				var array = [];
 				array.push({
@@ -433,7 +448,7 @@
 		});
 		$.ajax({
 			type:"post",
-			url: path + '/accountItem/findBy.action?HeaderId=' + accountHeadID,
+			url: path + '/accountItem/findBy.do?headerid=' + accountHeadID,
 			dataType: "json",
 			success: function (res) {
 				var EachAmount = TotalPrice;			
@@ -452,30 +467,30 @@
 	
 	
 	//分页信息处理
-	function ininPager(){
-		try
-		{
-			var opts = $("#tableData").datagrid('options');  
-			var pager = $("#tableData").datagrid('getPager'); 
-			pager.pagination({  
-				onSelectPage:function(pageNum, pageSize)
-				{  
-					opts.pageNumber = pageNum;  
-					opts.pageSize = pageSize;  
-					pager.pagination('refresh',
-					{  
-						pageNumber:pageNum,  
-						pageSize:pageSize  
-					});  
-					showAccountHeadDetails(pageNum,pageSize);
-				}  
-			}); 
-		}
-		catch (e) 
-		{
-			$.messager.alert('异常处理提示',"分页信息异常 :  " + e.name + ": " + e.message,'error');
-		}
-	}
+	// function ininPager(){
+	// 	try
+	// 	{
+	// 		var opts = $("#tableData").datagrid('options');
+	// 		var pager = $("#tableData").datagrid('getPager');
+	// 		pager.pagination({
+	// 			onSelectPage:function(pageNum, pageSize)
+	// 			{
+	// 				opts.pageNumber = pageNum;
+	// 				opts.pageSize = pageSize;
+	// 				pager.pagination('refresh',
+	// 				{
+	// 					pageNumber:pageNum,
+	// 					pageSize:pageSize
+	// 				});
+	// 				showAccountHeadDetails(pageNum,pageSize);
+	// 			}
+	// 		});
+	// 	}
+	// 	catch (e)
+	// 	{
+	// 		$.messager.alert('异常处理提示',"分页信息异常 :  " + e.name + ": " + e.message,'error');
+	// 	}
+	// }
 	
 	//删除财务信息
 	function deleteAccountHead(accountHeadID, thisOrganId, totalPrice){
@@ -485,7 +500,7 @@
             {
 				$.ajax({
 					type:"post",
-					url: path + "/accountHead/delete.action",
+					url: path + "/accountHead/delete.do",
 					dataType: "json",
 					data: ({
 						accountHeadID : accountHeadID,
@@ -493,9 +508,10 @@
 					}),
 					success: function (tipInfo)
 					{
-						var msg = tipInfo.showModel.msgTip;
+						var msg = tipInfo.message;
 						if(msg == '成功')
 						{
+                            $.messager.alert('提示','删除财务信息成功！','info');
 							//加载完以后重新初始化
 							$("#searchBtn").click();
 						}
@@ -514,7 +530,7 @@
 				if(listType === "收预付款"){
 					$.ajax({
 						type:"post",
-						url: path + "/supplier/updateAdvanceIn.action",
+						url: path + "/supplier/updateAdvanceIn.do",
 						dataType: "json",
 						data:{
 							SupplierID: thisOrganId, //会员id
@@ -543,6 +559,10 @@
 			$.messager.alert('删除提示','没有记录被选中！','info');				
 			return;	
 		}
+        if (row.length == 1) {
+            deleteAccountHead(row[0].Id)
+            return;
+        }
 		if(row.length > 0)
 		{
 			$.messager.confirm('删除确认','确定要删除选中的' + row.length + '条财务信息吗？',function(r)
@@ -558,12 +578,13 @@
                     	}
                     	ids += row[i].Id + ",";
                     }
+                    console.log(ids);
                     //批量更新会员的预收款信息
 					for(var i = 0;i < row.length; i ++) {
 						if(listType === "收预付款"){
 							$.ajax({
 								type:"post",
-								url: path + "/supplier/updateAdvanceIn.action",
+								url: path + "/supplier/updateAdvanceIn.do",
 								dataType: "json",
 								data:{
 									SupplierID: row[i].OrganId, //会员id
@@ -584,7 +605,7 @@
 					//批量删除
                     $.ajax({
 						type:"post",
-						url: path + "/accountHead/batchDelete.action",
+                        url: path + "/accountHead/batchDelete.do",
 						dataType: "json",
 						async :  false,
 						data: ({
@@ -593,12 +614,14 @@
 						}),
 						success: function (tipInfo)
 						{
-							var msg = tipInfo.showModel.msgTip;
+							var msg = tipInfo.message;
 							if(msg == '成功')
 							{
-								//加载完以后重新初始化
+                                $.messager.alert('提示','删除财务信息成功！','info');
+                                //加载完以后重新初始化
 								$("#searchBtn").click();
 								$(":checkbox").attr("checked",false);
+
 							}
 							else
 								$.messager.alert('删除提示','删除财务信息失败，请稍后再试！','error');
@@ -609,7 +632,7 @@
 			    			$.messager.alert('删除提示','删除财务信息异常，请稍后再试！','error');
 							return;
 						}
-					});	
+					});
                 }
             });
 		 }
@@ -631,7 +654,7 @@
         accountHeadID = 0;
         initTableData_account("add"); //明细列表
         reject(); //撤销下、刷新材料列表
-        url = path + '/accountHead/create.action';
+        url = path + '/accountHead/create.do';
 
 		//收预付款单据支持刷卡功能
 		if(listType == "收预付款") {
@@ -648,7 +671,8 @@
 	
 	//编辑信息
     function editAccountHead(accountHeadTotalInfo){
-    	var accountHeadInfo = accountHeadTotalInfo.split("AaBb");
+		// console.log(accountHeadTotalInfo)
+        var accountHeadInfo = accountHeadTotalInfo.split("AaBb");
         $("#clientIp").val(clientIp);
         $("#BillNo").val(accountHeadInfo[1]);
         $("#BillTime").val(accountHeadInfo[2]);
@@ -663,10 +687,11 @@
         $('#accountHeadDlg').dialog('open').dialog('setTitle','<img src="' + path + '/js/easyui-1.3.5/themes/icons/pencil.png"/>&nbsp;编辑' + editTitle);
         $(".window-mask").css({ width: webW ,height: webH});
         accountHeadID = accountHeadInfo[0];
-        
+
+
         initTableData_account("edit",TotalPrice); //明细列表
         reject(); //撤销下、刷新列表                
-        url = path + '/accountHead/update.action?accountHeadID=' + accountHeadInfo[0];
+        url = path + '/accountHead/update.do?id=' + accountHeadInfo[0];
     }
     
     //查看信息
@@ -683,7 +708,7 @@
         var showTitle = listTitle.replace("列表","信息");
         $('#accountHeadDlgShow').dialog('open').dialog('setTitle','<img src="' + path + '/js/easyui-1.3.5/themes/icons/list.png"/>&nbsp;查看' + showTitle);
         $(".window-mask").css({ width: webW ,height: webH});
-        
+
         accountHeadID = accountHeadInfo[0];
         initTableData_account_show(TotalPrice); //明细列表-查看状态
     }
@@ -694,16 +719,16 @@
 		$("#searchBtn").unbind().bind({
 			click:function()
 			{
-				showAccountHeadDetails(1,initPageSize);	
-				var opts = $("#tableData").datagrid('options');  
-				var pager = $("#tableData").datagrid('getPager'); 
-				opts.pageNumber = 1;  
-				opts.pageSize = initPageSize;  
-				pager.pagination('refresh',
-				{  
-					pageNumber:1,  
-					pageSize:initPageSize  
-				});  
+				showAccountHeadDetails();
+				// var opts = $("#tableData").datagrid('options');
+				// var pager = $("#tableData").datagrid('getPager');
+				// opts.pageNumber = 1;
+				// opts.pageSize = initPageSize;
+				// pager.pagination('refresh',
+				// {
+				// 	pageNumber:1,
+				// 	pageSize:initPageSize
+				// });
 			}
 		});
 
@@ -819,7 +844,7 @@
 						}
 						$.ajax({
 							type:"post",
-							url: path + "/supplier/updateAdvanceIn.action",
+							url: path + "/supplier/updateAdvanceIn.do",
 							dataType: "json",
 							data:{
 								SupplierID: OrganId,
@@ -836,7 +861,7 @@
 							}
 						});
 					}
-
+                    uuid = "cms"+guid();
 					//保存单位信息
 					$.ajax({
 						type:"post",
@@ -844,35 +869,36 @@
 						dataType: "json",
 						async :  false,
 						data: ({
-							Type: listType,
-							BillNo : $.trim($("#BillNo").val()),
-							BillTime : $.trim($("#BillTime").val()),
-							AccountId: $.trim($("#AccountId").val()),
-							ChangeAmount: ChangeAmount, //付款/收款/优惠/实付
-							TotalPrice: TotalPrice, //合计
-							OrganId: OrganId,
-							HandsPersonId: $.trim($("#HandsPersonId").val()),
-							Remark: $.trim($("#Remark").val()),
+							id:uuid,
+                            type: listType,
+                            billno : $.trim($("#BillNo").val()),
+                            billtime2 : $.trim($("#BillTime").val()),
+                            accountid: $.trim($("#AccountId").val()),
+                            changeamount: ChangeAmount, //付款/收款/优惠/实付
+                            totalprice: TotalPrice, //合计
+                            organid: OrganId,
+                            handspersonid: $.trim($("#HandsPersonId").val()),
+                            remark: $.trim($("#Remark").val()),
 							clientIp: clientIp
 						}),
-						success: function (tipInfo)
+						success: function (data)
 						{
+							var tipInfo=data.flag;
 							if(tipInfo)
 							{
 								//保存明细记录
 								if(accountHeadID ==0)
 								{
-									getMaxId(); //查找最大的Id
-									accept(accountHeadMaxId,listType); //新增
+
+									accept(uuid,listType); //新增
 								}
 								else
 								{
 									accept(accountHeadID,listType); //修改
 								}
-							
+
 								$('#accountHeadDlg').dialog('close');
-								var opts = $("#tableData").datagrid('options'); 
-								showAccountHeadDetails(opts.pageNumber,opts.pageSize); 
+								showAccountHeadDetails();
 							}
 							else
 							{
@@ -888,7 +914,7 @@
 			    			$.messager.alert('提示','保存信息异常，请稍后再试！','error');
 							return;
 						}
-					});	
+					});
 				}
 			}
 		});
@@ -911,20 +937,29 @@
 		        $("#searchBtn").click();
 		    }  
 		});
-	}			
-				
-	function showAccountHeadDetails(pageNo,pageSize){
+	}
+
+
+	function showAccountHeadDetails(){
+        // var param={
+        //     "type": listType,
+        //     "billno":$.trim($("#searchBillNo").val()),
+        //     "BeginTime":$("#searchBeginTime").val(),
+        //     "EndTime":$("#searchEndTime").val(),
+        // };
+        // var options=$('#tableData').datagrid('options');
+        // options.url=path + "/accountHead/findBy.do";
+        // // console.log(options);
+        // $("#tableData").datagrid('loadData',param);
 		$.ajax({
 			type:"post",
-			url: path + "/accountHead/findBy.action",
+			url: path + "/accountHead/findBy.do",
 			dataType: "json",
 			data: ({
-				Type: listType,
-				BillNo:$.trim($("#searchBillNo").val()),
+                type: listType,
+                billno:$.trim($("#searchBillNo").val()),
 				BeginTime:$("#searchBeginTime").val(),
 				EndTime:$("#searchEndTime").val(),
-				pageNo:pageNo,
-				pageSize:pageSize
 			}),
 			success: function (data)
 			{
@@ -1046,6 +1081,7 @@
     function accept(accepId,listType) {
         append();
         removeit();
+
         if ($("#accountData").datagrid('getChanges').length) {
             if (!CheckData())
                 return false;
@@ -1054,17 +1090,18 @@
             var updated = $("#accountData").datagrid('getChanges', "updated");
             $.ajax({
                 type: "post",
-                url: path + "/accountItem/saveDetials.action",
+                url: path + "/accountItem/saveDetials.do",
                 data: {
                     Inserted: JSON.stringify(inserted),
                     Deleted: JSON.stringify(deleted),
                     Updated: JSON.stringify(updated),
-                    HeaderId: accepId,
+                    headerid: accepId,
 					ListType: listType,
                     clientIp: clientIp
                 },
-                success: function (tipInfo) 
-                { 
+                success: function (data)
+                {
+                    var tipInfo=data.flag;
                     if (tipInfo) {
                         $.messager.alert('提示','保存成功！','info');	
                     }
@@ -1074,47 +1111,51 @@
                 },
                 error: function (XmlHttpRequest, textStatus, errorThrown) 
                 {
-                    $.messager.alert('提示',XmlHttpRequest.responseText,'error');	
+                   $.messager.alert('提示',XmlHttpRequest.responseText,'error');
                 }
             });
+        }else{
+            $.messager.alert('提示','保存成功！','info');
         }
         if (endEditing()) {
-            $('#accountData').datagrid('acceptChanges');
+        	// console.log(33);
+           $('#accountData').datagrid('acceptChanges');
         }
     }
-    //获取MaxId
-    function getMaxId(){
-	    var accountHeadMax=null;
-    	$.ajax({
-    		type:"post",
-    		url: path + "/accountHead/getMaxId.action",
-    		//设置为同步
-    		async:false,
-    		dataType: "json",
-    		success: function (systemInfo)
-    		{
-    			if(systemInfo)
-    			{
-    				accountHeadMax = systemInfo.showModel.map.accountHeadMax;
-    				var msgTip = systemInfo.showModel.msgTip;
-    				if(msgTip == "exceptoin")
-    				{
-    					$.messager.alert('提示','查找最大的Id异常,请与管理员联系！','error');
-    					return;
-    				}
-    			}
-    			else
-    			{
-    				accountHeadMax=null;
-    			}
-    		}
-    	});
-    	
-    	if(accountHeadMax !=null)
-    	{
-    		if(accountHeadMax.length>0)
-    		{
-    			accountHeadMaxId=accountHeadMax[0];
-    		}
-    	}
-    }
+    // //获取MaxId
+    // function getMaxId(){
+	 //    var accountHeadMax=null;
+    // 	$.ajax({
+    // 		type:"post",
+    // 		url: path + "/accountHead/getMaxId.action",
+    // 		//设置为同步
+    // 		async:false,
+    // 		dataType: "json",
+    // 		success: function (systemInfo)
+    // 		{
+    // 			if(systemInfo)
+    // 			{
+    // 				accountHeadMax = systemInfo.showModel.map.accountHeadMax;
+    // 				var msgTip = systemInfo.showModel.msgTip;
+    // 				if(msgTip == "exceptoin")
+    // 				{
+    // 					$.messager.alert('提示','查找最大的Id异常,请与管理员联系！','error');
+    // 					return;
+    // 				}
+    // 			}
+    // 			else
+    // 			{
+    // 				accountHeadMax=null;
+    // 			}
+    // 		}
+    // 	});
+    //
+    // 	if(accountHeadMax !=null)
+    // 	{
+    // 		if(accountHeadMax.length>0)
+    // 		{
+    // 			accountHeadMaxId=accountHeadMax[0];
+    // 		}
+    // 	}
+    //
+    // }

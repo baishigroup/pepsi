@@ -30,13 +30,13 @@
     where Id = #{id,jdbcType=VARCHAR}
   </delete>
   <insert id="insert" parameterType="com.zking.erp.model.all.AccountHead" >
-    insert into accounthead (Id, Type, OrganId, 
-      HandsPersonId, ChangeAmount, TotalPrice, 
-      AccountId, BillNo, BillTime, 
+    insert into accounthead (Id, Type, OrganId,
+      HandsPersonId, ChangeAmount, TotalPrice,
+      AccountId, BillNo, BillTime,
       Remark)
-    values (#{id,jdbcType=VARCHAR}, #{type,jdbcType=VARCHAR}, #{organid,jdbcType=VARCHAR}, 
-      #{handspersonid,jdbcType=VARCHAR}, #{changeamount,jdbcType=DOUBLE}, #{totalprice,jdbcType=DOUBLE}, 
-      #{accountid,jdbcType=VARCHAR}, #{billno,jdbcType=VARCHAR}, #{billtime,jdbcType=TIMESTAMP}, 
+    values (#{id,jdbcType=VARCHAR}, #{type,jdbcType=VARCHAR}, #{organid,jdbcType=VARCHAR},
+      #{handspersonid,jdbcType=VARCHAR}, #{changeamount,jdbcType=DOUBLE}, #{totalprice,jdbcType=DOUBLE},
+      #{accountid,jdbcType=VARCHAR}, #{billno,jdbcType=VARCHAR}, #{billtime,jdbcType=TIMESTAMP},
       #{remark,jdbcType=VARCHAR})
   </insert>
   <insert id="insertSelective" parameterType="com.zking.erp.model.all.AccountHead" >

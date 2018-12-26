@@ -26,6 +26,33 @@ public class Functions implements Serializable{
 
     private String pushbtn;
 
+    /**
+     * 用户IP，用户记录操作日志
+     */
+    private String clientIp = "";
+
+    /**
+     * UBType，UserBusiness类型
+     */
+    private String UBType = "";
+
+    /**
+     * UBKeyId，UserBusiness关键id
+     */
+    private String UBKeyId = "";
+
+    /**
+     * 分类ID
+     */
+    private String functionsID = "01";
+
+    /**
+     * 分类IDs 批量操作使用
+     */
+    private String functionsIDs = "";
+
+    private String[] ids=null;
+
     public Functions(String id, String number, String name, String pnumber, String url, Boolean state, String sort, Boolean enabled, String type, String pushbtn) {
         this.id = id;
         this.number = number;
@@ -41,6 +68,54 @@ public class Functions implements Serializable{
 
     public Functions() {
         super();
+    }
+
+    public String[] getIds() {
+        return ids;
+    }
+
+    public void setIds(String[] ids) {
+        this.ids = ids;
+    }
+
+    public String getFunctionsID() {
+        return functionsID;
+    }
+
+    public void setFunctionsID(String functionsID) {
+        this.functionsID = functionsID;
+    }
+
+    public String getFunctionsIDs() {
+        return functionsIDs;
+    }
+
+    public void setFunctionsIDs(String functionsIDs) {
+        this.functionsIDs = functionsIDs;
+    }
+
+    public String getClientIp() {
+        return clientIp;
+    }
+
+    public void setClientIp(String clientIp) {
+        this.clientIp = clientIp;
+    }
+
+    public String getUBType() {
+        return UBType;
+    }
+
+    public void setUBType(String UBType) {
+        this.UBType = UBType;
+    }
+
+    public String getUBKeyId() {
+        return UBKeyId;
+    }
+
+    public void setUBKeyId(String UBKeyId) {
+        this.UBKeyId = UBKeyId;
     }
 
     public String getId() {

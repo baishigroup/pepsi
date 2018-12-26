@@ -11,5 +11,10 @@
   <sql id="Base_Column_List" >
     Id, Type, Name
   </sql>
+    <select id="queryPersonByType" resultType="com.zking.erp.model.jhui.Person"
+            parameterType="com.zking.erp.model.jhui.Person">
+      SELECT <include refid="Base_Column_List"/>
+      FROM person person0_ WHERE 1=1 AND person0_.Type=#{type} ORDER BY person0_.Id ASC
+    </select>
 
 </mapper>

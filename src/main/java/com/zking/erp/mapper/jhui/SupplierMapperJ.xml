@@ -31,5 +31,43 @@
     BeginNeedGet, BeginNeedPay, AllNeedGet, AllNeedPay, fax, telephone, address, taxNum, 
     bankName, accountNumber, taxRate
   </sql>
+  <select id="querySupplierByType" resultType="com.zking.erp.model.jhui.Supplier"
+          parameterType="com.zking.erp.model.jhui.Supplier">
+    SELECT <include refid="Base_Column_List"/>
+    FROM  supplier supplier0_ WHERE 1=1 AND (supplier0_.type LIKE concat(concat('%',#{type}),'%')) AND supplier0_.enabled='1' ORDER BY supplier0_.id DESC
+
+  </select>
+
+  <select id="selectById" resultType="com.zking.erp.model.jhui.Supplier" parameterType="java.lang.String" >
+    select
+    <include refid="Base_Column_List" />
+    from supplier
+    where id = #{id,jdbcType=VARCHAR}
+  </select>
+
+  <update id="updateById" parameterType="com.zking.erp.model.jhui.Supplier" >
+    update supplier
+    set supplier = #{supplier,jdbcType=VARCHAR},
+    contacts = #{contacts,jdbcType=VARCHAR},
+    phonenum = #{phonenum,jdbcType=VARCHAR},
+    email = #{email,jdbcType=VARCHAR},
+    description = #{description,jdbcType=VARCHAR},
+    isystem = #{isystem,jdbcType=INTEGER},
+    type = #{type,jdbcType=VARCHAR},
+    enabled = #{enabled,jdbcType=INTEGER},
+    AdvanceIn = #{advancein,jdbcType=DOUBLE},
+    BeginNeedGet = #{beginneedget,jdbcType=DOUBLE},
+    BeginNeedPay = #{beginneedpay,jdbcType=DOUBLE},
+    AllNeedGet = #{allneedget,jdbcType=DOUBLE},
+    AllNeedPay = #{allneedpay,jdbcType=DOUBLE},
+    fax = #{fax,jdbcType=VARCHAR},
+    telephone = #{telephone,jdbcType=VARCHAR},
+    address = #{address,jdbcType=VARCHAR},
+    taxNum = #{taxnum,jdbcType=VARCHAR},
+    bankName = #{bankname,jdbcType=VARCHAR},
+    accountNumber = #{accountnumber,jdbcType=VARCHAR},
+    taxRate = #{taxrate,jdbcType=DOUBLE}
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
 
 </mapper>

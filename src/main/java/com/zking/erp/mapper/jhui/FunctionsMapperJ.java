@@ -12,4 +12,9 @@ public interface FunctionsMapperJ {
      * @return
      */
      List<Functions> queryMenuByPNumber(FunctionsVo functionsVo );
+
+     List<Functions> queryFunctionsByRole(Functions functions);
+
+     List<Functions> queryFunctionByIds(Functions functions);
+
 }

@@ -3,7 +3,7 @@
 <mapper namespace="com.zking.erp.mapper.jhui.AppMapperJ">
   <resultMap id="BaseResultMap" type="com.zking.erp.model.jhui.App">
     <constructor>
-      <idArg column="id" javaType="java.lang.Long" jdbcType="BIGINT" />
+      <idArg column="id" javaType="java.lang.String" jdbcType="VARCHAR" />
       <arg column="number" javaType="java.lang.String" jdbcType="VARCHAR" />
       <arg column="name" javaType="java.lang.String" jdbcType="VARCHAR" />
       <arg column="type" javaType="java.lang.String" jdbcType="VARCHAR" />
@@ -25,12 +25,87 @@
     remark, enabled
   </sql>
 
+  <update id="updateById" parameterType="com.zking.erp.model.jhui.App" >
+    update app
+    set  number=#{number},
+    name = #{name,jdbcType=VARCHAR},
+    type = #{type,jdbcType=VARCHAR},
+    icon=#{icon},
+    url=#{url},
+    width=#{width},
+    height=#{height},
+    resize=#{resize},
+    openmax=#{openmax},
+    flash=#{flash},
+    zl=#{zl},
+    sort=#{sort},
+    remark=#{remark},
+    enabled=#{enabled},
+    where Id = #{id,jdbcType=VARCHAR}
+  </update>
+
+  <insert id="insert" parameterType="com.zking.erp.model.jhui.App">
+     insert into app (id, number, name, type, icon, url, width, height, resize, openmax, flash, zl, sort,
+    remark, enabled)
+    values (#{id},#{number},#{name},#{type},#{icon},#{url},#{width},#{height},#{resize},#{openmax},#{flash},#{zl},#{sort},#{remark},#{enabled})
+  </insert>
 
   <select id="queryAppByfindDesk"
           parameterType="com.zking.erp.model.jhui.App" resultType="com.zking.erp.model.jhui.App">
       select  <include refid="Base_Column_List"/> from
       app app0_ where 1=1 and app0_.ZL=#{zl} and app0_.Enabled=1 order by app0_.Sort asc
   </select>
+
+  <select id="queryAppByRole" resultType="com.zking.erp.model.jhui.App"
+          parameterType="com.zking.erp.model.jhui.App">
+    SELECT <include refid="Base_Column_List"/>
+    from app app0_ where 1=1 and app0_.Enabled=1 order by app0_.Sort asc
+  </select>
+  <select id="queryAppByLikePager" resultType="com.zking.erp.model.jhui.App"
+          parameterType="com.zking.erp.model.jhui.App">
+    SELECT <include refid="Base_Column_List"/>
+    from app app0_ where 1=1
+    <if test="name != null and name!=''" >
+      AND (app0_.name LIKE concat(concat('%',#{name}),'%'))
+    </if>
+    <if test="type != null and type!=''" >
+      AND app0_.zl =#{type}
+    </if>
+    order by app0_.Sort asc
+  </select>
+
+  <select id="checkIsNameExist" resultType="com.zking.erp.model.jhui.App">
+      SELECT  *
+      FROM app   WHERE 1=1
+      <if test="param2 != null and param2!=''" >
+        AND (name LIKE concat(concat('%',#{param2}),'%'))
+      </if>
+      <if test="param4 != null and param4!=''" >
+        AND (id != #{param4})
+      </if>
+
+  </select>
+
+  <select id="selectById" resultType="com.zking.erp.model.jhui.App" parameterType="java.lang.String" >
+    select
+    <include refid="Base_Column_List" />
+    from app
+    where Id = #{id,jdbcType=VARCHAR}
+  </select>
+
+  <delete id="deleteById" parameterType="java.lang.String" >
+    delete from app
+    where Id = #{id,jdbcType=VARCHAR}
+  </delete>
+
+  <delete id="delete" parameterType="com.zking.erp.model.jhui.App">
+    delete from app
+    where 1=1
+    <foreach collection="id" item="id" open=" and id in(" close=")" separator="," index="idx">
+      #{id}
+    </foreach>
+  </delete>
+
 
 
 

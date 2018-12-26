@@ -1,10 +1,10 @@
 package com.zking.erp.controller.jhui;
 
+import com.zking.erp.base.BaseController;
 import com.zking.erp.model.jhui.User;
-import com.zking.erp.service.jhui.IUserService;
+import com.zking.erp.service.jhui.IUserJService;
 import com.zking.erp.util.Tools;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpRequest;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -12,16 +12,15 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.security.NoSuchAlgorithmException;
-import java.sql.Timestamp;
 import java.util.HashMap;
 import java.util.Map;
 
 @Controller
 @RequestMapping("/user")
-public class UserController {
+public class UserJController extends BaseController{
 
     @Autowired
-    private IUserService userService;
+    private IUserJService userService;
 
     private HttpSession getSession;
 
@@ -110,6 +109,89 @@ public class UserController {
             throw new RuntimeException(e);
         }
     }
+
+    /**
+     * 用户退出登录
+     *
+     * @return
+     */
+    @RequestMapping("/logout")
+    public String logout(HttpServletRequest request,User user) {
+        getSession = request.getSession();
+//        logService.create(new Logdetails(getUser(), "退出系统", model.getClientIp(),
+//                new Timestamp(System.currentTimeMillis()), (short) 0,
+//                "管理用户：" + getUser().getLoginame() + " 退出系统", getUser().getLoginame() + " 退出系统"));
+        getSession.removeAttribute("user");
+        return "pages/common/admin";
+    }
+
+
+
+    /**
+     * 修改密码
+     */
+    @RequestMapping("/updatePwd")
+    @ResponseBody
+    public Map<String,Object> updatePwd(HttpServletRequest request,User model) {
+        getSession = request.getSession();
+        Map<String,Object> map=new HashMap<String, Object>();
+        Integer flag = 0;//1.修改成功  2.原始密码错误（失败）  3.修改失败
+        try {
+            //获取当前登陆用户的信息
+            User user =(User)getSession.getAttribute("user");
+            //原始密码
+            String orgPassword = Tools.md5Encryp(model.getOrgpwd());
+            //修改后的密码
+            String md5Pwd = Tools.md5Encryp(model.getPassword());
+            //必须和原始密码一致才可以更新密码
+//            if(user.getLoginame().equals("jsh")){
+//                flag = 3;
+//                tipMsg = "管理员jsh不能修改密码";
+//                tipType = 1;
+//            } else
+            //判断输入的原始密码是否与真实原始密码相等
+            if (orgPassword.equalsIgnoreCase(user.getPassword())) {
+
+                user.setPassword(md5Pwd);
+                userService.updateById(user);
+
+                //看是否需要更新seesion中user
+//                if(getUser().getId() == model.getUserID())
+//                {
+//                    getSession().put("user", user);
+//                }
+
+                flag = 1;
+                tipMsg = "成功";
+                tipType = 0;
+            } else {
+                flag = 2;
+                tipMsg = "失败";
+                tipType = 1;
+            }
+
+        } catch (Exception e) {
+            System.out.println(">>>>>>>>>>>>>修改用户ID为 ： " + model.getId() + "密码信息失败");
+            flag = 3;
+            tipMsg = "失败";
+            tipType = 1;
+            e.printStackTrace();
+        } finally {
+            try {
+                map.put("flag",flag);
+                return map;
+            } catch (Exception e) {
+                System.out.println(">>>>>>>>>>>>修改用户密码回写客户端结果异常");
+                e.printStackTrace();
+                throw new RuntimeException(e);
+            }
+        }
+//        logService.create(new Logdetails(getUser(), "更新用户", model.getClientIp(),
+//                new Timestamp(System.currentTimeMillis())
+//                , tipType, "更新用户ID为  " + model.getUserID() + "密码信息 " + tipMsg + "！", "更新用户" + tipMsg));
+    }
+
+
 
 
 

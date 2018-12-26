@@ -12,5 +12,10 @@
   <sql id="Base_Column_List" >
     Id, Name, Type, Remark
   </sql>
+    <select id="queryInoutItemBySelect" resultType="com.zking.erp.model.jhui.InoutItem"
+            parameterType="com.zking.erp.model.jhui.InoutItem">
+      SELECT <include refid="Base_Column_List"/>
+      FROM inoutitem inoutitem0_ WHERE 1=1 AND TYPE=#{type} ORDER BY inoutitem0_.Id DESC
+    </select>
 
 </mapper>

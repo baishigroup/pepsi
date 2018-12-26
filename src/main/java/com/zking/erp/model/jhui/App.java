@@ -6,7 +6,7 @@ import java.io.Serializable;
 
 @ToString
 public class App implements Serializable{
-    private Long id;
+    private String id;
 
     private String number;
 
@@ -36,7 +36,34 @@ public class App implements Serializable{
 
     private Boolean enabled;
 
-    public App(Long id, String number, String name, String type, String icon, String url, String width, String height, Boolean resize, Boolean openmax, Boolean flash, String zl, String sort, String remark, Boolean enabled) {
+    /**
+     * 用户IP，用户记录操作日志
+     */
+    private String clientIp = "";
+
+    /**
+     * UBType，UserBusiness类型
+     */
+    private String UBType = "";
+
+    /**
+     * UBKeyId，UserBusiness关键id
+     */
+    private String UBKeyId = "";
+
+    /**
+     * 分类ID
+     */
+    private String appID = "01";
+
+    /**
+     * 分类IDs 批量操作使用
+     */
+    private String appIDs = "";
+
+    private String[] ids=null;
+
+    public App(String id, String number, String name, String type, String icon, String url, String width, String height, Boolean resize, Boolean openmax, Boolean flash, String zl, String sort, String remark, Boolean enabled) {
         this.id = id;
         this.number = number;
         this.name = name;
@@ -58,11 +85,59 @@ public class App implements Serializable{
         super();
     }
 
-    public Long getId() {
+    public String[] getIds() {
+        return ids;
+    }
+
+    public void setIds(String[] ids) {
+        this.ids = ids;
+    }
+
+    public String getAppID() {
+        return appID;
+    }
+
+    public void setAppID(String appID) {
+        this.appID = appID;
+    }
+
+    public String getAppIDs() {
+        return appIDs;
+    }
+
+    public void setAppIDs(String appIDs) {
+        this.appIDs = appIDs;
+    }
+
+    public String getClientIp() {
+        return clientIp;
+    }
+
+    public void setClientIp(String clientIp) {
+        this.clientIp = clientIp;
+    }
+
+    public String getUBType() {
+        return UBType;
+    }
+
+    public void setUBType(String UBType) {
+        this.UBType = UBType;
+    }
+
+    public String getUBKeyId() {
+        return UBKeyId;
+    }
+
+    public void setUBKeyId(String UBKeyId) {
+        this.UBKeyId = UBKeyId;
+    }
+
+    public String getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(String id) {
         this.id = id;
     }
 

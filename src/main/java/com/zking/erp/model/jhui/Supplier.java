@@ -48,6 +48,20 @@ public class Supplier implements Serializable{
 
     private Double taxrate;
 
+    private String UBType = ""; //UBType，UserBusiness类型
+
+    private String UBKeyId = ""; //UBKeyId，UserBusiness关键id
+
+    /**
+     * 供应商ID
+     */
+    private String supplierID = "01";
+
+    /**
+     * 供应商IDs 批量操作使用
+     */
+    private String supplierIDs = "";
+
     public Supplier(String id, String supplier, String contacts, String phonenum, String email, String description, Integer isystem, String type, Integer enabled, Double advancein, Double beginneedget, Double beginneedpay, Double allneedget, Double allneedpay, String fax, String telephone, String address, String taxnum, String bankname, String accountnumber, Double taxrate) {
         this.id = id;
         this.supplier = supplier;
@@ -74,6 +88,38 @@ public class Supplier implements Serializable{
 
     public Supplier() {
         super();
+    }
+
+    public String getSupplierID() {
+        return supplierID;
+    }
+
+    public void setSupplierID(String supplierID) {
+        this.supplierID = supplierID;
+    }
+
+    public String getSupplierIDs() {
+        return supplierIDs;
+    }
+
+    public void setSupplierIDs(String supplierIDs) {
+        this.supplierIDs = supplierIDs;
+    }
+
+    public String getUBType() {
+        return UBType;
+    }
+
+    public void setUBType(String UBType) {
+        this.UBType = UBType;
+    }
+
+    public String getUBKeyId() {
+        return UBKeyId;
+    }
+
+    public void setUBKeyId(String UBKeyId) {
+        this.UBKeyId = UBKeyId;
     }
 
     public String getId() {
