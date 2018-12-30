@@ -7,7 +7,7 @@ import java.util.Arrays;
 
 @ToString
 public class MaterialProperty implements Serializable{
-    private byte[] id;
+    private String id;
 
     private String nativename;
 
@@ -17,7 +17,7 @@ public class MaterialProperty implements Serializable{
 
     private String anothername;
 
-    public MaterialProperty(byte[] id, String nativename, Integer enabled, String sort, String anothername) {
+    public MaterialProperty(String id, String nativename, Integer enabled, String sort, String anothername) {
         this.id = id;
         this.nativename = nativename;
         this.enabled = enabled;
@@ -29,11 +29,11 @@ public class MaterialProperty implements Serializable{
         super();
     }
 
-    public byte[] getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(byte[] id) {
+    public void setId(String id) {
         this.id = id;
     }
 
@@ -72,7 +72,7 @@ public class MaterialProperty implements Serializable{
     @Override
     public String toString() {
         return "MaterialProperty{" +
-                "id=" + Arrays.toString(id) +
+                "id='" + id + '\'' +
                 ", nativename='" + nativename + '\'' +
                 ", enabled=" + enabled +
                 ", sort='" + sort + '\'' +

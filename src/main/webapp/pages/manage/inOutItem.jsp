@@ -96,7 +96,6 @@
     //初始化界面
     $(function () {
         initTableData();
-        ininPager();
         browserFit();
     });
 
@@ -121,6 +120,7 @@
     //初始化表格数据
     function initTableData() {
         $('#tableData').datagrid({
+            url: '<%=path %>/cao/inOutItem/findBy.do',
             //title:'收支项目',
             //iconCls:'icon-save',
             //width:700,
@@ -138,13 +138,14 @@
             checkOnSelect: false,
             //交替出现背景
             striped: true,
-            url: '<%=path %>/inOutItem/findBy.action?pageSize=' + initPageSize,
+
             pagination: true,
             //自动截取数据
             //nowrap : true,
             //loadFilter: pagerFilter,
-            pageSize: initPageSize,
-            pageList: initPageNum,
+            pageList:[2,5,10,15],
+            pageSize: 10,
+            pageNumber: 1,
             columns: [[
                 {field: 'id', width: 35, align: "center", checkbox: true},
                 {title: '名称', field: 'name', width: 200},
@@ -205,28 +206,6 @@
         }
     });
 
-    //分页信息处理
-    function ininPager() {
-        try {
-            var opts = $("#tableData").datagrid('options');
-            var pager = $("#tableData").datagrid('getPager');
-            pager.pagination({
-                onSelectPage: function (pageNum, pageSize) {
-                    opts.pageNumber = pageNum;
-                    opts.pageSize = pageSize;
-                    pager.pagination('refresh',
-                        {
-                            pageNumber: pageNum,
-                            pageSize: pageSize
-                        });
-                    showInOutItemDetails(pageNum, pageSize);
-                }
-            });
-        }
-        catch (e) {
-            $.messager.alert('异常处理提示', "分页信息异常 :  " + e.name + ": " + e.message, 'error');
-        }
-    }
 
     //删除收支项目
     function deleteInOutItem(inOutItemInfo) {
@@ -235,15 +214,15 @@
                 var inOutItemTotalInfo = inOutItemInfo.split("AaBb");
                 $.ajax({
                     type: "post",
-                    url: "<%=path %>/inOutItem/delete.action",
+                    url: "<%=path %>/cao/inOutItem/delete.do",
                     dataType: "json",
                     data: ({
-                        inOutItemID: inOutItemTotalInfo[0],
+                        id: inOutItemTotalInfo[0],
                         name: inOutItemTotalInfo[1],
                         clientIp: '<%=clientIp %>'
                     }),
                     success: function (tipInfo) {
-                        var msg = tipInfo.showModel.msgTip;
+                        var msg = tipInfo.message;
                         if (msg == '成功')
                         //加载完以后重新初始化
                             $("#searchBtn").click();
@@ -267,7 +246,11 @@
             $.messager.alert('删除提示', '没有记录被选中！', 'info');
             return;
         }
-        if (row.length > 0) {
+        if (row.length == 1) {
+            deleteInOutItem(row[0].id);
+            return;
+        }
+        if (row.length > 1) {
             $.messager.confirm('删除确认', '确定要删除选中的' + row.length + '条收支项目吗？', function (r) {
                 if (r) {
                     var ids = "";
@@ -280,15 +263,15 @@
                     }
                     $.ajax({
                         type: "post",
-                        url: "<%=path %>/inOutItem/batchDelete.action",
+                        url: "<%=path %>/cao/inOutItem/batchDelete.do",
                         dataType: "json",
                         async: false,
                         data: ({
-                            inOutItemIDs: ids,
+                            unitIDs: ids,
                             clientIp: '<%=clientIp %>'
                         }),
                         success: function (tipInfo) {
-                            var msg = tipInfo.showModel.msgTip;
+                            var msg = tipInfo.message;
                             if (msg == '成功') {
                                 //加载完以后重新初始化
                                 $("#searchBtn").click();
@@ -327,7 +310,7 @@
         $("#inOutItem").focus();
         orgInOutItem = "";
         inOutItemID = 0;
-        url = '<%=path %>/inOutItem/create.action';
+        url = '<%=path %>/cao/inOutItem/create.do';
     }
 
     //保存收支项目
@@ -346,19 +329,17 @@
                 },
                 success: function (result) {
                     var result = eval('(' + result + ')');
-                    if (!result) {
+                    if (result) {
+                        $('#inOutItemDlg').dialog('close');
+
+                        var opts = $("#tableData").datagrid('options');
+                        showInOutItemDetails();
+                    }
+                    else {
                         $.messager.show({
                             title: '错误提示',
                             msg: '保存收支项目失败，请稍后重试!'
                         });
-                    }
-                    else {
-                        $('#inOutItemDlg').dialog('close');
-                        //$('#tableData').datagrid('reload');
-                        //加载完以后重新初始化
-                        //$("#searchBtn").click();
-                        var opts = $("#tableData").datagrid('options');
-                        showInOutItemDetails(opts.pageNumber, opts.pageSize);
                     }
                 }
             });
@@ -379,9 +360,10 @@
         $(".window-mask").css({width: webW, height: webH});
         $('#inOutItemFM').form('load', row);
         inOutItemID = inOutItemInfo[0];
+        //id = inOutItemInfo[0];
         //焦点在名称输入框==定焦在输入文字后面
         $("#inOutItem").val("").focus().val(inOutItemInfo[1]);
-        url = '<%=path %>/inOutItem/update.action?inOutItemID=' + inOutItemInfo[0];
+        url = '<%=path %>/cao/inOutItem/update.do?id=' + inOutItemInfo[0];
     }
 
     //检查收支项目 名称是否存在 ++ 重名无法提示问题需要跟进
@@ -393,7 +375,7 @@
         if (inOutItemName.length > 0 && (orgInOutItem.length == 0 || inOutItemName != orgInOutItem)) {
             $.ajax({
                 type: "post",
-                url: "<%=path %>/inOutItem/checkIsNameExist.action",
+                url: "<%=path %>/cao/inOutItem/checkIsNameExist.do",
                 dataType: "json",
                 async: false,
                 data: ({
@@ -401,8 +383,8 @@
                     name: inOutItemName
                 }),
                 success: function (tipInfo) {
-                    flag = tipInfo;
-                    if (tipInfo) {
+                    flag = tipInfo.flag;
+                    if (flag) {
                         $.messager.alert('提示', '收支项目名称已经存在', 'info');
                         return;
                     }
@@ -420,40 +402,21 @@
     //搜索处理
     $("#searchBtn").unbind().bind({
         click: function () {
-            showInOutItemDetails(1, initPageSize);
-            var opts = $("#tableData").datagrid('options');
-            var pager = $("#tableData").datagrid('getPager');
-            opts.pageNumber = 1;
-            opts.pageSize = initPageSize;
-            pager.pagination('refresh',
-                {
-                    pageNumber: 1,
-                    pageSize: initPageSize
-                });
+            showInOutItemDetails();
         }
     });
 
-    function showInOutItemDetails(pageNo, pageSize) {
-        $.ajax({
-            type: "post",
-            url: "<%=path %>/inOutItem/findBy.action",
-            dataType: "json",
-            data: ({
-                name: $.trim($("#searchName").val()),
-                type: $.trim($("#searchType").val()),
-                remark: $.trim($("#searchRemark").val()),
-                pageNo: pageNo,
-                pageSize: pageSize
-            }),
-            success: function (data) {
-                $("#tableData").datagrid('loadData', data);
-            },
-            //此处添加错误处理
-            error: function () {
-                $.messager.alert('查询提示', '查询数据后台异常，请稍后再试！', 'error');
-                return;
-            }
-        });
+
+    function showInOutItemDetails() {
+        var params={
+            name: $.trim($("#searchName").val()),
+            type: $.trim($("#searchType").val()),
+            remark: $.trim($("#searchRemark").val())
+        }
+        var options=$("#tableData").datagrid('options');
+        options.url="<%=path %>/cao/inOutItem/findBy.do";
+        $("#tableData").datagrid('load',params);
+
     }
 
     //重置按钮

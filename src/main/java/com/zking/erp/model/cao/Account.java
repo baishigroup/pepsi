@@ -20,6 +20,42 @@ public class Account implements Serializable{
 
     private Integer isdefault;
 
+    private String accountID;
+
+    /**
+     * IDs 批量操作使用
+     */
+    private String accountIDs = "";
+
+    private String[] ids=null;
+
+    private String clientIp;
+
+    private String Number;
+    private String newType;
+    private String supplier;
+    private String ChangeAmount;
+    private String oTime;
+    private String AList;
+    private String AMList;
+
+
+    public String  getAccountIDs() {
+        return accountIDs;
+    }
+
+    public void setAccountIDs(String accountIDs) {
+        this.accountIDs = accountIDs;
+    }
+
+    public String[] getIds() {
+        return ids;
+    }
+
+    public void setIds(String[] ids) {
+        this.ids = ids;
+    }
+
     public Account(String id, String name, String serialno, Double initialamount, Double currentamount, String remark, Integer isdefault) {
         this.id = id;
         this.name = name;
@@ -30,8 +66,80 @@ public class Account implements Serializable{
         this.isdefault = isdefault;
     }
 
+    public String getClientIp() {
+        return clientIp;
+    }
+
+    public void setClientIp(String clientIp) {
+        this.clientIp = clientIp;
+    }
+
     public Account() {
         super();
+    }
+
+    public String getNumber() {
+        return Number;
+    }
+
+    public void setNumber(String number) {
+        Number = number;
+    }
+
+    public String getNewType() {
+        return newType;
+    }
+
+    public void setNewType(String newType) {
+        this.newType = newType;
+    }
+
+    public String getSupplier() {
+        return supplier;
+    }
+
+    public void setSupplier(String supplier) {
+        this.supplier = supplier;
+    }
+
+    public String getChangeAmount() {
+        return ChangeAmount;
+    }
+
+    public void setChangeAmount(String changeAmount) {
+        ChangeAmount = changeAmount;
+    }
+
+    public String getoTime() {
+        return oTime;
+    }
+
+    public void setoTime(String oTime) {
+        this.oTime = oTime;
+    }
+
+    public String getAList() {
+        return AList;
+    }
+
+    public void setAList(String AList) {
+        this.AList = AList;
+    }
+
+    public String getAMList() {
+        return AMList;
+    }
+
+    public void setAMList(String AMList) {
+        this.AMList = AMList;
+    }
+
+    public String getAccountID() {
+        return accountID;
+    }
+
+    public void setAccountID(String accountID) {
+        this.accountID = accountID;
     }
 
     public String getId() {

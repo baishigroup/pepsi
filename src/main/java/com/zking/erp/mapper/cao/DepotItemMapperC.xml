@@ -34,4 +34,38 @@
     OtherField1, OtherField2, OtherField3, OtherField4, OtherField5, MType
   </sql>
 
+  <select id="queryDepotJoinTable" resultType="com.zking.erp.model.cao.DepotItem"
+          parameterType="com.zking.erp.model.cao.DepotItem">
+    SELECT m.Name MaterialName,m.Model MaterialModel,m.Unit MaterialUnit,u.UName UnitName,u.id UnitId ,d1.name DepotName,d2.name AnotherDepotName,d.*
+    FROM depotitem d LEFT JOIN material m ON d.MaterialId=m.id  LEFT JOIN unit u ON m.UnitId=u.id LEFT JOIN depot d1 ON d.DepotId=d1.id LEFT JOIN
+    depot d2 ON d.AnotherDepotId=d2.id WHERE HeaderId=#{headerid} ORDER BY id ASC
+  </select>
+    <select id="queryDepotItemByMId" resultType="com.zking.erp.model.cao.DepotItem"
+            parameterType="com.zking.erp.model.cao.DepotItem">
+      SELECT m.name MaterialName ,m.Model MaterialModel ,d.* FROM depotitem d LEFT JOIN material m
+      ON d.MaterialId=m.id WHERE 1=1
+      <if test="null!=materialid and ''!=materialid">
+        AND d.MaterialId=#{materialid}
+      </if>
+    </select>
+  <select id="querySumByTypeByMId" resultType="com.zking.erp.model.cao.DepotItem">
+      SELECT SUM(BasicNumber) AS Basicnumber FROM  depothead dh INNER JOIN  depotitem di
+    on dh.id=di.HeaderId WHERE 1=1 AND  dh.type=#{param1}
+    <if test="param1 eq '出库'">
+      AND dh.SubType!='调拨' AND dh.SubType!='礼品充值'
+    </if>
+    AND di.MaterialId =#{param2}
+  </select>
+  <select id="queryDetailByMIdPager" resultType="com.zking.erp.model.cao.DepotItem">
+
+ SELECT dh.Number,CONCAT(dh.SubType,dh.Type) AS Type,
+ CASE WHEN TYPE='入库' THEN di.BasicNumber
+	WHEN TYPE='出库' THEN 0-di.BasicNumber
+	ELSE 0  END AS BasicNumber,
+ DATE_FORMAT(dh.OperTime,'%Y-%m-%d %H:%i:%S') AS OperTime
+ FROM depothead dh INNER JOIN depotitem di ON dh.id=di.HeaderId WHERE TYPE!='其它'
+ AND SubType!='调拨' AND SubType!='礼品充值'
+  AND MaterialId =#{MId} ORDER BY OperTime DESC
+  </select>
+
 </mapper>

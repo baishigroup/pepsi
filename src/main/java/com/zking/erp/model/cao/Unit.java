@@ -3,7 +3,6 @@ package com.zking.erp.model.cao;
 import lombok.ToString;
 
 import java.io.Serializable;
-import java.util.List;
 
 @ToString
 public class Unit implements Serializable{
@@ -11,14 +10,26 @@ public class Unit implements Serializable{
 
     private String uname;
 
-    //根据ID批量删除
-    private List<String> ids;
+    /**
+     * IDs 批量操作使用
+     */
+    private String unitIDs = "";
 
-    public List<String> getIds() {
+    private String[] ids=null;
+
+    public String getUnitIDs() {
+        return unitIDs;
+    }
+
+    public void setUnitIDs(String unitIDs) {
+        this.unitIDs = unitIDs;
+    }
+
+    public String[] getIds() {
         return ids;
     }
 
-    public void setIds(List<String> ids) {
+    public void setIds(String[] ids) {
         this.ids = ids;
     }
 

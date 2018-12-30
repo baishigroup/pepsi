@@ -42,4 +42,23 @@ public interface SupplierMapperC {
      */
     List<Supplier> querySupplierPager(Supplier supplier);
 
+    /**
+     * 判断是否重名
+     * @param filedName
+     * @param filedValue
+     * @param idFiled
+     * @param objectID
+     * @return
+     */
+    List<Supplier> checkIsNameExist(String filedName,String filedValue,String idFiled,String objectID);
+
+    /**
+     * 批量启用、禁用
+     * @param supplier
+     * @return
+     */
+    int batchSetEnable(Supplier supplier);
+
+
+
 }

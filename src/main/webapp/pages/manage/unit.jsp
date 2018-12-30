@@ -218,7 +218,11 @@
             $.messager.alert('删除提示', '没有记录被选中！', 'info');
             return;
         }
-        if (row.length > 0) {
+        if (row.length == 1) {
+            deleteUnit(row[0].id);
+            return;
+        }
+        if (row.length > 1) {
             $.messager.confirm('删除确认', '确定要删除选中的' + row.length + '条计量单位信息吗？', function (r) {
                 if (r) {
                     var ids = "";
@@ -230,13 +234,15 @@
                         alert(row[i].id);
                         ids += row[i].id + ",";
                     }
+
+
                     $.ajax({
                         type: "post",
                         url: "<%=path %>/cao/unit/batchDelete.do",
                         dataType: "json",
                         async: false,
                         data: ({
-                            ids: ids,
+                            unitIDs: ids,
                             clientIp: '<%=clientIp %>'
                         }),
                         success: function (tipInfo) {
@@ -300,10 +306,7 @@
                         clientIp: '<%=clientIp %>'
                     }),
                     success: function (tipInfo) {
-                        var f = tipInfo.message;
-                        console.log(f);
-                        alert(f);
-                        if (f) {
+                        if (tipInfo) {
                             $('#unitDlg').dialog('close');
 
                             var opts = $("#tableData").datagrid('options');
@@ -352,7 +355,10 @@
 
     //检查名称是否存在 ++ 重名无法提示问题需要跟进
     function checkUnitName() {
-        var name = $.trim($("#name").val());
+        var basicName = $.trim($("#basicName").val());
+        var otherName = $.trim($("#otherName").val());
+        var otherNum = $.trim($("#otherNum").val());
+        var name = basicName + "," + otherName + "(1:" + otherNum + ")";
         //表示是否存在 true == 存在 false = 不存在
         var flag = false;
         //开始ajax名称检验，不能重名
@@ -363,13 +369,13 @@
                 dataType: "json",
                 async: false,
                 data: ({
-                    unitID: unitID,
+                    id: unitID,
                     uname: name
                 }),
                 success: function (tipInfo) {
-                    flag = tipInfo;
-                    if (tipInfo) {
-                        $.messager.alert('提示', '计量单位名称已经存在', 'info');
+                    flag = tipInfo.flag;
+                    if (flag) {
+                        $.messager.alert('提示', '计量单位名称已经存在','info');
                         return;
                     }
                 },
@@ -387,28 +393,19 @@
     $("#searchBtn").unbind().bind({
         click: function () {
             showUnitDetails( );
-
         }
     });
 
     function showUnitDetails( ) {
-        $.ajax({
-            type: "post",
-            url: "<%=path %>/cao/unit/findBy.do",
-            dataType: "json",
-            data: ({
-                uname: $.trim($("#searchName").val()),
-            }),
-            success: function (data) {
-                $("#tableData").datagrid('loadData', data);
-            },
-            //此处添加错误处理
-            error: function () {
-                $.messager.alert('查询提示', '查询数据后台异常，请稍后再试！', 'error');
-                return;
-            }
-        });
+        var params={
+            uname: $.trim($("#searchName").val())
+        }
+        var options=$("#tableData").datagrid('options');
+        options.url="<%=path %>/cao/unit/findBy.do";
+        $("#tableData").datagrid('load', params);
+
     }
+
 
     //重置按钮
     $("#searchResetBtn").unbind().bind({

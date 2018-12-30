@@ -2,11 +2,10 @@ package com.zking.erp.service.cao;
 
 import com.zking.erp.model.cao.Unit;
 import com.zking.erp.util.PageBean;
-import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
-public interface IUnitService {
+public interface IUnitCService {
     /**
      * 添加计量单位
      * @param unit
@@ -41,5 +40,15 @@ public interface IUnitService {
      * @return
      */
     List<Unit> queryUnitPager(Unit unit, PageBean pageBean);
+
+    /**
+     * 判断是否重名
+     * @param filedName
+     * @param filedValue
+     * @param idFiled
+     * @param objectID
+     * @return
+     */
+    Boolean checkIsNameExist(String filedName,String filedValue,String idFiled,String objectID);
 
 }

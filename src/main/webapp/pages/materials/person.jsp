@@ -65,7 +65,6 @@
                 <td>类型</td>
                 <td style="padding:5px">
                     <select name="Type" id="Type" style="width:230px;">
-                        <option value="">请选择</option>
                         <option value="业务员">业务员</option>
                         <option value="仓管员">仓管员</option>
                         <option value="财务员">财务员</option>
@@ -98,7 +97,6 @@
         initSystemData();
         initSelectInfo();
         initTableData();
-        ininPager();
         initForm();
     });
 
@@ -106,13 +104,13 @@
     function initSystemData() {
         $.ajax({
             type: "post",
-            url: "<%=path%>/depot/getBasicData.action",
+            url: "<%=path%>/cao/depot/getBasicData.do",
             //设置为同步
             async: false,
             dataType: "json",
             success: function (systemInfo) {
-                depotList = systemInfo.showModel.map.depotList;
-                var msgTip = systemInfo.showModel.msgTip;
+                depotList = systemInfo.depotList;
+                var msgTip = systemInfo.message;
                 if (msgTip == "exceptoin") {
                     $.messager.alert('提示', '查找系统基础信息异常,请与管理员联系！', 'error');
                     return;
@@ -151,6 +149,7 @@
     //初始化表格数据
     function initTableData() {
         $('#tableData').datagrid({
+            url: '<%=path %>/cao/person/findBy.do',
             //title:'经手人列表',
             //iconCls:'icon-save',
             //width:700,
@@ -166,13 +165,13 @@
             //fitColumns:true,
             //单击行是否选中
             //checkOnSelect : false,
-            url: '<%=path %>/person/findBy.action?pageSize=' + initPageSize,
             pagination: true,
             //交替出现背景
             striped: true,
             //loadFilter: pagerFilter,
-            pageSize: initPageSize,
-            pageList: initPageNum,
+            pageList:[2,5,10,15],
+            pageSize: 10,
+            pageNumber: 1,
             columns: [[
                 {field: 'Id', width: 35, align: "center", checkbox: true},
                 {title: '姓名', field: 'Name', width: 180},
@@ -183,7 +182,7 @@
                         var rowInfo = rec.Id + 'AaBb' + rec.Type + 'AaBb' + rec.Name;
                         if (1 == value) {
                             str += '<img src="<%=path%>/js/easyui-1.3.5/themes/icons/pencil.png" style="cursor: pointer;" onclick="editPerson(\'' + rowInfo + '\');"/>&nbsp;<a onclick="editPerson(\'' + rowInfo + '\');" style="text-decoration:none;color:black;" href="javascript:void(0)">编辑</a>&nbsp;&nbsp;';
-                            str += '<img src="<%=path%>/js/easyui-1.3.5/themes/icons/edit_remove.png" style="cursor: pointer;" onclick="deletePerson(' + rec.Id + ');"/>&nbsp;<a onclick="deletePerson(' + rec.Id + ');" style="text-decoration:none;color:black;" href="javascript:void(0)">删除</a>&nbsp;&nbsp;';
+                            str += '<img src="<%=path%>/js/easyui-1.3.5/themes/icons/edit_remove.png" style="cursor: pointer;" onclick="deletePerson(\'' + rec.Id + '\');"/>&nbsp;<a onclick="deletePerson(\'' + rec.Id + '\');" style="text-decoration:none;color:black;" href="javascript:void(0)">删除</a>&nbsp;&nbsp;';
                         }
                         return str;
                     }
@@ -231,28 +230,6 @@
         }
     });
 
-    //分页信息处理
-    function ininPager() {
-        try {
-            var opts = $("#tableData").datagrid('options');
-            var pager = $("#tableData").datagrid('getPager');
-            pager.pagination({
-                onSelectPage: function (pageNum, pageSize) {
-                    opts.pageNumber = pageNum;
-                    opts.pageSize = pageSize;
-                    pager.pagination('refresh',
-                        {
-                            pageNumber: pageNum,
-                            pageSize: pageSize
-                        });
-                    showPersonDetails(pageNum, pageSize);
-                }
-            });
-        }
-        catch (e) {
-            $.messager.alert('异常处理提示', "分页信息异常 :  " + e.name + ": " + e.message, 'error');
-        }
-    }
 
     //删除经手人信息
     function deletePerson(personID) {
@@ -260,14 +237,14 @@
             if (r) {
                 $.ajax({
                     type: "post",
-                    url: "<%=path %>/person/delete.action",
+                    url: "<%=path %>/cao/person/delete.do",
                     dataType: "json",
                     data: ({
-                        personID: personID,
+                        id: personID,
                         clientIp: '<%=clientIp %>'
                     }),
                     success: function (tipInfo) {
-                        var msg = tipInfo.showModel.msgTip;
+                        var msg = tipInfo.message;
                         if (msg == '成功') {
                             //加载完以后重新初始化
                             $("#searchBtn").click();
@@ -292,6 +269,10 @@
             $.messager.alert('删除提示', '没有记录被选中！', 'info');
             return;
         }
+        if (row.length == 1) {
+            deletePerson(row[0].id);
+            return;
+        }
         if (row.length > 0) {
             $.messager.confirm('删除确认', '确定要删除选中的' + row.length + '条经手人信息吗？', function (r) {
                 if (r) {
@@ -306,7 +287,7 @@
                     }
                     $.ajax({
                         type: "post",
-                        url: "<%=path %>/person/batchDelete.action",
+                        url: "<%=path %>/cao/person/batchDelete.do",
                         dataType: "json",
                         async: false,
                         data: ({
@@ -314,7 +295,7 @@
                             clientIp: '<%=clientIp %>'
                         }),
                         success: function (tipInfo) {
-                            var msg = tipInfo.showModel.msgTip;
+                            var msg = tipInfo.message;
                             if (msg == '成功') {
                                 //加载完以后重新初始化
                                 $("#searchBtn").click();
@@ -349,13 +330,15 @@
 
         orgPerson = "";
         personID = 0;
-        url = '<%=path %>/person/create.action';
+        url = '<%=path %>/cao/person/create.do';
     }
 
     //保存信息
     $("#savePerson").unbind().bind({
         click: function () {
             if (!$('#personFM').form('validate'))
+                return;
+            else if (checkDepotName())
                 return;
             else {
                 if (!$("#Type").val()) {
@@ -373,11 +356,11 @@
                         clientIp: '<%=clientIp %>'
                     }),
                     success: function (tipInfo) {
-                        if (tipInfo) {
+                        if (tipInfo.message) {
                             $('#personDlg').dialog('close');
 
                             var opts = $("#tableData").datagrid('options');
-                            showPersonDetails(opts.pageNumber, opts.pageSize);
+                            showPersonDetails();
                         }
                         else {
                             $.messager.show({
@@ -410,45 +393,58 @@
         personID = personInfo[0];
         //焦点在名称输入框==定焦在输入文字后面
         $("#Name").val("").focus().val(personInfo[2]);
-        url = '<%=path %>/person/update.action?personID=' + personInfo[0];
+        url = '<%=path %>/cao/person/update.do?id=' + personInfo[0];
+    }
+
+    //检查名称是否存在 ++ 重名无法提示问题需要跟进
+    function checkDepotName() {
+        var name = $.trim($("#Name").val());
+        //表示是否存在 true == 存在 false = 不存在
+        var flag = false;
+        //开始ajax名称检验，不能重名
+        if (name.length > 0 && (orgPerson.length == 0 || name != orgPerson)) {
+            $.ajax({
+                type: "post",
+                url: "<%=path %>/cao/person/checkIsNameExist.do",
+                dataType: "json",
+                async: false,
+                data: ({
+                    id: depotID,
+                    name: name
+                }),
+                success: function (tipInfo) {
+                    flag = tipInfo.flag;
+                    if (flag) {
+                        $.messager.alert('提示', '经手人名称已经存在', 'info');
+                        return;
+                    }
+                },
+                //此处添加错误处理
+                error: function () {
+                    $.messager.alert('提示', '检查经手人名称是否存在异常，请稍后再试！', 'error');
+                    return;
+                }
+            });
+        }
+        return flag;
     }
 
     //搜索处理
     $("#searchBtn").unbind().bind({
         click: function () {
-            showPersonDetails(1, initPageSize);
-            var opts = $("#tableData").datagrid('options');
-            var pager = $("#tableData").datagrid('getPager');
-            opts.pageNumber = 1;
-            opts.pageSize = initPageSize;
-            pager.pagination('refresh',
-                {
-                    pageNumber: 1,
-                    pageSize: initPageSize
-                });
+            showPersonDetails();
         }
     });
 
-    function showPersonDetails(pageNo, pageSize) {
-        $.ajax({
-            type: "post",
-            url: "<%=path %>/person/findBy.action",
-            dataType: "json",
-            data: ({
-                Name: $.trim($("#searchName").val()),
-                Type: $.trim($("#searchType").val()),
-                pageNo: pageNo,
-                pageSize: pageSize
-            }),
-            success: function (data) {
-                $("#tableData").datagrid('loadData', data);
-            },
-            //此处添加错误处理
-            error: function () {
-                $.messager.alert('查询提示', '查询数据后台异常，请稍后再试！', 'error');
-                return;
-            }
-        });
+    function showPersonDetails() {
+        var params={
+            Name: $.trim($("#searchName").val()),
+            Type: $.trim($("#searchType").val())
+        }
+        var options=$("#tableData").datagrid('options');
+        options.url="<%=path %>/cao/person/findBy.do";
+        $("#tableData").datagrid('load',params);
+
     }
 
     //重置按钮

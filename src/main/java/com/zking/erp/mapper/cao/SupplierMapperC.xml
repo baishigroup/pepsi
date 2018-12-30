@@ -47,16 +47,22 @@
     AllNeedGet=#{allneedget}, AllNeedPay=#{allneedpay}, description=#{description},
     isystem=#{isystem}, enabled=#{enabled} WHERE id=#{id}
   </update>
+  <update id="batchSetEnable" parameterType="com.zking.erp.model.cao.Supplier">
+    UPDATE supplier set enabled=#{enabled}
+    <foreach collection="supplierIDs" item="id" open=" where id in(" close=")" separator="," index="idx">
+      #{id}
+    </foreach>
+  </update>
   <delete id="deleteSupplierById">
     delete from supplier where id=#{id}
   </delete>
   <delete id="deleteSupplierByIds" parameterType="com.zking.erp.model.cao.Supplier">
     delete from supplier
-    <foreach collection="ids" item="id" open=" where id in(" close=")" separator="," index="idx">
+    <foreach collection="supplierIDs" item="id" open=" where id in(" close=")" separator="," index="idx">
       #{id}
     </foreach>
   </delete>
-  <select id="querySupplierPager" resultType="com.zking.erp.model.cao.Supplier"
+  <select id="querySupplierPager" resultMap="BaseResultMap"
           parameterType="com.zking.erp.model.cao.Supplier">
     select <include refid="Base_Column_List"/>
     from supplier where 1=1
@@ -72,6 +78,20 @@
     <if test="null!=description and ''!=description">
       and description like concat(concat('%',#{description}),'%')
     </if>
+    <if test="null!=type and ''!=type">
+      and type =#{type}
+    </if>
+    and isystem=1 order by id desc
   </select>
+    <select id="checkIsNameExist" resultType="com.zking.erp.model.cao.Supplier">
+      select <include refid="Base_Column_List"/>
+      from supplier where 1=1
+      <if test="null!=param2 and ''!=param2">
+        and (supplier=#{param2})
+      </if>
+      <if test="null!=param4 and ''!=param4">
+        and (id !=#{param4})
+      </if>
+    </select>
 
 </mapper>

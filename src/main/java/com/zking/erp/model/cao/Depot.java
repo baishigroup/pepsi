@@ -22,6 +22,29 @@ public class Depot implements Serializable {
 
     private String remark;
 
+    /**
+     * IDs 批量操作使用
+     */
+    private String depotIDs = "";
+
+    private String[] ids=null;
+
+    public String getDepotIDs() {
+        return depotIDs;
+    }
+
+    public void setDepotIDs(String depotIDs) {
+        this.depotIDs = depotIDs;
+    }
+
+    public String[] getIds() {
+        return ids;
+    }
+
+    public void setIds(String[] ids) {
+        this.ids = ids;
+    }
+
     public Depot(String id, String name, String address, Double warehousing, Double truckage, Integer type, String sort, String remark) {
         this.id = id;
         this.name = name;

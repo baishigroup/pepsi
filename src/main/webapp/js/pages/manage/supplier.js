@@ -34,7 +34,6 @@ function getPersonList(){
         dataType: "json",
         success: function (systemInfo)
         {
-            console.log("成功");
             var msgTip = systemInfo.message;
             if(msgTip !== "exceptoin"){
                 var personList = systemInfo.personList;
@@ -70,6 +69,7 @@ function initTableData() {
     $("#searchPanel").panel({width:webW-2});
     $("#tablePanel").panel({width:webW-2});
     $('#tableData').datagrid({
+        url: path+'/cao/supplier/findBy.do?type='+listType,
         //title:'单位列表',
         //iconCls:'icon-save',
         //width:700,
@@ -85,14 +85,15 @@ function initTableData() {
         //fitColumns:true,
         //单击行是否选中
         checkOnSelect : false,
+        pagination: true,
         //交替出现背景
         striped : true,
-        pagination: true,
         //自动截取数据
         //nowrap : true,
         //loadFilter: pagerFilter,
-        pageSize: initPageSize,
-        pageList: initPageNum,
+        pageList:[2,5,10,15],
+        pageSize: 10,
+        pageNumber: 1,
         columns:[[
             { field: 'id',width:35,align:"center",checkbox:true},
             { title: '操作',field: 'op',align:"center",width:60,formatter:function(value,rec)
@@ -181,32 +182,6 @@ function initTableData() {
 }
 
 
-//分页信息处理
-// function ininPager() {
-//     try
-//     {
-//         var opts = $("#tableData").datagrid('options');
-//         var pager = $("#tableData").datagrid('getPager');
-//         pager.pagination({
-//             onSelectPage:function(pageNum, pageSize)
-//             {
-//                 opts.pageNumber = pageNum;
-//                 opts.pageSize = pageSize;
-//                 pager.pagination('refresh',
-//                     {
-//                         pageNumber:pageNum,
-//                         pageSize:pageSize
-//                     });
-//                 showSupplierDetails(pageNum,pageSize);
-//             }
-//         });
-//     }
-//     catch (e)
-//     {
-//         $.messager.alert('异常处理提示',"分页信息异常 :  " + e.name + ": " + e.message,'error');
-//     }
-// }
-
 //删除信息
 function deleteSupplier(supplierInfo) {
     $.messager.confirm('删除确认','确定要删除此条信息吗？',function(r)
@@ -216,16 +191,16 @@ function deleteSupplier(supplierInfo) {
             var supplierTotalInfo = supplierInfo.split("AaBb");
             $.ajax({
                 type:"post",
-                url: path + "/supplier/delete.action",
+                url: path + "/cao/supplier/delete.do",
                 dataType: "json",
                 data: ({
-                    supplierID : supplierTotalInfo[0],
+                    id : supplierTotalInfo[0],
                     supplier:supplierTotalInfo[1],
                     clientIp: clientIp
                 }),
                 success: function (tipInfo)
                 {
-                    var msg = tipInfo.showModel.msgTip;
+                    var msg = tipInfo.message;
                     if(msg == '成功')
                     //加载完以后重新初始化
                         $("#searchBtn").click();
@@ -251,6 +226,10 @@ function batDeleteSupplier() {
         $.messager.alert('删除提示','没有记录被选中！','info');
         return;
     }
+    if (row.length == 1) {
+        deleteSupplier(row[0].id);
+        return;
+    }
     if(row.length > 0)
     {
         $.messager.confirm('删除确认','确定要删除选中的' + row.length + '条信息吗？',function(r)
@@ -269,7 +248,7 @@ function batDeleteSupplier() {
                 }
                 $.ajax({
                     type:"post",
-                    url: path + "/supplier/batchDelete.action",
+                    url: path + "/cao/supplier/batchDelete.do",
                     dataType: "json",
                     async :  false,
                     data: ({
@@ -278,7 +257,7 @@ function batDeleteSupplier() {
                     }),
                     success: function (tipInfo)
                     {
-                        var msg = tipInfo.showModel.msgTip;
+                        var msg = tipInfo.message;
                         if(msg == '成功')
                         {
                             //加载完以后重新初始化
@@ -326,17 +305,17 @@ function setEnableFun() {
                 }
                 $.ajax({
                     type:"post",
-                    url: path + "/supplier/batchSetEnable.action",
+                    url: path + "/cao/supplier/batchSetEnable.do",
                     dataType: "json",
                     async :  false,
                     data: ({
-                        enabled: true,
+                        enabled: 1,
                         supplierIDs : ids,
                         clientIp: clientIp
                     }),
                     success: function (tipInfo)
                     {
-                        var msg = tipInfo.showModel.msgTip;
+                        var msg = tipInfo.message;
                         if(msg == '成功')
                         {
                             //加载完以后重新初始化
@@ -382,19 +361,19 @@ function setDisEnableFun() {
                     }
                     ids += row[i].id + ",";
                 }
+
                 $.ajax({
                     type:"post",
-                    url: path + "/supplier/batchSetEnable.action",
+                    url: path + "/cao/supplier/batchSetEnable.do",
                     dataType: "json",
                     async :  false,
                     data: ({
-                        enabled: false,
+                        enabled: 0,
                         supplierIDs : ids,
                         clientIp: clientIp
                     }),
-                    success: function (tipInfo)
-                    {
-                        var msg = tipInfo.showModel.msgTip;
+                    success: function (tipInfo) {
+                        var msg = tipInfo.message;
                         if(msg == '成功')
                         {
                             //加载完以后重新初始化
@@ -432,7 +411,7 @@ function setInputFun(){
 
 //导出数据
 function setOutputFun(){
-    window.location.href = path + "/supplier/exportExcel.action?browserType=" + getOs() + "&type=" + listTypeEn;
+    window.location.href = path + "/cao/supplier/exportExcel.do?browserType=" + getOs() + "&type=" + listTypeEn;
 }
 
 //增加单位
@@ -448,7 +427,7 @@ function addSuppler() {
     $('#supplierFM').form('clear');
     orgSupplier = "";
     supplierID = 0;
-    url = path + '/supplier/create.action';
+    url = path + '/cao/supplier/create.do';
 }
 
 function bindEvent(){
@@ -620,7 +599,7 @@ function editSupplier(supplierTotalInfo) {
     supplierID = supplierInfo[0];
     //焦点在名称输入框==定焦在输入文字后面
     $("#supplier").val("").focus().val(supplierInfo[1]);
-    url = path + '/supplier/update.action?supplierID=' + supplierInfo[0];
+    url = path + '/cao/supplier/update.do?id=' + supplierInfo[0];
 
     //显示累计应收和累计应付
     var thisDateTime = getNowFormatDateTime(); //当前时间
@@ -688,6 +667,7 @@ function editSupplier(supplierTotalInfo) {
 //检查单位名称是否存在 ++ 重名无法提示问题需要跟进
 function checkSupplierName() {
     var supplierName = $.trim($("#supplier").val());
+    alert(supplierName);
     //表示是否存在 true == 存在 false = 不存在
     var flag = false;
     //开始ajax名称检验，不能重名
@@ -695,17 +675,17 @@ function checkSupplierName() {
     {
         $.ajax({
             type:"post",
-            url: path + "/supplier/checkIsNameExist.action",
+            url: path + "/cao/supplier/checkIsNameExist.do",
             dataType: "json",
             async :  false,
             data: ({
-                supplierID : supplierID,
+                id : supplierID,
                 supplier : supplierName
             }),
             success: function (tipInfo)
             {
-                flag = tipInfo;
-                if(tipInfo)
+                flag = tipInfo.flag;
+                if(flag)
                 {
                     $.messager.alert('提示','单位名称已经存在','info');
                     return;
@@ -723,29 +703,17 @@ function checkSupplierName() {
 }
 
 
-function showSupplierDetails( ) {
-    $.ajax({
-        type:"post",
-        url: path + "/supplier/findBy.action",
-        dataType: "json",
-        data: ({
-            supplier:$.trim($("#searchSupplier").val()),
-            type: listType,
-            phonenum:$.trim($("#searchPhonenum").val()),
-            telephone:$.trim($("#searchTelephone").val()),
-            description:$.trim($("#searchDesc").val())
-        }),
-        success: function (data)
-        {
-            $("#tableData").datagrid('loadData',data);
-            //$('#tableData').datagrid('reload');
-        },
-        //此处添加错误处理
-        error:function()
-        {
-            $.messager.alert('查询提示','查询数据后台异常，请稍后再试！','error');
-            return;
-        }
-    });
+function showSupplierDetails() {
+    var params={
+        supplier:$.trim($("#searchSupplier").val()),
+        type: listType,
+        phonenum:$.trim($("#searchPhonenum").val()),
+        telephone:$.trim($("#searchTelephone").val()),
+        description:$.trim($("#searchDesc").val())
+    }
+    var options=$("#tableData").datagrid('options');
+    options.url= path+"/cao/supplier/findBy.do";
+    $("#tableData").datagrid('load',params);
+
 }
 

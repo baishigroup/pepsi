@@ -88,7 +88,6 @@
     //初始化界面
     $(function () {
         initTableData();
-        ininPager();
         initForm();
         browserFit();
     });
@@ -121,7 +120,8 @@
     //初始化表格数据
     function initTableData() {
         $('#tableData').datagrid({
-            //title:'仓库列表',
+            url: '<%=path %>/cao/depot/findBy.do?type=1',
+            //title:'礼品卡列表',
             //iconCls:'icon-save',
             //width:700,
             height: heightInfo,
@@ -136,13 +136,13 @@
             //fitColumns:true,
             //单击行是否选中
             checkOnSelect: false,
-            url: '<%=path %>/depot/findBy.action?type=1&pageSize=' + initPageSize,
             pagination: true,
             //交替出现背景
             striped: true,
             //loadFilter: pagerFilter,
-            pageSize: initPageSize,
-            pageList: initPageNum,
+            pageList:[2,5,10,15],
+            pageSize: 10,
+            pageNumber: 1,
             columns: [[
                 {field: 'id', width: 35, align: "center", checkbox: true},
                 {title: '礼品卡名称', field: 'name', width: 200},
@@ -154,7 +154,7 @@
                         var rowInfo = rec.id + 'AaBb' + rec.name + 'AaBb' + rec.sort + 'AaBb' + rec.remark;
                         if (1 == value) {
                             str += '<img src="<%=path%>/js/easyui-1.3.5/themes/icons/pencil.png" style="cursor: pointer;" onclick="editDepot(\'' + rowInfo + '\');"/>&nbsp;<a onclick="editDepot(\'' + rowInfo + '\');" style="text-decoration:none;color:black;" href="javascript:void(0)">编辑</a>&nbsp;&nbsp;';
-                            str += '<img src="<%=path%>/js/easyui-1.3.5/themes/icons/edit_remove.png" style="cursor: pointer;" onclick="deleteDepot(' + rec.id + ');"/>&nbsp;<a onclick="deleteDepot(' + rec.id + ');" style="text-decoration:none;color:black;" href="javascript:void(0)">删除</a>&nbsp;&nbsp;';
+                            str += '<img src="<%=path%>/js/easyui-1.3.5/themes/icons/edit_remove.png" style="cursor: pointer;" onclick="deleteDepot(\'' + rec.id + '\');"/>&nbsp;<a onclick="deleteDepot(\'' + rec.id + '\');" style="text-decoration:none;color:black;" href="javascript:void(0)">删除</a>&nbsp;&nbsp;';
                         }
                         return str;
                     }
@@ -202,53 +202,31 @@
         }
     });
 
-    //分页信息处理
-    function ininPager() {
-        try {
-            var opts = $("#tableData").datagrid('options');
-            var pager = $("#tableData").datagrid('getPager');
-            pager.pagination({
-                onSelectPage: function (pageNum, pageSize) {
-                    opts.pageNumber = pageNum;
-                    opts.pageSize = pageSize;
-                    pager.pagination('refresh',
-                        {
-                            pageNumber: pageNum,
-                            pageSize: pageSize
-                        });
-                    showDepotDetails(pageNum, pageSize);
-                }
-            });
-        }
-        catch (e) {
-            $.messager.alert('异常处理提示', "分页信息异常 :  " + e.name + ": " + e.message, 'error');
-        }
-    }
 
     //删除供应商信息
     function deleteDepot(depotID) {
-        $.messager.confirm('删除确认', '确定要删除此仓库信息吗？', function (r) {
+        $.messager.confirm('删除确认', '确定要删除此礼品卡信息吗？', function (r) {
             if (r) {
                 $.ajax({
                     type: "post",
-                    url: "<%=path %>/depot/delete.action",
+                    url: "<%=path %>/cao/depot/delete.do",
                     dataType: "json",
                     data: ({
-                        depotID: depotID,
+                        id: depotID,
                         clientIp: '<%=clientIp %>'
                     }),
                     success: function (tipInfo) {
-                        var msg = tipInfo.showModel.msgTip;
+                        var msg = tipInfo.message;
                         if (msg == '成功') {
                             //加载完以后重新初始化
                             $("#searchBtn").click();
                         }
                         else
-                            $.messager.alert('删除提示', '删除仓库信息失败，请稍后再试！', 'error');
+                            $.messager.alert('删除提示', '删除礼品卡信息失败，请稍后再试！', 'error');
                     },
                     //此处添加错误处理
                     error: function () {
-                        $.messager.alert('删除提示', '删除仓库信息异常，请稍后再试！', 'error');
+                        $.messager.alert('删除提示', '删除礼品卡信息异常，请稍后再试！', 'error');
                         return;
                     }
                 });
@@ -263,8 +241,12 @@
             $.messager.alert('删除提示', '没有记录被选中！', 'info');
             return;
         }
+        if (row.length == 1) {
+            deleteDepot(row[0].id);
+            return;
+        }
         if (row.length > 0) {
-            $.messager.confirm('删除确认', '确定要删除选中的' + row.length + '条仓库信息吗？', function (r) {
+            $.messager.confirm('删除确认', '确定要删除选中的' + row.length + '条礼品卡信息吗？', function (r) {
                 if (r) {
                     var ids = "";
                     for (var i = 0; i < row.length; i++) {
@@ -277,7 +259,7 @@
                     }
                     $.ajax({
                         type: "post",
-                        url: "<%=path %>/depot/batchDelete.action",
+                        url: "<%=path %>/cao/depot/batchDelete.do",
                         dataType: "json",
                         async: false,
                         data: ({
@@ -285,18 +267,18 @@
                             clientIp: '<%=clientIp %>'
                         }),
                         success: function (tipInfo) {
-                            var msg = tipInfo.showModel.msgTip;
+                            var msg = tipInfo.message;
                             if (msg == '成功') {
                                 //加载完以后重新初始化
                                 $("#searchBtn").click();
                                 $(":checkbox").attr("checked", false);
                             }
                             else
-                                $.messager.alert('删除提示', '删除仓库信息失败，请稍后再试！', 'error');
+                                $.messager.alert('删除提示', '删除礼品卡信息失败，请稍后再试！', 'error');
                         },
                         //此处添加错误处理
                         error: function () {
-                            $.messager.alert('删除提示', '删除仓库信息异常，请稍后再试！', 'error');
+                            $.messager.alert('删除提示', '删除礼品卡信息异常，请稍后再试！', 'error');
                             return;
                         }
                     });
@@ -315,24 +297,29 @@
         $("#clientIp").val('<%=clientIp %>');
         $("#sort").val("");
         $("#remark").val("");
-        $('#depotDlg').dialog('open').dialog('setTitle', '<img src="<%=path%>/js/easyui-1.3.5/themes/icons/edit_add.png"/>&nbsp;增加仓库信息');
+        $('#depotDlg').dialog('open').dialog('setTitle', '<img src="<%=path%>/js/easyui-1.3.5/themes/icons/edit_add.png"/>&nbsp;增加礼品卡信息');
         $(".window-mask").css({width: webW, height: webH});
         $("#name").val("").focus();
         //$('#depotFM').form('clear');
 
         orgDepot = "";
         depotID = 0;
-        url = '<%=path %>/depot/create.action';
+        url = '<%=path %>/cao/depot/create.do';
     }
 
     //保存信息
     $("#saveDepot").unbind().bind({
         click: function () {
-            if (!$('#depotFM').form('validate'))
+            //alert(!$('#depotFM').form('validate')+"123");
+            if (!$('#depotFM').form('validate')){
                 return;
-            else if (checkDepotName())
+            }
+            else if (checkDepotName()){
                 return;
+            }
+
             else {
+                alert(11);
                 $.ajax({
                     type: "post",
                     url: url,
@@ -346,22 +333,22 @@
                         clientIp: '<%=clientIp %>'
                     }),
                     success: function (tipInfo) {
-                        if (tipInfo) {
+                        if (tipInfo.message) {
                             $('#depotDlg').dialog('close');
 
                             var opts = $("#tableData").datagrid('options');
-                            showDepotDetails(opts.pageNumber, opts.pageSize);
+                            showDepotDetails();
                         }
                         else {
                             $.messager.show({
                                 title: '错误提示',
-                                msg: '保存仓库信息失败，请稍后重试!'
+                                msg: '保存。礼品卡信息失败，请稍后重试!'
                             });
                         }
                     },
                     //此处添加错误处理
                     error: function () {
-                        $.messager.alert('提示', '保存仓库信息异常，请稍后再试！', 'error');
+                        $.messager.alert('提示', '保存礼品卡信息异常，请稍后再试！', 'error');
                         return;
                     }
                 });
@@ -379,12 +366,12 @@
         $("#remark").val(depotInfo[3]);
 
         orgDepot = depotInfo[1];
-        $('#depotDlg').dialog('open').dialog('setTitle', '<img src="<%=path%>/js/easyui-1.3.5/themes/icons/pencil.png"/>&nbsp;编辑仓库信息');
+        $('#depotDlg').dialog('open').dialog('setTitle', '<img src="<%=path%>/js/easyui-1.3.5/themes/icons/pencil.png"/>&nbsp;编辑礼品卡信息');
         $(".window-mask").css({width: webW, height: webH});
         depotID = depotInfo[0];
         //焦点在名称输入框==定焦在输入文字后面
         $("#name").val("").focus().val(depotInfo[1]);
-        url = '<%=path %>/depot/update.action?depotID=' + depotInfo[0];
+        url = '<%=path %>/cao/depot/update.do?id=' + depotInfo[0];
     }
 
     //检查名称是否存在 ++ 重名无法提示问题需要跟进
@@ -396,25 +383,26 @@
         if (name.length > 0 && (orgDepot.length == 0 || name != orgDepot)) {
             $.ajax({
                 type: "post",
-                url: "<%=path %>/depot/checkIsNameExist.action",
+                url: "<%=path %>/cao/depot/checkIsNameExist.do",
                 dataType: "json",
                 async: false,
                 data: ({
-                    depotID: depotID,
+                    id: depotID,
                     name: name
                 }),
                 success: function (tipInfo) {
-                    flag = tipInfo;
-                    if (tipInfo) {
-                        $.messager.alert('提示', '仓库名称已经存在', 'info');
-                        //alert("仓库名称已经存在");
+                    flag = tipInfo.flag;
+                    alert(flag);
+                    if (flag) {
+                        $.messager.alert('提示', '礼品卡名称已经存在', 'info');
+                        //alert("礼品卡名称已经存在");
                         //$("#name").val("");
                         return;
                     }
                 },
                 //此处添加错误处理
                 error: function () {
-                    $.messager.alert('提示', '检查仓库名称是否存在异常，请稍后再试！', 'error');
+                    $.messager.alert('提示', '检查礼品卡名称是否存在异常，请稍后再试！', 'error');
                     return;
                 }
             });
@@ -425,40 +413,19 @@
     //搜索处理
     $("#searchBtn").unbind().bind({
         click: function () {
-            showDepotDetails(1, initPageSize);
-            var opts = $("#tableData").datagrid('options');
-            var pager = $("#tableData").datagrid('getPager');
-            opts.pageNumber = 1;
-            opts.pageSize = initPageSize;
-            pager.pagination('refresh',
-                {
-                    pageNumber: 1,
-                    pageSize: initPageSize
-                });
+            showDepotDetails();
         }
     });
 
-    function showDepotDetails(pageNo, pageSize) {
-        $.ajax({
-            type: "post",
-            url: "<%=path %>/depot/findBy.action",
-            dataType: "json",
-            data: ({
-                name: $.trim($("#searchName").val()),
-                type: 1, // 礼品卡
-                remark: $.trim($("#searchRemark").val()),
-                pageNo: pageNo,
-                pageSize: pageSize
-            }),
-            success: function (data) {
-                $("#tableData").datagrid('loadData', data);
-            },
-            //此处添加错误处理
-            error: function () {
-                $.messager.alert('查询提示', '查询数据后台异常，请稍后再试！', 'error');
-                return;
-            }
-        });
+    function showDepotDetails() {
+        var params={
+            name: $.trim($("#searchName").val()),
+            type: 1,  //仓库
+            remark: $.trim($("#searchRemark").val())
+        }
+        var options=$("#tableData").datagrid('options');
+        options.url="<%=path %>/cao/depot/findBy.do";
+        $("#tableData").datagrid('load',params);
     }
 
     //重置按钮

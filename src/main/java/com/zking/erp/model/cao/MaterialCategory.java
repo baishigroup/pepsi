@@ -14,6 +14,17 @@ public class MaterialCategory implements Serializable{
 
     private String parentid;
 
+    /**
+     * IDs 批量操作使用
+     */
+    private String materialCategoryIDs = "";
+
+    private String[] ids=null;
+
+    private String ParentName;
+
+
+
     public MaterialCategory(String id, String name, Integer categorylevel, String parentid) {
         this.id = id;
         this.name = name;
@@ -23,6 +34,30 @@ public class MaterialCategory implements Serializable{
 
     public MaterialCategory() {
         super();
+    }
+
+    public String getParentName() {
+        return ParentName;
+    }
+
+    public void setParentName(String parentName) {
+        ParentName = parentName;
+    }
+
+    public String getMaterialCategoryIDs() {
+        return materialCategoryIDs;
+    }
+
+    public void setMaterialCategoryIDs(String materialCategoryIDs) {
+        this.materialCategoryIDs = materialCategoryIDs;
+    }
+
+    public String[] getIds() {
+        return ids;
+    }
+
+    public void setIds(String[] ids) {
+        this.ids = ids;
     }
 
     public String getId() {

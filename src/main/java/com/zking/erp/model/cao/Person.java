@@ -12,6 +12,29 @@ public class Person implements Serializable{
 
     private String name;
 
+    /**
+     * IDs 批量操作使用
+     */
+    private String personIDs = "";
+
+    private String[] ids=null;
+
+    public String getPersonIDs() {
+        return personIDs;
+    }
+
+    public void setPersonIDs(String personIDs) {
+        this.personIDs = personIDs;
+    }
+
+    public String[] getIds() {
+        return ids;
+    }
+
+    public void setIds(String[] ids) {
+        this.ids = ids;
+    }
+
     public Person(String id, String type, String name) {
         this.id = id;
         this.type = type;

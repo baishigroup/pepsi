@@ -30,10 +30,27 @@ public interface MaterialCategoryMapperC {
     int deleteMaterialCateById(String id);
 
     /**
+     * 批量刪除
+     * @param materialCategory
+     * @return
+     */
+    int deleteMaterialCateByIds(MaterialCategory materialCategory);
+
+    /**
      * 根据条件查询商品信息
      * @param materialCategory
      * @return
      */
-    List<MaterialCategory> queryMaterialCate(MaterialCategory materialCategory);
+    List<MaterialCategory> queryMaterialCatePager(MaterialCategory materialCategory);
+
+    /**
+     * 判断是否重名
+     * @param filedName
+     * @param filedValue
+     * @param idFiled
+     * @param objectID
+     * @return
+     */
+    List<MaterialCategory> checkIsNameExist(String filedName, String filedValue, String idFiled, String objectID);
 
 }

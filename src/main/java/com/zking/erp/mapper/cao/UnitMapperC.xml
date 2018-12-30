@@ -25,8 +25,8 @@
   <delete id="deleteUnitByIds" parameterType="com.zking.erp.model.cao.Unit">
     delete from unit
     <foreach collection="ids" item="id" open=" where id in(" close=")" separator="," index="idx">
-      #{id}
-    </foreach>
+    #{id}
+  </foreach>
   </delete>
   <select id="queryUnitPager" resultMap="UnitResult"
           parameterType="com.zking.erp.model.cao.Unit">
@@ -35,6 +35,18 @@
     <if test="null!=uname and ''!=uname">
       and uname like concat(concat('%',#{uname}),'%')
     </if>
+    order by id asc
   </select>
+  <select id="checkIsNameExist" resultType="com.zking.erp.model.cao.Unit">
+    select <include refid="Base_Column_List"/>
+    from unit where 1=1
+    <if test="null!=param2 and ''!=param2">
+      and (uname=#{param2})
+    </if>
+    <if test="null!=param4 and ''!=param4">
+      and (id !=#{param4})
+    </if>
+  </select>
+
 
 </mapper>

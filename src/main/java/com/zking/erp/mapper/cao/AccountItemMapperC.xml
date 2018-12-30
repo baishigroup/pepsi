@@ -15,4 +15,21 @@
     Id, HeaderId, AccountId, InOutItemId, EachAmount, Remark
   </sql>
 
+  <select id="queryAccountItemByHeaderId" resultType="com.zking.erp.model.cao.AccountItem"
+          parameterType="com.zking.erp.model.cao.AccountItem">
+    SELECT accountite0_.Id  , accountite0_.HeaderId  , accountite0_.AccountId ,account0_.Name AccountName , accountite0_.InOutItemId  ,
+    inoutitem0_.Name InOutItemName, accountite0_.EachAmount  , accountite0_.Remark  FROM accountitem accountite0_  LEFT JOIN inoutitem inoutitem0_
+    ON accountite0_.InOutItemId=inoutitem0_.id  LEFT JOIN account account0_ ON  accountite0_.AccountId=account0_.id
+    WHERE 1=1  AND  accountite0_.HeaderId=#{headerid}  ORDER BY accountite0_.Id ASC
+  </select>
+
+  <select id="queryAccountItemByItem" resultType="com.zking.erp.model.cao.AccountItem">
+      SELECT <include refid="Base_Column_List"/>
+    from accountitem where 1=1 and AccountId=#{param1}
+    <foreach collection="param2" item="id" open=" and HeaderId in(" close=")" separator="," index="idx">
+      #{id}
+    </foreach>
+    </select>
+
+
 </mapper>

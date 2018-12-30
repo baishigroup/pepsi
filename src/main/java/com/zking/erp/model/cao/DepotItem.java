@@ -52,6 +52,38 @@ public class DepotItem implements Serializable{
 
     private String mtype;
 
+    private String MaterialName;
+    private String MaterialModel;
+    private String MaterialUnit;
+
+
+    private String UnitId;
+    private String UnitName;
+
+    private String DepotName;
+    //调拨时。对方的仓库
+    private String AnotherDepotName;
+
+
+
+    private String Inserted = "";    //json插入记录
+    private String Deleted = "";    //json删除记录
+    private String Updated = "";    //json修改记录
+
+    private String HeadIds = "";    //表头集合列表
+    private String MaterialIds = "";    //材料列表
+    private String MonthTime = "";  //月份
+    private String ProjectId = null;
+    private String browserType = "";
+
+    private String mpList = ""; //商品属性
+
+    private String clientIp="";
+
+    private String number;
+    private String type;
+    private String OperTime;
+
     public DepotItem(String id, String headerid, String materialid, String munit, Double opernumber, Double basicnumber, Double unitprice, Double taxunitprice, Double allprice, String remark, String img, Double incidentals, String depotid, String anotherdepotid, Double taxrate, Double taxmoney, Double taxlastmoney, String otherfield1, String otherfield2, String otherfield3, String otherfield4, String otherfield5, String mtype) {
         this.id = id;
         this.headerid = headerid;
@@ -80,6 +112,166 @@ public class DepotItem implements Serializable{
 
     public DepotItem() {
         super();
+    }
+
+    public String getNumber() {
+        return number;
+    }
+
+    public void setNumber(String number) {
+        this.number = number;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    public String getOperTime() {
+        return OperTime;
+    }
+
+    public void setOperTime(String operTime) {
+        OperTime = operTime;
+    }
+
+    public String getMaterialName() {
+        return MaterialName;
+    }
+
+    public void setMaterialName(String materialName) {
+        MaterialName = materialName;
+    }
+
+    public String getMaterialModel() {
+        return MaterialModel;
+    }
+
+    public void setMaterialModel(String materialModel) {
+        MaterialModel = materialModel;
+    }
+
+    public String getMaterialUnit() {
+        return MaterialUnit;
+    }
+
+    public void setMaterialUnit(String materialUnit) {
+        MaterialUnit = materialUnit;
+    }
+
+    public String getUnitId() {
+        return UnitId;
+    }
+
+    public void setUnitId(String unitId) {
+        UnitId = unitId;
+    }
+
+    public String getUnitName() {
+        return UnitName;
+    }
+
+    public void setUnitName(String unitName) {
+        UnitName = unitName;
+    }
+
+    public String getDepotName() {
+        return DepotName;
+    }
+
+    public void setDepotName(String depotName) {
+        DepotName = depotName;
+    }
+
+    public String getAnotherDepotName() {
+        return AnotherDepotName;
+    }
+
+    public void setAnotherDepotName(String anotherDepotName) {
+        AnotherDepotName = anotherDepotName;
+    }
+
+    public String getInserted() {
+        return Inserted;
+    }
+
+    public void setInserted(String inserted) {
+        Inserted = inserted;
+    }
+
+    public String getDeleted() {
+        return Deleted;
+    }
+
+    public void setDeleted(String deleted) {
+        Deleted = deleted;
+    }
+
+    public String getUpdated() {
+        return Updated;
+    }
+
+    public void setUpdated(String updated) {
+        Updated = updated;
+    }
+
+    public String getHeadIds() {
+        return HeadIds;
+    }
+
+    public void setHeadIds(String headIds) {
+        HeadIds = headIds;
+    }
+
+    public String getMaterialIds() {
+        return MaterialIds;
+    }
+
+    public void setMaterialIds(String materialIds) {
+        MaterialIds = materialIds;
+    }
+
+    public String getMonthTime() {
+        return MonthTime;
+    }
+
+    public void setMonthTime(String monthTime) {
+        MonthTime = monthTime;
+    }
+
+    public String getProjectId() {
+        return ProjectId;
+    }
+
+    public void setProjectId(String projectId) {
+        ProjectId = projectId;
+    }
+
+    public String getBrowserType() {
+        return browserType;
+    }
+
+    public void setBrowserType(String browserType) {
+        this.browserType = browserType;
+    }
+
+    public String getMpList() {
+        return mpList;
+    }
+
+    public void setMpList(String mpList) {
+        this.mpList = mpList;
+    }
+
+    public String getClientIp() {
+        return clientIp;
+    }
+
+    public void setClientIp(String clientIp) {
+        this.clientIp = clientIp;
     }
 
     public String getId() {

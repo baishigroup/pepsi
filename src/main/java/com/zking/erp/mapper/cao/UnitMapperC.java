@@ -42,6 +42,14 @@ public interface UnitMapperC {
      */
     List<Unit> queryUnitPager(Unit unit);
 
-
+    /**
+     * 判断是否重名
+     * @param filedName
+     * @param filedValue
+     * @param idFiled
+     * @param objectID
+     * @return
+     */
+    List<Unit> checkIsNameExist(String filedName,String filedValue,String idFiled,String objectID);
 
 }
