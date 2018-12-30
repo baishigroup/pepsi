@@ -22,7 +22,7 @@
     <script src="<%=path %>/js/common/common.js"></script>
     <script src="<%=path %>/js/pages/materials/bill_detail.js"></script>
     <script>
-        var kid = ${sessionScope.user.id};
+        var kid = "${sessionScope.user.id}";
         var path = "<%=path%>";
         var clientIp = "<%=clientIp%>";
     </script>

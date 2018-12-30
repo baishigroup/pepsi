@@ -17,4 +17,18 @@ public interface FunctionsMapperJ {
 
      List<Functions> queryFunctionByIds(Functions functions);
 
+     List<Functions>  queryFunctionByLikePager(Functions functions);
+
+     List<Functions> checkIsNameExist(String filedName, String filedVale, String idFiled, String objectID);
+
+    int insert(Functions functions);
+
+    Functions selectById(String id);
+
+    int updateById(Functions record);
+
+    int deleteById(String id);
+
+    int delete(Functions functions);
+
 }

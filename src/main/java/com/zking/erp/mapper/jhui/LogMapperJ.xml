@@ -16,5 +16,44 @@
   <sql id="Base_Column_List" >
     id, userID, operation, clientIP, createtime, status, contentdetails, remark
   </sql>
+    <select id="queryLogByLikePager" resultType="com.zking.erp.model.jhui.Log"
+            parameterType="com.zking.erp.model.jhui.Log">
+       SELECT u.username username,l.* FROM LOG l,USER u WHERE l.userID=u.id
+      <if test="userid!= null and userid!=''" >
+        AND l.userid=#{userid}
+      </if>
+      <if test="status!= null and status!=''" >
+        AND l.status=#{status}
+      </if>
+      <if test="operation!= null and operation!=''" >
+        AND (l.operation LIKE concat(concat('%',#{operation}),'%'))
+      </if>
+      <if test="contentdetails!= null and contentdetails!=''" >
+        AND (l.contentdetails LIKE concat(concat('%',#{contentdetails}),'%'))
+      </if>
+      <if test="remark!= null and remark!=''" >
+        AND (l.remark LIKE concat(concat('%',#{remark}),'%'))
+      </if>
+      <if test="clientIp!= null and clientIp!=''" >
+        AND (l.clientIp LIKE concat(concat('%',#{clientIp}),'%'))
+      </if>
+      <if test="beginTime!= null and beginTime!=''" >
+        AND l.createtime &gt;=#{beginTime}
+      </if>
+      <if test="endTime!= null and endTime!=''" >
+        AND l.createtime &lt;=#{endTime}
+      </if>
+        ORDER BY createtime DESC
+
+    </select>
+
+  <insert id="insert" parameterType="com.zking.erp.model.jhui.Log" >
+    insert into log (id, userID, operation,
+    clientIP, createtime, status,
+    contentdetails, remark)
+    values (#{id,jdbcType=VARCHAR}, #{userid,jdbcType=VARCHAR}, #{operation,jdbcType=VARCHAR},
+    #{clientip,jdbcType=VARCHAR}, #{createtime,jdbcType=TIMESTAMP}, #{status,jdbcType=TINYINT},
+    #{contentdetails,jdbcType=VARCHAR}, #{remark,jdbcType=VARCHAR})
+  </insert>
 
 </mapper>

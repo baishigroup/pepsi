@@ -126,7 +126,6 @@
     //初始化界面
     $(function () {
         initTableData();
-        ininPager();
         initForm();
         bindEvent();
     });
@@ -157,13 +156,14 @@
             //fitColumns:true,
             //单击行是否选中
             checkOnSelect: false,
-            url: '<%=path %>/functions/findBy.action?pageSize=' + initPageSize,
+            url: '<%=path %>/functions/findBy.do',
             pagination: true,
             //交替出现背景
             striped: true,
             //loadFilter: pagerFilter,
-            pageSize: initPageSize,
-            pageList: initPageNum,
+            pageList:[2,5,10],
+            pageSize:10,		// 初始化每页显示条数
+            pageNumber:1,	// 初始化页码
             columns: [[
                 {field: 'Id', width: 35, align: "center", checkbox: true},
                 {title: '编号 ', field: 'Number', width: 60},
@@ -189,7 +189,7 @@
                             + 'AaBb' + rec.State + 'AaBb' + rec.Sort + 'AaBb' + rec.Enabled + 'AaBb' + rec.Type + 'AaBb' + rec.PushBtn;
                         if (1 == value) {
                             str += '<img src="<%=path%>/js/easyui-1.3.5/themes/icons/pencil.png" style="cursor: pointer;" onclick="editFunctions(\'' + rowInfo + '\');"/>&nbsp;<a onclick="editFunctions(\'' + rowInfo + '\');" style="text-decoration:none;color:black;" href="javascript:void(0)">编辑</a>&nbsp;&nbsp;';
-                            str += '<img src="<%=path%>/js/easyui-1.3.5/themes/icons/edit_remove.png" style="cursor: pointer;" onclick="deleteFunctions(' + rec.Id + ');"/>&nbsp;<a onclick="deleteFunctions(' + rec.Id + ');" style="text-decoration:none;color:black;" href="javascript:void(0)">删除</a>&nbsp;&nbsp;';
+                            str += '<img src="<%=path%>/js/easyui-1.3.5/themes/icons/edit_remove.png" style="cursor: pointer;" onclick="deleteFunctions(\'' +  rec.Id + '\');"/>&nbsp;<a onclick="deleteFunctions(\'' +  rec.Id + '\');" style="text-decoration:none;color:black;" href="javascript:void(0)">删除</a>&nbsp;&nbsp;';
                         }
                         return str;
                     }
@@ -237,33 +237,39 @@
         }
     });
 
-    //分页信息处理
-    function ininPager() {
-        try {
-            var opts = $("#tableData").datagrid('options');
-            var pager = $("#tableData").datagrid('getPager');
-            pager.pagination({
-                onSelectPage: function (pageNum, pageSize) {
-                    opts.pageNumber = pageNum;
-                    opts.pageSize = pageSize;
-                    pager.pagination('refresh',
-                        {
-                            pageNumber: pageNum,
-                            pageSize: pageSize
-                        });
-                    showFunctionsDetails(pageNum, pageSize);
-                }
-            });
-        }
-        catch (e) {
-            $.messager.alert('异常处理提示', "分页信息异常 :  " + e.name + ": " + e.message, 'error');
-        }
-    }
+
 
     //绑定事件
-    function bindEvent() {
+        function bindEvent() {
+            <%--$.ajax({--%>
+                <%--url : "<%=path %>/functions/getPushBtn.do",--%>
+                <%--dataType : 'json',--%>
+                <%--type : 'post',--%>
+            <%--async : false,--%>
+            <%--success : function(data) {--%>
+                <%--var items = [];--%>
+                <%--items.push({--%>
+                    <%--"id" : "",--%>
+                    <%--"text" : "",--%>
+                    <%--"selected" : true--%>
+                <%--});--%>
+                <%--for(var key in data){--%>
+                    <%--items.push({--%>
+                        <%--"id" : key,--%>
+                        <%--"text" : data[key]--%>
+                    <%--});--%>
+                <%--}--%>
+                <%--$('#PushBtn').combobox({--%>
+                    <%--valueField : 'id',--%>
+                    <%--textField : 'text',--%>
+                    <%--data : data--%>
+                <%--});--%>
+            <%--}--%>
+        <%--});--%>
+
+
         $('#PushBtn').combobox({
-            url: '<%=path %>/js/pages/manage/pushBtn.json',
+            url: "<%=path %>/functions/getPushBtn.do",
             valueField: 'id',
             textField: 'text',
             panelHeight: 120,
@@ -277,14 +283,14 @@
             if (r) {
                 $.ajax({
                     type: "post",
-                    url: "<%=path %>/functions/delete.action",
+                    url: "<%=path %>/functions/delete.do",
                     dataType: "json",
                     data: ({
                         functionsID: functionsID,
                         clientIp: '<%=clientIp %>'
                     }),
                     success: function (tipInfo) {
-                        var msg = tipInfo.showModel.msgTip;
+                        var msg = tipInfo.message;
                         if (msg == '成功') {
                             //加载完以后重新初始化
                             $("#searchBtn").click();
@@ -309,6 +315,10 @@
             $.messager.alert('删除提示', '没有记录被选中！', 'info');
             return;
         }
+        if (row.length == 1) {
+            deleteFunctions(row[0].Id)
+            return;
+        }
         if (row.length > 0) {
             $.messager.confirm('删除确认', '确定要删除选中的' + row.length + '条功能信息吗？', function (r) {
                 if (r) {
@@ -323,7 +333,7 @@
                     }
                     $.ajax({
                         type: "post",
-                        url: "<%=path %>/functions/batchDelete.action",
+                        url: "<%=path %>/functions/batchDelete.do",
                         dataType: "json",
                         async: false,
                         data: ({
@@ -331,7 +341,7 @@
                             clientIp: '<%=clientIp %>'
                         }),
                         success: function (tipInfo) {
-                            var msg = tipInfo.showModel.msgTip;
+                            var msg = tipInfo.message;
                             if (msg == '成功') {
                                 //加载完以后重新初始化
                                 $("#searchBtn").click();
@@ -366,7 +376,7 @@
 
         orgFunctions = "";
         functionsID = 0;
-        url = '<%=path %>/functions/create.action';
+        url = '<%=path %>/functions/create.do';
     }
 
     //保存信息
@@ -389,21 +399,21 @@
                     data: ({
                         Number: $.trim($("#Number").val()),
                         Name: $.trim($("#Name").val()),
-                        PNumber: $.trim($("#PNumber").val()),
-                        URL: $.trim($("#URL").val()),
+                        Pnumber: $.trim($("#PNumber").val()),
+                        Url: $.trim($("#URL").val()),
                         State: $("#State").is(':checked'),
                         Sort: $.trim($("#Sort").val()),
                         Enabled: $("#Enabled").is(':checked'),
                         Type: $.trim($("#Type").val()),
-                        PushBtn: $('#PushBtn').combobox('getValues').toString(), //功能按钮
+                        Pushbtn: $('#PushBtn').combobox('getValues').toString(), //功能按钮
                         clientIp: '<%=clientIp %>'
                     }),
                     success: function (tipInfo) {
+                        var tipInfo=tipInfo.flag;
                         if (tipInfo) {
                             $('#functionsDlg').dialog('close');
 
-                            var opts = $("#tableData").datagrid('options');
-                            showFunctionsDetails(opts.pageNumber, opts.pageSize);
+                            showFunctionsDetails();
                         }
                         else {
                             $.messager.show({
@@ -457,7 +467,7 @@
         functionsID = functionsInfo[0];
         //焦点在名称输入框==定焦在输入文字后面
         $("#Name").val("").focus().val(functionsInfo[2]);
-        url = '<%=path %>/functions/update.action?functionsID=' + functionsInfo[0];
+        url = '<%=path %>/functions/update.do?functionsID=' + functionsInfo[0];
     }
 
     //检查名称是否存在 ++ 重名无法提示问题需要跟进
@@ -469,7 +479,7 @@
         if (name.length > 0 && (orgFunctions.length == 0 || name != orgFunctions)) {
             $.ajax({
                 type: "post",
-                url: "<%=path %>/functions/checkIsNameExist.action",
+                url: "<%=path %>/functions/checkIsNameExist.do",
                 dataType: "json",
                 async: false,
                 data: ({
@@ -477,8 +487,8 @@
                     Name: Name
                 }),
                 success: function (tipInfo) {
-                    flag = tipInfo;
-                    if (tipInfo) {
+                    flag = tipInfo.flag;
+                    if (flag) {
                         $.messager.alert('提示', '功能名称已经存在', 'info');
                         //alert("功能名称已经存在");
                         //$("#name").val("");
@@ -498,39 +508,20 @@
     //搜索处理
     $("#searchBtn").unbind().bind({
         click: function () {
-            showFunctionsDetails(1, initPageSize);
-            var opts = $("#tableData").datagrid('options');
-            var pager = $("#tableData").datagrid('getPager');
-            opts.pageNumber = 1;
-            opts.pageSize = initPageSize;
-            pager.pagination('refresh',
-                {
-                    pageNumber: 1,
-                    pageSize: initPageSize
-                });
+            showFunctionsDetails();
+
         }
     });
 
-    function showFunctionsDetails(pageNo, pageSize) {
-        $.ajax({
-            type: "post",
-            url: "<%=path %>/functions/findBy.action",
-            dataType: "json",
-            data: ({
-                Name: $.trim($("#searchName").val()),
-                Type: $.trim($("#searchType").val()),
-                pageNo: pageNo,
-                pageSize: pageSize
-            }),
-            success: function (data) {
-                $("#tableData").datagrid('loadData', data);
-            },
-            //此处添加错误处理
-            error: function () {
-                $.messager.alert('查询提示', '查询数据后台异常，请稍后再试！', 'error');
-                return;
-            }
-        });
+    function showFunctionsDetails( ) {
+        var params={
+            Name: $.trim($("#searchName").val()),
+            Type: $.trim($("#searchType").val()),
+        };
+        var options=$('#tableData').datagrid('options');
+        options.url="<%=path %>/functions/findBy.do";
+        // console.log(options);
+        $("#tableData").datagrid('load',params);
     }
 
     //重置按钮

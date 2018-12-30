@@ -507,26 +507,15 @@
     });
 
     function showAppDetails( ) {
-        $.ajax({
-            type: "post",
-            url: "<%=path %>/app/findBy.do",
-            dataType: "json",
-            data: ({
-                Name: $.trim($("#searchName").val()),
-                Type: $.trim($("#searchType").val()),
-            }),
-            success: function (data) {
-                $("#tableData").datagrid('loadData', data);
-                $('#tableData').datagrid({
-                		pageNumber : 1
-                	});
-            },
-            //此处添加错误处理
-            error: function () {
-                $.messager.alert('查询提示', '查询数据后台异常，请稍后再试！', 'error');
-                return;
-            }
-        });
+        var params={
+            Name: $.trim($("#searchName").val()),
+            Type: $.trim($("#searchType").val()),
+        };
+        var options=$('#tableData').datagrid('options');
+        options.url="<%=path %>/app/findBy.do";
+        // console.log(options);
+        $("#tableData").datagrid('load',params);
+
     }
 
     //重置按钮

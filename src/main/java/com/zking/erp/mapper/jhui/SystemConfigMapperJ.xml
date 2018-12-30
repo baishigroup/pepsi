@@ -14,4 +14,25 @@
     id, type, name, value, description
   </sql>
 
+  <select id="selectById" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select
+    <include refid="Base_Column_List" />
+    from systemconfig
+    where id = #{id,jdbcType=VARCHAR}
+  </select>
+  <select id="querySystemConfig" resultType="com.zking.erp.model.jhui.SystemConfig"
+          parameterType="com.zking.erp.model.jhui.SystemConfig">
+    SELECT <include refid="Base_Column_List"/>
+    from systemconfig order by id asc
+  </select>
+
+  <update id="updateById" parameterType="com.zking.erp.model.jhui.SystemConfig" >
+    update systemconfig
+    set type = #{type,jdbcType=VARCHAR},
+    name = #{name,jdbcType=VARCHAR},
+    value = #{value,jdbcType=VARCHAR},
+    description = #{description,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+
 </mapper>

@@ -71,7 +71,7 @@
             <tr>
                 <td>别名</td>
                 <td style="padding:5px">
-                    <input name="anotherName" id="anotherName" class="easyui-validatebox"
+                    <input name="anothername" id="anotherName" class="easyui-validatebox"
                            data-options="validType:'length[2,30]'" style="width: 230px;height: 20px"/>
                 </td>
             </tr>
@@ -89,7 +89,6 @@
     //初始化界面
     $(function () {
         initTableData();
-        ininPager();
         initForm();
     });
 
@@ -117,10 +116,13 @@
             //fitColumns:true,
             //单击行是否选中
             //checkOnSelect : false,
-            url: '<%=path %>/materialProperty/findBy.action?pageSize=' + initPageSize,
-            pagination: false,
+            url: '<%=path %>/materialProperty/findBy.do',
+            pagination: true,
             //交替出现背景
             striped: true,
+            pageList:[2,5,10],
+            pageSize:10,		// 初始化每页显示条数
+            pageNumber:1,	// 初始化页码
             //loadFilter: pagerFilter,
             columns: [[
                 {field: 'id', width: 10, align: "center", hidden: true},
@@ -170,27 +172,6 @@
         }
     });
 
-    //分页信息处理
-    function ininPager() {
-        try {
-            var opts = $("#tableData").datagrid('options');
-            var pager = $("#tableData").datagrid('getPager');
-            pager.pagination({
-                onSelectPage: function (pageNum, pageSize) {
-                    opts.pageNumber = pageNum;
-                    opts.pageSize = pageSize;
-                    pager.pagination('refresh', {
-                        pageNumber: pageNum,
-                        pageSize: pageSize
-                    });
-                    showMaterialPropertyDetails(pageNum, pageSize);
-                }
-            });
-        }
-        catch (e) {
-            $.messager.alert('异常处理提示', "分页信息异常 :  " + e.name + ": " + e.message, 'error');
-        }
-    }
 
     //增加
     var url;
@@ -201,23 +182,28 @@
             if (!$('#materialPropertyFM').form('validate'))
                 return;
             else {
+                var enabled;
+                if($("#enabled").is(':checked'))
+                     enabled=1;
+                else
+                     enabled=0;
                 $.ajax({
                     type: "post",
                     url: url,
                     dataType: "json",
                     async: false,
                     data: ({
-                        nativeName: $.trim($("#nativeName").val()),
-                        enabled: $("#enabled").is(':checked'),
+                        nativename: $.trim($("#nativeName").val()),
+                        enabled: enabled,
                         sort: $.trim($("#sort").val()),
-                        anotherName: $.trim($("#anotherName").val()),
+                        anothername: $.trim($("#anotherName").val()),
                         clientIp: '<%=clientIp %>'
                     }),
                     success: function (tipInfo) {
+                        var tipInfo=tipInfo.flag;
                         if (tipInfo) {
                             $('#materialPropertyDlg').dialog('close');
-                            var opts = $("#tableData").datagrid('options');
-                            showMaterialPropertyDetails(opts.pageNumber, opts.pageSize);
+                            showMaterialPropertyDetails();
                         }
                         else {
                             $.messager.show({
@@ -242,7 +228,7 @@
 
         $("#clientIp").val('<%=clientIp %>');
         $("#nativeName").text(materialPropertyInfo[1]);
-        $("#enabled").attr("checked", materialPropertyInfo[2] == 'true' ? true : false);
+        $("#enabled").attr("checked", materialPropertyInfo[2] == '1' ? true : false);
         $("#sort").val(materialPropertyInfo[3]);
         $("#anotherName").val(materialPropertyInfo[4]);
 
@@ -250,43 +236,26 @@
         $(".window-mask").css({width: webW, height: webH});
         //焦点在名称输入框==定焦在输入文字后面
         $("#nativeName").val("").focus().val(materialPropertyInfo[1]);
-        url = '<%=path %>/materialProperty/update.action?id=' + materialPropertyInfo[0];
+        url = '<%=path %>/materialProperty/update.do?id=' + materialPropertyInfo[0];
     }
 
     //搜索处理
     $("#searchBtn").unbind().bind({
         click: function () {
-            showMaterialPropertyDetails(1, initPageSize);
-            var opts = $("#tableData").datagrid('options');
-            var pager = $("#tableData").datagrid('getPager');
-            opts.pageNumber = 1;
-            opts.pageSize = initPageSize;
-            pager.pagination('refresh', {
-                pageNumber: 1,
-                pageSize: initPageSize
-            });
+            showMaterialPropertyDetails();
+
         }
     });
 
-    function showMaterialPropertyDetails(pageNo, pageSize) {
-        $.ajax({
-            type: "post",
-            url: "<%=path %>/materialProperty/findBy.action",
-            dataType: "json",
-            data: ({
-                nativeName: $.trim($("#searchNativeName").val()),
-                pageNo: pageNo,
-                pageSize: pageSize
-            }),
-            success: function (data) {
-                $("#tableData").datagrid('loadData', data);
-            },
-            //此处添加错误处理
-            error: function () {
-                $.messager.alert('查询提示', '查询数据后台异常，请稍后再试！', 'error');
-                return;
-            }
-        });
+    function showMaterialPropertyDetails() {
+        var params={
+            nativename: $.trim($("#searchNativeName").val()),
+        };
+        var options=$('#tableData').datagrid('options');
+        options.url="<%=path %>/materialProperty/findBy.do";
+        // console.log(options);
+        $("#tableData").datagrid('load',params);
+
     }
 
     //重置按钮

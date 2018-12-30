@@ -22,11 +22,11 @@ public class User implements Serializable{
 
     private String phonenum;
 
-    private Byte ismanager;
+    private int ismanager;
 
-    private Byte isystem;
+    private int isystem;
 
-    private Byte status;
+    private int status;
 
     private String description;
 
@@ -35,11 +35,27 @@ public class User implements Serializable{
     //修改密码时的原始密码
     private String orgpwd = "";
 
+    /**
+     * 用户ID
+     */
+    private String userID = "01";
+
+    /**
+     * 用户IDs 批量操作使用
+     */
+    private String userIDs = "";
+
+    private String[] ids=null;
 
     /**
      * 用户IP，用户记录操作日志
      */
     private String clientIp = "";
+
+    /**
+     * 根据标识判断是校验登录名称还是用户名称 0==用户名称 1==登录名称
+     */
+    private int checkFlag = 0;
 
     public User(String id, String username, String loginame, String password, String position, String department, String email, String phonenum, Byte ismanager, Byte isystem, Byte status, String description, String remark) {
         this.id = id;
@@ -59,6 +75,38 @@ public class User implements Serializable{
 
     public User() {
         super();
+    }
+
+    public String[] getIds() {
+        return ids;
+    }
+
+    public void setIds(String[] ids) {
+        this.ids = ids;
+    }
+
+    public int getCheckFlag() {
+        return checkFlag;
+    }
+
+    public void setCheckFlag(int checkFlag) {
+        this.checkFlag = checkFlag;
+    }
+
+    public String getUserID() {
+        return userID;
+    }
+
+    public void setUserID(String userID) {
+        this.userID = userID;
+    }
+
+    public String getUserIDs() {
+        return userIDs;
+    }
+
+    public void setUserIDs(String userIDs) {
+        this.userIDs = userIDs;
     }
 
     public String getOrgpwd() {
@@ -141,27 +189,27 @@ public class User implements Serializable{
         this.phonenum = phonenum;
     }
 
-    public Byte getIsmanager() {
+    public int getIsmanager() {
         return ismanager;
     }
 
-    public void setIsmanager(Byte ismanager) {
+    public void setIsmanager(int ismanager) {
         this.ismanager = ismanager;
     }
 
-    public Byte getIsystem() {
+    public int getIsystem() {
         return isystem;
     }
 
-    public void setIsystem(Byte isystem) {
+    public void setIsystem(int isystem) {
         this.isystem = isystem;
     }
 
-    public Byte getStatus() {
+    public int getStatus() {
         return status;
     }
 
-    public void setStatus(Byte status) {
+    public void setStatus(int status) {
         this.status = status;
     }
 

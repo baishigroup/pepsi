@@ -1,6 +1,10 @@
 package com.zking.erp.service.jhui;
 
+import com.sun.org.apache.xpath.internal.operations.Bool;
 import com.zking.erp.model.jhui.User;
+import com.zking.erp.util.PageBean;
+
+import java.util.List;
 
 public interface IUserJService {
 
@@ -27,5 +31,24 @@ public interface IUserJService {
      * @return
      */
     int updateById(User user);
+
+    List<User> queryUserByLikePager(PageBean pageBean,User user);
+
+    /**
+     * 检查是否重名
+     * @param field
+     * @param username
+     * @param userID
+     */
+   Boolean checkIsNameExist(String field, String username, String userID);
+
+    int insert(User user);
+
+    User selectById(String id);
+
+    int deleteById(String id);
+
+    int delete(User user);
+
 
 }

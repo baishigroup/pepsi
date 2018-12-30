@@ -68,7 +68,7 @@
     $(function () {
 
         $('#tt').tree({
-            url: '<%=path%>/role/findUserRole.action?UBType=' + type + '&UBKeyId=' + url_id,
+            url: '<%=path%>/role/findUserRole.do?UBType=' + type + '&UBKeyId=' + url_id,
             animate: true,
             checkbox: true
         });
@@ -77,10 +77,10 @@
         $("#btnOK").click(
             function () {
                 if (!checkUserRole()) {
-                    url = '<%=path%>/userBusiness/create.action';
+                    url = '<%=path%>/userBusiness/create.do';
                 }
                 else {
-                    url = '<%=path%>/userBusiness/update.action';
+                    url = '<%=path%>/userBusiness/update.do';
                 }
 
                 if (confirm("您确定要保存吗？")) {
@@ -89,17 +89,18 @@
                         type: "post",
                         url: url,
                         data: {
-                            Type: type, KeyId: url_id, Value: GetNode('child'), clientIp: '<%=clientIp %>'
+                            Type: type, Keyid: url_id, Value: GetNode('child'), clientIp: '<%=clientIp %>'
                         },
                         dataType: "json",
                         async: false,
                         success: function (tipInfo) {
+                            var tipInfo=tipInfo.flag;
                             if (tipInfo) {
                                 self.parent.$.colorbox.close();
                                 alert("操作成功！");
                             }
                             else
-                                alert(tipInfo);
+                                $.messager.alert('提示', '操作失败！', 'error');
                         }
                     });
                 }
@@ -115,15 +116,15 @@
         //开始ajax名称检验，是否存在
         $.ajax({
             type: "post",
-            url: "<%=path %>/userBusiness/checkIsValueExist.action",
+            url: "<%=path %>/userBusiness/checkIsValueExist.do",
             dataType: "json",
             async: false,
             data: ({
                 Type: type,
-                KeyId: url_id
+                Keyid: url_id
             }),
             success: function (tipInfo) {
-                flag = tipInfo;
+                flag = tipInfo.flag;
             },
             //此处添加错误处理
             error: function () {

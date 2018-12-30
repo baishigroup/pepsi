@@ -33,5 +33,98 @@
     AllPrice, Remark, Img, Incidentals, DepotId, AnotherDepotId, TaxRate, TaxMoney, TaxLastMoney, 
     OtherField1, OtherField2, OtherField3, OtherField4, OtherField5, MType
   </sql>
+  <select id="queryDepotItemByMaterialId" resultType="com.zking.erp.model.jhui.DepotItem"
+          parameterType="com.zking.erp.model.jhui.DepotItem">
+    SELECT m.Name MaterialName,m.Model MaterialModel,d.* FROM depotitem d LEFT JOIN material m ON d.MaterialId=m.id WHERE d.MaterialId=#{materialid}
+  </select>
+
+  <select id="queryByType" resultType="com.zking.erp.model.jhui.DepotItem">
+    <if test="param5==1">
+      select sum(BasicNumber) as BasicNumber from depotitem di,depothead dh where di.HeaderId = dh.id  and
+      ((type=#{param1} and DepotId=#{param2})  or (SubType='调拨' and AnotherDepotId=#{param2})  or (SubType='礼品充值' and AnotherDepotId=#{param2}))
+      and MaterialId =#{param3} and dh.OperTime &lt;concat(#{param4},'-01 00:00:00')
+    </if>
+    <if test="param5==2">
+      select sum(BasicNumber) as BasicNumber from depotitem di,depothead dh  where di.HeaderId = dh.id  and
+      ((type=#{param1} and DepotId=#{param2})  or (SubType='调拨' and AnotherDepotId=#{param2})  or (SubType='礼品充值' and AnotherDepotId=#{param2}))
+      and MaterialId =#{param3 and dh.OperTime &gt;=concat(#{param4},'-01 00:00:00') and dh.OperTime &lt;=concat(#{param4},'-31 59:59:59')
+    </if>
+  </select>
+  <select id="queryDepotJoinTable" resultType="com.zking.erp.model.jhui.DepotItem"
+          parameterType="com.zking.erp.model.jhui.DepotItem">
+    SELECT m.Name MaterialName,m.Model MaterialModel,m.Unit MaterialUnit,u.UName UnitName,u.id UnitId ,d1.name DepotName,d2.name AnotherDepotName,d.*
+    FROM depotitem d LEFT JOIN material m ON d.MaterialId=m.id  LEFT JOIN unit u ON m.UnitId=u.id LEFT JOIN depot d1 ON d.DepotId=d1.id LEFT JOIN
+    depot d2 ON d.AnotherDepotId=d2.id WHERE HeaderId=#{headerid} ORDER BY id ASC
+  </select>
+
+  <insert id="insert" parameterType="com.zking.erp.model.jhui.DepotItem" >
+    insert into depotitem (Id, HeaderId, MaterialId,
+    MUnit, OperNumber, BasicNumber,
+    UnitPrice, TaxUnitPrice, AllPrice,
+    Remark, Img, Incidentals,
+    DepotId, AnotherDepotId, TaxRate,
+    TaxMoney, TaxLastMoney, OtherField1,
+    OtherField2, OtherField3, OtherField4,
+    OtherField5, MType)
+    values (#{id,jdbcType=VARCHAR}, #{headerid,jdbcType=VARCHAR}, #{materialid,jdbcType=VARCHAR},
+    #{munit,jdbcType=VARCHAR}, #{opernumber,jdbcType=DOUBLE}, #{basicnumber,jdbcType=DOUBLE},
+    #{unitprice,jdbcType=DOUBLE}, #{taxunitprice,jdbcType=DOUBLE}, #{allprice,jdbcType=DOUBLE},
+    #{remark,jdbcType=VARCHAR}, #{img,jdbcType=VARCHAR}, #{incidentals,jdbcType=DOUBLE},
+    #{depotid,jdbcType=VARCHAR}, #{anotherdepotid,jdbcType=VARCHAR}, #{taxrate,jdbcType=DOUBLE},
+    #{taxmoney,jdbcType=DOUBLE}, #{taxlastmoney,jdbcType=DOUBLE}, #{otherfield1,jdbcType=VARCHAR},
+    #{otherfield2,jdbcType=VARCHAR}, #{otherfield3,jdbcType=VARCHAR}, #{otherfield4,jdbcType=VARCHAR},
+    #{otherfield5,jdbcType=VARCHAR}, #{mtype,jdbcType=VARCHAR})
+  </insert>
+
+  <select id="selectById" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select
+    <include refid="Base_Column_List" />
+    from depotitem
+    where Id = #{id,jdbcType=VARCHAR}
+  </select>
+
+  <update id="updateById" parameterType="com.zking.erp.model.jhui.DepotItem" >
+    update depotitem
+    set HeaderId = #{headerid,jdbcType=VARCHAR},
+    MaterialId = #{materialid,jdbcType=VARCHAR},
+    MUnit = #{munit,jdbcType=VARCHAR},
+    OperNumber = #{opernumber,jdbcType=DOUBLE},
+    BasicNumber = #{basicnumber,jdbcType=DOUBLE},
+    UnitPrice = #{unitprice,jdbcType=DOUBLE},
+    TaxUnitPrice = #{taxunitprice,jdbcType=DOUBLE},
+    AllPrice = #{allprice,jdbcType=DOUBLE},
+    Remark = #{remark,jdbcType=VARCHAR},
+    Img = #{img,jdbcType=VARCHAR},
+    Incidentals = #{incidentals,jdbcType=DOUBLE},
+    DepotId = #{depotid,jdbcType=VARCHAR},
+    AnotherDepotId = #{anotherdepotid,jdbcType=VARCHAR},
+    TaxRate = #{taxrate,jdbcType=DOUBLE},
+    TaxMoney = #{taxmoney,jdbcType=DOUBLE},
+    TaxLastMoney = #{taxlastmoney,jdbcType=DOUBLE},
+    OtherField1 = #{otherfield1,jdbcType=VARCHAR},
+    OtherField2 = #{otherfield2,jdbcType=VARCHAR},
+    OtherField3 = #{otherfield3,jdbcType=VARCHAR},
+    OtherField4 = #{otherfield4,jdbcType=VARCHAR},
+    OtherField5 = #{otherfield5,jdbcType=VARCHAR},
+    MType = #{mtype,jdbcType=VARCHAR}
+    where Id = #{id,jdbcType=VARCHAR}
+  </update>
+
+  <delete id="deleteById" parameterType="java.lang.String" >
+    delete from depotitem
+    where Id = #{id,jdbcType=VARCHAR}
+  </delete>
+
+    <select id="queryHeaderIdByMaterial" resultType="com.zking.erp.model.jhui.DepotItem">
+        select dt.HeaderId headerid  from depotitem dt INNER JOIN material m on dt.MaterialId = m.Id where 1=1
+        <if test="param1 != null and param1!=''" >
+            ( m.Name  like concat(concat('%',#{param1}),'%') or m.Model like concat(concat('%',#{param1}),'%'))
+        </if>
+        <if test="param2 != null and param2!=''" >
+            <foreach collection="param2" item="id" open=" and dt.DepotId in(" close=")" separator="," index="idx">
+                #{id}
+            </foreach>
+        </if>
+    </select>
 
 </mapper>

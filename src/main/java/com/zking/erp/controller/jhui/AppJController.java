@@ -2,6 +2,7 @@ package com.zking.erp.controller.jhui;
 
 import com.zking.erp.base.BaseController;
 import com.zking.erp.model.jhui.App;
+import com.zking.erp.model.jhui.Log;
 import com.zking.erp.service.jhui.IAppJService;
 import com.zking.erp.service.jhui.IUserBusinessJService;
 import com.zking.erp.util.PageBean;
@@ -219,7 +220,7 @@ public class AppJController extends BaseController {
      */
     @ResponseBody
     @RequestMapping("/create")
-    public Map<String,Object> create(App model) {
+    public Map<String,Object> create(HttpServletRequest request,App model) {
         System.out.println("==================开始调用增加应用方法create()===================");
         Boolean flag = false;
         Map<String,Object> map = new HashMap<String, Object>();
@@ -239,9 +240,9 @@ public class AppJController extends BaseController {
             tipType = 1;
             e.printStackTrace();
         }
-//        logService.create(new Logdetails(getUser(), "增加应用", model.getClientIp(),
-//                new Timestamp(System.currentTimeMillis())
-//                , tipType, "增加应用名称为  " + model.getName() + " " + tipMsg + "！", "增加应用" + tipMsg));
+        logService.create(new Log(getUser(request), "增加应用", model.getClientIp(),
+                new Timestamp(System.currentTimeMillis())
+                , tipType, "增加应用名称为  " + model.getName() + " " + tipMsg + "！", "增加应用" + tipMsg));
         System.out.println("==================结束调用增加应用方法create()===================");
         map.put("flag",flag);
         return map;
@@ -254,7 +255,7 @@ public class AppJController extends BaseController {
      */
     @ResponseBody
     @RequestMapping("/update")
-    public  Map<String,Object> update(App model) {
+    public  Map<String,Object> update(HttpServletRequest request,App model) {
         Boolean flag = false;
         Map<String,Object> map = new HashMap<String, Object>();
         try {
@@ -286,10 +287,10 @@ public class AppJController extends BaseController {
             e.printStackTrace();
         }
         map.put("flag",flag);
+        logService.create(new Log(getUser(request), "更新应用", model.getClientIp(),
+                new Timestamp(System.currentTimeMillis())
+                , tipType, "更新应用ID为  " + model.getAppID() + " " + tipMsg + "！", "更新应用" + tipMsg));
         return map;
-//        logService.create(new Logdetails(getUser(), "更新应用", model.getClientIp(),
-//                new Timestamp(System.currentTimeMillis())
-//                , tipType, "更新应用ID为  " + model.getAppID() + " " + tipMsg + "！", "更新应用" + tipMsg));
     }
 
     /**
@@ -299,7 +300,7 @@ public class AppJController extends BaseController {
      */
     @ResponseBody
     @RequestMapping("/batchDelete")
-    public Map<String,Object>  batchDelete(App model) {
+    public Map<String,Object>  batchDelete(HttpServletRequest request,App model) {
         Map<String,Object> map = new HashMap<String, Object>();
         try {
             appService.delete(model);
@@ -314,9 +315,9 @@ public class AppJController extends BaseController {
             e.printStackTrace();
         }
 
-//        logService.create(new Logdetails(getUser(), "批量删除应用", model.getClientIp(),
-//                new Timestamp(System.currentTimeMillis())
-//                , tipType, "批量删除应用ID为  " + model.getAppIDs() + " " + tipMsg + "！", "批量删除应用" + tipMsg));
+        logService.create(new Log(getUser(request), "批量删除应用", model.getClientIp(),
+                new Timestamp(System.currentTimeMillis())
+                , tipType, "批量删除应用ID为  " + model.getAppIDs() + " " + tipMsg + "！", "批量删除应用" + tipMsg));
         return map;
     }
 
@@ -327,7 +328,7 @@ public class AppJController extends BaseController {
      */
     @ResponseBody
     @RequestMapping("/delete")
-    public Map<String,Object>  delete(App model) {
+    public Map<String,Object>  delete(HttpServletRequest request,App model) {
         Map<String,Object> map = new HashMap<String, Object>();
         System.out.println("====================开始调用删除应用方法delete()================");
         try {
@@ -341,9 +342,9 @@ public class AppJController extends BaseController {
             e.printStackTrace();
         }
         map.put("message",tipMsg);
-//        logService.create(new Logdetails(getUser(), "删除应用", model.getClientIp(),
-//                new Timestamp(System.currentTimeMillis())
-//                , tipType, "删除应用ID为  " + model.getAppID() + " " + tipMsg + "！", "删除应用" + tipMsg));
+        logService.create(new Log(getUser(request), "删除应用", model.getClientIp(),
+                new Timestamp(System.currentTimeMillis())
+                , tipType, "删除应用ID为  " + model.getAppID() + " " + tipMsg + "！", "删除应用" + tipMsg));
         System.out.println("====================结束调用删除应用方法delete()================");
         return map;
     }

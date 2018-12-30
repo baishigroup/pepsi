@@ -33,7 +33,6 @@
         // showAccountHeadDetails();//账户表分页数据(在点击查询时调用)
 		initForm();	
 		bindEvent();//绑定操作事件
-		$("#searchBtn").click();	
 	});
 
     //用于生成uuid
@@ -230,7 +229,7 @@
 			organNameHidden = true;
 		}
 		$('#tableData').datagrid({
-			url:"",
+			url:path+"/accountHead/findBy.do?type="+listType,
 			//width:700,
 			height:heightInfo,
 			rownumbers: false,
@@ -302,6 +301,7 @@
 				return;
 			}    
 		});
+
 	}
 	
 	//初始化表格数据-明细列表-编辑状态
@@ -391,7 +391,6 @@
 				return;
 			}    
 		});
-        showAccountHeadDetails();
 		$.ajax({
 			type:"post",
 			url: path + '/accountItem/findBy.do?headerid=' + accountHeadID,
@@ -691,7 +690,7 @@
 
         initTableData_account("edit",TotalPrice); //明细列表
         reject(); //撤销下、刷新列表                
-        url = path + '/accountHead/update.do?id=' + accountHeadInfo[0];
+        url = path + '/accountHead/update.do?accountHeadID=' + accountHeadInfo[0];
     }
     
     //查看信息
@@ -848,7 +847,7 @@
 							dataType: "json",
 							data:{
 								SupplierID: OrganId,
-								AdvanceIn: advanceIn
+								Advancein: advanceIn
 							},
 							success: function(res){
 								if(res) {
@@ -941,37 +940,39 @@
 
 
 	function showAccountHeadDetails(){
-        // var param={
-        //     "type": listType,
-        //     "billno":$.trim($("#searchBillNo").val()),
-        //     "BeginTime":$("#searchBeginTime").val(),
-        //     "EndTime":$("#searchEndTime").val(),
-        // };
-        // var options=$('#tableData').datagrid('options');
-        // options.url=path + "/accountHead/findBy.do";
-        // // console.log(options);
-        // $("#tableData").datagrid('loadData',param);
-		$.ajax({
-			type:"post",
-			url: path + "/accountHead/findBy.do",
-			dataType: "json",
-			data: ({
-                type: listType,
-                billno:$.trim($("#searchBillNo").val()),
-				BeginTime:$("#searchBeginTime").val(),
-				EndTime:$("#searchEndTime").val(),
-			}),
-			success: function (data)
-			{
-				$("#tableData").datagrid('loadData',data);
-			},
-			//此处添加错误处理
-    		error:function()
-    		{
-    			$.messager.alert('查询提示','查询数据后台异常，请稍后再试！','error');
-				return;
-			}
-		});
+        var params={
+            "type": listType,
+            "billno":$.trim($("#searchBillNo").val()),
+            "BeginTime":$("#searchBeginTime").val(),
+            "EndTime":$("#searchEndTime").val(),
+        };
+        var options=$('#tableData').datagrid('options');
+        options.url=path + "/accountHead/findBy.do";
+        // console.log(options);
+        $("#tableData").datagrid('load',params);
+		// $.ajax({
+		// 	type:"post",
+		// 	url: path + "/accountHead/findBy.do",
+		// 	dataType: "json",
+		// 	data: ({
+         //        type: listType,
+         //        billno:$.trim($("#searchBillNo").val()),
+		// 		BeginTime:$("#searchBeginTime").val(),
+		// 		EndTime:$("#searchEndTime").val(),
+		// 	}),
+		// 	success: function (data)
+		// 	{
+         //        $("#tableData").datagrid('loadData',data);
+         //        data.pageNumber=1;
+        //
+         //    },
+		// 	//此处添加错误处理
+    		// error:function()
+    		// {
+    		// 	$.messager.alert('查询提示','查询数据后台异常，请稍后再试！','error');
+		// 		return;
+		// 	}
+		// });
 	}
 	
 	//自动计算事件

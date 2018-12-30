@@ -52,6 +52,24 @@ public class Material implements Serializable{
 
     private String otherfield3;
 
+    private String mpList = ""; //商品属性
+
+
+    /**
+     * 分类ID
+     */
+    private String materialID = "01";
+
+    /**
+     * 分类IDs 批量操作使用
+     */
+    private String materialIDs = "";
+
+    private String[] ids=null;
+
+    private String UnitId;
+    private String UnitName;
+
     public Material(String id, String categoryid, String name, String mfrs, Double packing, Double safetystock, String model, String standard, String color, String unit, String remark, Double retailprice, Double lowprice, Double presetpriceone, Double presetpricetwo, String unitid, String firstoutunit, String firstinunit, String pricestrategy, Integer enabled, String otherfield1, String otherfield2, String otherfield3) {
         this.id = id;
         this.categoryid = categoryid;
@@ -82,8 +100,56 @@ public class Material implements Serializable{
         super();
     }
 
+    public String getMpList() {
+        return mpList;
+    }
+
+    public void setMpList(String mpList) {
+        this.mpList = mpList;
+    }
+
+    public String getUnitId() {
+        return UnitId;
+    }
+
+    public void setUnitId(String unitId) {
+        UnitId = unitId;
+    }
+
+    public String getUnitName() {
+        return UnitName;
+    }
+
+    public void setUnitName(String unitName) {
+        UnitName = unitName;
+    }
+
     public String getId() {
         return id;
+    }
+
+    public String getMaterialID() {
+        return materialID;
+    }
+
+    public void setMaterialID(String materialID) {
+        this.materialID = materialID;
+    }
+
+    public String getMaterialIDs() {
+        return materialIDs;
+    }
+
+    public void setMaterialIDs(String materialIDs) {
+        this.materialIDs = materialIDs;
+    }
+
+    public String[] getIds() {
+        return ids;
+    }
+
+    public void setIds(String[] ids) {
+        this.ids = ids;
     }
 
     public void setId(String id) {

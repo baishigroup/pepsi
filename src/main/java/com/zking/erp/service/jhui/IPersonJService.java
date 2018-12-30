@@ -14,4 +14,10 @@ public interface IPersonJService {
      */
     List<Person> queryPersonByType(Person person);
 
+    List<Person> queryPersonAll();
+
+    List<Person> queryPersonByIds(Person person);
+
+
+
 }

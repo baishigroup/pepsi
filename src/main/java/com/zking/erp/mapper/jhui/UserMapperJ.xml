@@ -11,9 +11,9 @@
       <arg column="department" jdbcType="VARCHAR" javaType="java.lang.String" />
       <arg column="email" jdbcType="VARCHAR" javaType="java.lang.String" />
       <arg column="phonenum" jdbcType="VARCHAR" javaType="java.lang.String" />
-      <arg column="ismanager" jdbcType="TINYINT" javaType="java.lang.Byte" />
-      <arg column="isystem" jdbcType="TINYINT" javaType="java.lang.Byte" />
-      <arg column="status" jdbcType="TINYINT" javaType="java.lang.Byte" />
+      <arg column="ismanager" jdbcType="INTEGER" javaType="java.lang.Integer" />
+      <arg column="isystem" jdbcType="INTEGER" javaType="java.lang.Integer" />
+      <arg column="status" jdbcType="INTEGER" javaType="java.lang.Integer" />
       <arg column="description" jdbcType="VARCHAR" javaType="java.lang.String" />
       <arg column="remark" jdbcType="VARCHAR" javaType="java.lang.String" />
     </constructor>
@@ -48,5 +48,64 @@
     remark = #{remark,jdbcType=VARCHAR}
     where id = #{id,jdbcType=VARCHAR}
   </update>
+
+
+  <select id="queryUserByLikePager" resultType="com.zking.erp.model.jhui.User"
+          parameterType="com.zking.erp.model.jhui.User">
+    SELECT <include refid="Base_Column_List"/>
+    from user where 1=1
+    <if test="username != null and username!=''" >
+      AND (username LIKE concat(concat('%',#{username}),'%'))
+    </if>
+    <if test="loginame != null and loginame!=''" >
+      AND (loginame LIKE concat(concat('%',#{loginame}),'%'))
+    </if>
+    order by id asc
+  </select>
+
+  <select id="checkIsNameExist" resultType="com.zking.erp.model.jhui.User">
+    SELECT  *
+    FROM user   WHERE 1=1
+    <if test="param2 != null and param2!=''" >
+      AND (${param1} =#{param2})
+    </if>
+    <if test="param3 != null and param3!=''" >
+      AND (id != #{param3})
+    </if>
+
+  </select>
+
+  <select id="selectById" resultType="com.zking.erp.model.jhui.User" parameterType="java.lang.String" >
+    select
+    <include refid="Base_Column_List" />
+    from user
+    where Id = #{id,jdbcType=VARCHAR}
+  </select>
+
+  <delete id="deleteById" parameterType="java.lang.String" >
+    delete from user
+    where Id = #{id,jdbcType=VARCHAR}
+  </delete>
+
+  <delete id="delete" parameterType="com.zking.erp.model.jhui.User">
+    delete from user
+    where 1=1
+    <foreach collection="ids" item="id" open=" and id in(" close=")" separator="," index="idx">
+      #{id}
+    </foreach>
+  </delete>
+
+  <insert id="insert" parameterType="com.zking.erp.model.jhui.User" >
+    insert into user (id, username, loginame,
+    password, position, department,
+    email, phonenum, ismanager,
+    isystem, status, description,
+    remark)
+    values (#{id,jdbcType=VARCHAR}, #{username,jdbcType=VARCHAR}, #{loginame,jdbcType=VARCHAR},
+    #{password,jdbcType=VARCHAR}, #{position,jdbcType=VARCHAR}, #{department,jdbcType=VARCHAR},
+    #{email,jdbcType=VARCHAR}, #{phonenum,jdbcType=VARCHAR}, #{ismanager,jdbcType=INTEGER},
+    #{isystem,jdbcType=INTEGER}, #{status,jdbcType=INTEGER}, #{description,jdbcType=VARCHAR},
+    #{remark,jdbcType=VARCHAR})
+  </insert>
 
 </mapper>

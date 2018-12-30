@@ -90,7 +90,7 @@
 	function getBtnStr() {
 		var funId = window.parent.window.funId; //功能id
 		var btnStrList = window.parent.window.winBtnStrList; //按钮功能列表 JSON字符串
-		var btnEnableList =""; //按钮列表
+        var btnEnableList =""; //按钮列表
 		if(funId && btnStrList) {
 			btnStrList = JSON.parse(btnStrList);
 			for(var i=0; i<btnStrList.length; i++){

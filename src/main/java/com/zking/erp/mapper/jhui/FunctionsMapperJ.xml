@@ -36,5 +36,64 @@
     </foreach>
     order by functions0_.Sort asc
   </select>
+  <select id="queryFunctionByLikePager" resultType="com.zking.erp.model.jhui.Functions"
+          parameterType="com.zking.erp.model.jhui.Functions">
+    SELECT <include refid="Base_Column_List"/>
+    from functions functions0_ where 1=1
+    <if test="type!= null and type!=''" >
+      AND functions0_.Type=#{type}
+    </if>
+    <if test="name!= null and name!=''" >
+      AND functions0_.name like concat(concat('%',#{name}),'%')
+    </if>
+    order by functions0_.Sort asc
+  </select>
+  <select id="checkIsNameExist" resultType="com.zking.erp.model.jhui.Functions">
+    SELECT <include refid="Base_Column_List"/>
+    from functions where 1=1 and name=#{param2} and id=#{param4}
+  </select>
+
+  <insert id="insert" parameterType="com.zking.erp.model.jhui.Functions" >
+    insert into functions (Id, Number, Name,
+    PNumber, URL, State, Sort,
+    Enabled, Type, PushBtn)
+    values (#{id,jdbcType=VARCHAR}, #{number,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR},
+    #{pnumber,jdbcType=VARCHAR}, #{url,jdbcType=VARCHAR}, #{state,jdbcType=BIT}, #{sort,jdbcType=VARCHAR},
+    #{enabled,jdbcType=BIT}, #{type,jdbcType=VARCHAR}, #{pushbtn,jdbcType=VARCHAR})
+  </insert>
+
+  <select id="selectById" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select
+    <include refid="Base_Column_List" />
+    from functions
+    where Id = #{id,jdbcType=VARCHAR}
+  </select>
+
+  <update id="updateById" parameterType="com.zking.erp.model.jhui.Functions" >
+    update functions
+    set Number = #{number,jdbcType=VARCHAR},
+    Name = #{name,jdbcType=VARCHAR},
+    PNumber = #{pnumber,jdbcType=VARCHAR},
+    URL = #{url,jdbcType=VARCHAR},
+    State = #{state,jdbcType=BIT},
+    Sort = #{sort,jdbcType=VARCHAR},
+    Enabled = #{enabled,jdbcType=BIT},
+    Type = #{type,jdbcType=VARCHAR},
+    PushBtn = #{pushbtn,jdbcType=VARCHAR}
+    where Id = #{id,jdbcType=VARCHAR}
+  </update>
+
+  <delete id="deleteById" parameterType="java.lang.String" >
+    delete from functions
+    where Id = #{id,jdbcType=VARCHAR}
+  </delete>
+
+  <delete id="delete" parameterType="com.zking.erp.model.jhui.Functions">
+    delete from functions
+    where 1=1
+    <foreach collection="ids" item="id" open=" and id in(" close=")" separator="," index="idx">
+      #{id}
+    </foreach>
+  </delete>
 
 </mapper>

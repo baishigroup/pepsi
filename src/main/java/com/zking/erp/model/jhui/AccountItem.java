@@ -30,6 +30,8 @@ public class AccountItem implements Serializable{
 
     private String ListType ;   //单据类型
 
+    private String ClientIp;
+
 
     public AccountItem(String id, String headerid, String accountid, String inoutitemid, Double eachamount, String remark) {
         this.id = id;
@@ -44,6 +46,13 @@ public class AccountItem implements Serializable{
         super();
     }
 
+    public String getClientIp() {
+        return ClientIp;
+    }
+
+    public void setClientIp(String clientIp) {
+        ClientIp = clientIp;
+    }
 
     public String getInserted() {
         return Inserted;

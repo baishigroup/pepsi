@@ -1,6 +1,7 @@
 package com.zking.erp.controller.jhui;
 
 import com.zking.erp.base.BaseController;
+import com.zking.erp.model.jhui.Log;
 import com.zking.erp.model.jhui.UserBusiness;
 import com.zking.erp.service.jhui.IUserBusinessJService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
+import java.sql.Timestamp;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -24,12 +26,13 @@ public class UserBusinessJController extends BaseController{
 
     @ResponseBody
     @RequestMapping("/getBasicData")
-    public Map<String,List> getBasicData(HttpServletRequest req , UserBusiness userBusiness) {
-        Map<String, List> mapData = new HashMap<String,List>();
+    public Map<String,Object> getBasicData(HttpServletRequest req , UserBusiness userBusiness) {
+        Map<String, Object> mapData = new HashMap<String,Object>();
         try {
             List<UserBusiness> userBusinessList = userBusinessService.queryUserBusinessByTypeByKeyId(userBusiness);
             mapData.put("userBusinessList",userBusinessList);
         } catch (Exception e) {
+            mapData.put("message","exceptoin");
             e.printStackTrace();
         }
         return mapData;
@@ -59,7 +62,7 @@ public class UserBusinessJController extends BaseController{
      */
     @ResponseBody
     @RequestMapping("/create")
-    public  Map<String, Object> create(UserBusiness  model) {
+    public  Map<String, Object> create(HttpServletRequest request,UserBusiness  model) {
         System.out.println("==================开始调用增加UserBusiness信息方法create()===================");
         Boolean flag = false;
         Map<String, Object> map = new HashMap<String,Object>();
@@ -84,9 +87,9 @@ public class UserBusinessJController extends BaseController{
             e.printStackTrace();
         }
         map.put("flag",flag);
-//        logService.create(new Logdetails(getUser(), "增加UserBusiness", model.getClientIp(),
-//                new Timestamp(System.currentTimeMillis())
-//                , tipType, "增加UserBusiness为  " + model.getType() + " " + tipMsg + "！", "增加UserBusiness" + tipMsg));
+        logService.create(new Log(getUser(request), "增加UserBusiness", model.getClientIp(),
+                new Timestamp(System.currentTimeMillis())
+                , tipType, "增加UserBusiness为  " + model.getType() + " " + tipMsg + "！", "增加UserBusiness" + tipMsg));
         System.out.println("==================结束调用增加UserBusiness方法create()===================");
         return map;
     }
@@ -98,7 +101,7 @@ public class UserBusinessJController extends BaseController{
      */
     @ResponseBody
     @RequestMapping("/update")
-    public Map<String, Object> update(UserBusiness  model) {
+    public Map<String, Object> update(HttpServletRequest request,UserBusiness  model) {
         Boolean flag = false;
         Map<String, Object> map = new HashMap<String,Object>();
         String id = "01";
@@ -127,9 +130,9 @@ public class UserBusinessJController extends BaseController{
             e.printStackTrace();;
         }
         map.put("flag",flag);
-//        logService.create(new Logdetails(getUser(), "更新UserBusiness", model.getClientIp(),
-//                new Timestamp(System.currentTimeMillis())
-//                , tipType, "更新UserBusiness的ID为  " + id + " " + tipMsg + "！", "更新UserBusiness" + tipMsg));
+        logService.create(new Log(getUser(request), "更新UserBusiness", model.getClientIp(),
+                new Timestamp(System.currentTimeMillis())
+                , tipType, "更新UserBusiness的ID为  " + id + " " + tipMsg + "！", "更新UserBusiness" + tipMsg));
         return map;
     }
     /**
@@ -138,7 +141,7 @@ public class UserBusinessJController extends BaseController{
      */
     @ResponseBody
     @RequestMapping("/updateBtnStr")
-    public Map<String, Object> updateBtnStr(UserBusiness model) {
+    public Map<String, Object> updateBtnStr(HttpServletRequest request,UserBusiness model) {
         Boolean flag = false;
         Map<String, Object> map = new HashMap<String,Object>();
         try {
@@ -160,10 +163,10 @@ public class UserBusinessJController extends BaseController{
             e.printStackTrace();
         }
         map.put("flag",flag);
+        logService.create(new Log(getUser(request), "更新角色按钮权限", model.getClientIp(),
+                new Timestamp(System.currentTimeMillis()), tipType,
+                "角色按钮权限的ID为  "+ model.getUserBusinessID() + " " + tipMsg + "！", "更新角色按钮权限" + tipMsg));
         return map;
-//        logService.create(new Logdetails(getUser(), "更新角色按钮权限", model.getClientIp(),
-//                new Timestamp(System.currentTimeMillis()), tipType,
-//                "角色按钮权限的ID为  "+ model.getUserBusinessID() + " " + tipMsg + "！", "更新角色按钮权限" + tipMsg));
     }
 
 }

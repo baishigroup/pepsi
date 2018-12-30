@@ -22,6 +22,21 @@ public class Depot implements Serializable {
 
     private String remark;
 
+    /**
+     * 用户IP，用户记录操作日志
+     */
+    private String clientIp = "";
+
+    /**
+     * UBType，UserBusiness类型
+     */
+    private String UBType = "";
+
+    /**
+     * UBKeyId，UserBusiness关键id
+     */
+    private String UBKeyId = "";
+
     public Depot(String id, String name, String address, Double warehousing, Double truckage, Integer type, String sort, String remark) {
         this.id = id;
         this.name = name;
@@ -35,6 +50,30 @@ public class Depot implements Serializable {
 
     public Depot() {
         super();
+    }
+
+    public String getClientIp() {
+        return clientIp;
+    }
+
+    public void setClientIp(String clientIp) {
+        this.clientIp = clientIp;
+    }
+
+    public String getUBType() {
+        return UBType;
+    }
+
+    public void setUBType(String UBType) {
+        this.UBType = UBType;
+    }
+
+    public String getUBKeyId() {
+        return UBKeyId;
+    }
+
+    public void setUBKeyId(String UBKeyId) {
+        this.UBKeyId = UBKeyId;
     }
 
     public String getId() {

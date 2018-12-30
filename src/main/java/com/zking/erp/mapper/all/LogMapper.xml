@@ -8,7 +8,7 @@
       <arg column="operation" jdbcType="VARCHAR" javaType="java.lang.String" />
       <arg column="clientIP" jdbcType="VARCHAR" javaType="java.lang.String" />
       <arg column="createtime" jdbcType="TIMESTAMP" javaType="java.util.Date" />
-      <arg column="status" jdbcType="TINYINT" javaType="java.lang.Byte" />
+      <arg column="status" jdbcType="INTEGER" javaType="java.lang.Integer" />
       <arg column="contentdetails" jdbcType="VARCHAR" javaType="java.lang.String" />
       <arg column="remark" jdbcType="VARCHAR" javaType="java.lang.String" />
     </constructor>

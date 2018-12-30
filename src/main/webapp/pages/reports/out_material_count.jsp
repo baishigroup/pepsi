@@ -22,7 +22,7 @@
     <script type="text/javascript" src="<%=path %>/js/My97DatePicker/WdatePicker.js"></script>
     <script type="text/javascript" src="<%=path %>/js/common/common.js"></script>
     <script>
-        var uid = ${sessionScope.user.id};
+        var uid = '${sessionScope.user.id}';
     </script>
 </head>
 <body>

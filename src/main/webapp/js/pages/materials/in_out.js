@@ -33,6 +33,7 @@
 	var btnEnableList = getBtnStr(); //获取按钮的权限
 	var mPropertyList = ""; //商品属性列表
 	var defaultAccountId = 0; //默认账户id
+	var uuid="";
 	$(function(){
 		//初始化系统基础信息
 		getType();
@@ -50,8 +51,7 @@
 		initOutItemList(); //初始化支出项目
 		initMProperty(); //初始化商品属性
 		initTableData();
-		ininPager();
-		initForm();	
+		initForm();
 		bindEvent();//绑定操作事件
 	});
 	//根据单据名称获取类型
@@ -61,9 +61,10 @@
 		//改变宽度和高度
 		$("#searchPanel").panel({width:webW-2});
 		$("#tablePanel").panel({width:webW-2});
-		var supUrl = path + "/supplier/findBySelect_sup.action"; //供应商接口
-		var cusUrl = path + "/supplier/findBySelect_cus.action?UBType=UserCustomer&UBKeyId=" + kid; //客户接口
-		var retailUrl = path + "/supplier/findBySelect_retail.action"; //散户接口
+        var supUrl = path + "/supplier/findSupplierByType.do?type=供应商"; //供应商接口
+		var cusUrl = path + "/supplier/findBySelect_cus.do?UBType=UserCustomer&UBKeyId=" + kid; //客户接口
+        var retailUrl = path + "/supplier/findSupplierByType.do?type=会员"; //散户接口
+
 		if(listTitle === "采购入库列表"){
 			listType = "入库"; 
 			listSubType = "采购"; 
@@ -160,9 +161,9 @@
 	function initSystemData_UB(){
 		$.ajax({
 			type:"post",
-			url: path + "/userBusiness/getBasicData.action",
+			url: path + "/userBusiness/getBasicData.do",
 			data: ({
-				KeyId:kid,
+				Keyid:kid,
 				Type:"UserDepot"
 			}),
 			//设置为同步
@@ -172,8 +173,8 @@
 			{
 				if(systemInfo)
 				{
-					userBusinessList = systemInfo.showModel.map.userBusinessList;
-					var msgTip = systemInfo.showModel.msgTip;
+					userBusinessList = systemInfo.userBusinessList;
+					var msgTip = systemInfo.message;
 					if(msgTip == "exceptoin")
 					{
 						$.messager.alert('提示','查找UserBusiness异常,请与管理员联系！','error');
@@ -206,14 +207,14 @@
 	function initSystemData_depot(){
 		$.ajax({
 			type:"post",
-			url: path + "/depot/getBasicData.action",
+			url: path + "/depot/getBasicData.do",
 			//设置为同步
 			async:false,
 			dataType: "json",
 			success: function (systemInfo)
 			{
-				depotList = systemInfo.showModel.map.depotList;
-				var msgTip = systemInfo.showModel.msgTip;
+				depotList = systemInfo.depotList;
+				var msgTip = systemInfo.message;
 				if(msgTip == "exceptoin")
 				{
 					$.messager.alert('提示','查找系统基础信息异常,请与管理员联系！','error');
@@ -266,7 +267,7 @@
 				var data = $(this).combobox('getData');
 				for(var i = 0; i<= data.length; i++){
 					if(data && data[i] && data[i].supplier === "非会员"){
-						orgDefaultId = data[i].id;
+						orgDefaultId = data[i].id;//默认选择非会员
 					}
 				}
 				if(listSubType === "零售"){
@@ -288,7 +289,7 @@
 				else{
 					$.ajax({
 						type:"get",
-						url: path + "/supplier/findById.action",
+						url: path + "/supplier/findById.do",
 						data: {
 							SupplierID: rec.id
 						},
@@ -307,10 +308,10 @@
 		});  
 	}
 
-	//初始化销售人员
+	//初始化销售人员（业务员）
 	function initSalesman(){
 		$('#Salesman').combobox({
-			url: path + "/person/getPersonByNumType.action?type=1",
+			url: path + "/person/getPersonByNumType.do?type=1",
 			valueField:'id',
 			textField:'name',
 			multiple: true
@@ -321,12 +322,12 @@
 	function initGift(){
 		if(listSubType == "礼品充值"|| listSubType == "礼品销售"){
 			$('#GiftId').combobox({
-				url: path + "/depot/findGiftByType.action?type=1",
+				url: path + "/depot/findGiftByType.do?type=1",
 				valueField:'id',
 				textField:'name'
 			});
 			$('#searchGiftId').combobox({
-				url: path + "/depot/findGiftByType.action?type=1",
+				url: path + "/depot/findGiftByType.do?type=1",
 				valueField:'id',
 				textField:'name'
 			});
@@ -334,7 +335,7 @@
 		if(listSubType == "礼品销售"){
 			$.ajax({
 				type:"post",
-				url: path + "/supplier/findBySelectRetailNoPeople.action", //散户接口
+				url: path + "/supplier/findBySelectRetailNoPeople.do", //散户接口
 				dataType: "json",
 				success: function (res){
 					if(res && res[0]){
@@ -349,7 +350,7 @@
 	function initOutItemList(){
 		$.ajax({
 			type:"post",
-			url: path + "/inOutItem/findBySelect.action?type=out",
+			url: path + "/inOutItem/findBySelect.do?type=out",
 			//设置为同步
 			async:false,
 			dataType: "json",
@@ -368,7 +369,7 @@
 	function initMProperty(){
 		$.ajax({
 			type: "post",
-			url: path + "/materialProperty/findBy.action",
+			url: path + "/materialProperty/findBy.do",
 			dataType: "json",
 			success: function (res) {
 				if (res && res.rows) {
@@ -395,14 +396,14 @@
 	function initSystemData_person(){
 		$.ajax({
 			type:"post",
-			url: path + "/person/getBasicData.action",
+			url: path + "/person/getBasicData.do",
 			//设置为同步
 			async:false,
 			dataType: "json",
 			success: function (systemInfo)
 			{
-				personList = systemInfo.showModel.map.personList;
-				var msgTip = systemInfo.showModel.msgTip;
+				personList = systemInfo.personList;
+				var msgTip = systemInfo.message;
 				if(msgTip == "exceptoin")
 				{
 					$.messager.alert('提示','查找系统基础信息异常,请与管理员联系！','error');
@@ -436,14 +437,14 @@
 	function initSystemData_account(){
 		$.ajax({
 			type:"post",
-			url: path + "/account/getAccount.action",
-			//设置为同步
-			async:false,
-			dataType: "json",
+			url: path + "/account/getAccount.do",
+            //设置为同步
+            async:false,
+            dataType: "json",
 			success: function (systemInfo)
 			{
-				accountList = systemInfo.showModel.map.accountList;
-				var msgTip = systemInfo.showModel.msgTip;
+				accountList = systemInfo.accountList;
+				var msgTip = systemInfo.message;
 				if(msgTip == "exceptoin")
 				{
 					$.messager.alert('提示','查找账户信息异常,请与管理员联系！','error');
@@ -560,8 +561,9 @@
 			pagination: true,
 			//交替出现背景
 			striped : true,
-			pageSize: 10,
-			pageList: initPageNum,
+            pageList:[2,5,10],
+            pageSize:10,		// 初始化每页显示条数
+            pageNumber:1,	// 初始化页码
 			columns:[[
 				{ field: 'Id',width:35,align:"center",checkbox:true},
 				{ title: '操作',field: 'op',align:"center",width:90,
@@ -580,25 +582,25 @@
 							var orgId = rec.OrganId? rec.OrganId:0;
 							str += '<img title="查看" src="' + path + '/js/easyui-1.3.5/themes/icons/list.png" style="cursor: pointer;" onclick="showDepotHead(\'' + rowInfo + '\');"/>&nbsp;&nbsp;&nbsp;';
 							str += '<img title="编辑" src="' + path + '/js/easyui-1.3.5/themes/icons/pencil.png" style="cursor: pointer;" onclick="editDepotHead(\'' + rowInfo + '\''+',' + rec.Status + ');"/>&nbsp;&nbsp;&nbsp;';
-							str += '<img title="删除" src="' + path + '/js/easyui-1.3.5/themes/icons/edit_remove.png" style="cursor: pointer;" onclick="deleteDepotHead('+ rec.Id +',' + orgId +',' + rec.TotalPrice+',' + rec.Status + ');"/>';
+							str += '<img title="删除" src="' + path + '/js/easyui-1.3.5/themes/icons/edit_remove.png" style="cursor: pointer;" onclick="deleteDepotHead(\'' + rec.Id + '\',\'' + orgId + '\',' + rec.TotalPrice+',' + rec.Status + ');"/>';
 						}
 						return str;
 					}
 				},
-				{ title: organNameTitle, field: 'OrganName',width:120, hidden:isShowOrganNameColumn},
-				{ title: '单据编号',field: 'Number',width:130},
-				{ title: '商品信息',field: 'MaterialsList',width:180,formatter:function(value){
+				{ title: organNameTitle, field: 'OrganName',width:120, hidden:isShowOrganNameColumn,align:"center"},
+				{ title: '单据编号',field: 'Number',width:130,align:"center"},
+				{ title: '商品信息',field: 'MaterialsList',width:180,align:"center",formatter:function(value){
 						return value.replace(",","，");
 					}
 				},
-				{ title: '单据日期 ',field: 'OperTime',width:130},
-				{ title: '操作员',field: 'OperPersonName',width:60},
-				{ title: '金额合计',field: 'TotalPrice',width:60},
+				{ title: '单据日期 ',field: 'OperTime',width:130,align:"center"},
+				{ title: '操作员',field: 'OperPersonName',width:60,align:"center"},
+				{ title: '金额合计',field: 'TotalPrice',width:60,align:"center"},
 				{ title: '含税合计',field: 'TotalTaxLastMoney',hidden:isShowLastMoneyColumn,width:60,formatter:function(value,rec){
-						return (rec.DiscountMoney + rec.DiscountLastMoney).toFixed(2);
-					}
+						return (rec.DiscountMoney + rec.DiscountLastMoney).toFixed(2);//保留小数点
+					},align:"center"
 				},
-				{ title: '优惠后金额',field: 'DiscountLastMoney',hidden:isShowLastMoneyColumn,width:80},
+				{ title: '优惠后金额',field: 'DiscountLastMoney',hidden:isShowLastMoneyColumn,width:80,align:"center"},
 				{ title: payTypeTitle,field: 'ChangeAmount',width:50,hidden:hideType},
 				{ title: '状态',field: 'Status',hidden:isHiddenStatus, width:70,align:"center",formatter:function(value){
 						return value? "<span style='color:green;'>已审核</span>":"<span style='color:red;'>未审核</span>";
@@ -617,7 +619,7 @@
 	function findStockNumById(depotId, mId, monthTime, body, input, ratio, type){
 		var thisRatio = 1; //比例
 		$.ajax({
-			url: path + "/material/findById.action",
+			url: path + "/material/findById.do",
 			type: "get",
 			dataType: "json",
 			data: {
@@ -661,10 +663,10 @@
 					//查询库存
 					$.ajax({
 						type: "get",
-						url: path + '/depotItem/findStockNumById.action',
+						url: path + '/depotItem/findStockNumById.do',
 						data:{
 							ProjectId: depotId,
-							MaterialId: mId,
+							Materialid: mId,
 							MonthTime: monthTime
 						},
 						dataType: "json",
@@ -752,23 +754,23 @@
 		if(listSubType == "调拨"){
 			isShowAnotherDepot = false; //调拨时候显示对方仓库
 			anotherDepotHeadName = "调入仓库";
-			anotherDepotUrl = path + '/depot/findDepotByUserId.action?UBType=UserDepot&UBKeyId='+kid;
+			anotherDepotUrl = path + '/depot/findDepotByUserId.do?UBType=UserDepot&UBKeyId='+kid;
 			anotherDepotTextField = "depotName";
 		}
 		if(listSubType == "礼品充值"){
 			isShowAnotherDepot = false; //礼品充值时候显示礼品卡
 			anotherDepotHeadName = "礼品卡";
-			anotherDepotUrl = path + "/depot/findGiftByType.action?type=1";
+			anotherDepotUrl = path + "/depot/findGiftByType.do?type=1";
 			anotherDepotTextField = "name";
 		}
 		if(listSubType == "礼品销售"){
 			depotHeadName = "礼品卡";
-			depotUrl = path + "/depot/findGiftByType.action?type=1";
+			depotUrl = path + "/depot/findGiftByType.do?type=1";
 			depotTextField = "name";
 		}
 		else {
 			depotHeadName = "仓库名称";
-			depotUrl = path + '/depot/findDepotByUserId.action?UBType=UserDepot&UBKeyId='+kid;
+			depotUrl = path + '/depot/findDepotByUserId.do?UBType=UserDepot&UBKeyId='+kid;
 			depotTextField = "depotName";
 		}
 		var isShowTaxColumn = false; //是否显示税率相关的列,true为隐藏,false为显示
@@ -834,7 +836,7 @@
 	                      	valueField:'Id',
 	                      	textField:'MaterialName',
 	                      	method:'post',
-	                      	url: path + "/material/findBySelect.action",
+	                      	url: path + "/material/findBySelect.do",
 							panelWidth: 300, //下拉框的宽度
 							//全面模糊匹配，过滤字段
 							filter: function(q, row){
@@ -848,7 +850,7 @@
 								if(rec) {
 									var mId = rec.Id;
 									$.ajax({
-										url: path + "/material/findById.action",
+										url: path + "/material/findById.do",
 										type: "get",
 										dataType: "json",
 										data: {
@@ -1124,7 +1126,7 @@
 		});
 		$.ajax({
 			type:"post",
-			url: path + '/depotItem/findBy.action?HeaderId=' + depotHeadID,
+			url: path + '/depotItem/findBy.do?Headerid=' + depotHeadID,
 			data: {
 				mpList: mPropertyList
 			},
@@ -1221,7 +1223,7 @@
 		});
 		$.ajax({
 			type:"post",
-			url: path + '/depotItem/findBy.action?HeaderId=' + depotHeadID,
+			url: path + '/depotItem/findBy.do?Headerid=' + depotHeadID,
 			data: {
 				mpList: mPropertyList
 			},
@@ -1245,31 +1247,7 @@
 		});
 	}
 
-	//分页信息处理
-	function ininPager(){
-		try
-		{
-			var opts = $("#tableData").datagrid('options');  
-			var pager = $("#tableData").datagrid('getPager'); 
-			pager.pagination({  
-				onSelectPage:function(pageNum, pageSize)
-				{  
-					opts.pageNumber = pageNum;  
-					opts.pageSize = pageSize;  
-					pager.pagination('refresh',
-					{  
-						pageNumber:pageNum,  
-						pageSize:pageSize  
-					});  
-					showDepotHeadDetails(pageNum,pageSize);
-				}  
-			}); 
-		}
-		catch (e) 
-		{
-			$.messager.alert('异常处理提示',"分页信息异常 :  " + e.name + ": " + e.message,'error');
-		}
-	}
+
 	
 	//删除单据信息
 	function deleteDepotHead(depotHeadID, thisOrganId, totalPrice, status){
@@ -1281,7 +1259,7 @@
 	        if (r) {
 				$.ajax({
 					type:"post",
-					url: path + "/depotHead/delete.action",
+					url: path + "/depotHead/delete.do",
 					dataType: "json",
 					data: ({
 						depotHeadID : depotHeadID,
@@ -1289,7 +1267,7 @@
 					}),
 					success: function (tipInfo)
 					{
-						var msg = tipInfo.showModel.msgTip;
+						var msg = tipInfo.message;
 						if(msg == '成功')
 						{
 							//加载完以后重新初始化
@@ -1310,14 +1288,14 @@
 				if(listSubType === "零售") {
 					$.ajax({
 						type:"post",
-						url: path + "/supplier/updateAdvanceIn.action",
+						url: path + "/supplier/updateAdvanceIn.do",
 						dataType: "json",
 						data:{
 							SupplierID: thisOrganId, //会员id
-							AdvanceIn: totalPrice  //删除时同时返还用户的预付款
+							Advancein: totalPrice  //删除时同时返还用户的预付款
 						},
 						success: function(res){
-							if(res) {
+							if(res.flag) {
 								//保存会员预收款成功
 							}
 						},
@@ -1339,6 +1317,11 @@
 			$.messager.alert('删除提示','没有记录被选中！','info');				
 			return;	
 		}
+        if(row.length == 1)
+        {
+            deleteDepotHead(row[0].Id,row[0].OrganId,row[0].TotalPrice,row[0].Status);
+            return;
+        }
 		if(row.length > 0)
 		{
 			$.messager.confirm('删除确认','确定要删除选中的' + row.length + '条单据信息吗？',function(r)
@@ -1361,11 +1344,11 @@
 						if(listSubType === "零售") {
 							$.ajax({
 								type:"post",
-								url: path + "/supplier/updateAdvanceIn.action",
+								url: path + "/supplier/updateAdvanceIn.do",
 								dataType: "json",
 								data:{
 									SupplierID: row[i].OrganId, //会员id
-									AdvanceIn: row[i].TotalPrice  //删除时同时返还用户的预付款
+									Advancein: row[i].TotalPrice  //删除时同时返还用户的预付款
 								},
 								success: function(res){
 									if(res) {
@@ -1382,7 +1365,7 @@
 					//批量删除
 	                $.ajax({
 						type:"post",
-						url: path + "/depotHead/batchDelete.action",
+						url: path + "/depotHead/batchDelete.do",
 						dataType: "json",
 						async :  false,
 						data: ({
@@ -1391,7 +1374,7 @@
 						}),
 						success: function (tipInfo)
 						{
-							var msg = tipInfo.showModel.msgTip;
+							var msg = tipInfo.message;
 							if(msg == '成功')
 							{
 								//加载完以后重新初始化
@@ -1437,7 +1420,7 @@
 					}
 					$.ajax({
 						type:"post",
-						url: path + "/depotHead/batchSetStatus.action",
+						url: path + "/depotHead/batchSetStatus.do",
 						dataType: "json",
 						async :  false,
 						data: ({
@@ -1447,7 +1430,7 @@
 						}),
 						success: function (tipInfo)
 						{
-							var msg = tipInfo.showModel.msgTip;
+							var msg = tipInfo.message;
 							if(msg == '成功')
 							{
 								//加载完以后重新初始化
@@ -1495,7 +1478,7 @@
 					}
 					$.ajax({
 						type:"post",
-						url: path + "/depotHead/batchSetStatus.action",
+						url: path + "/depotHead/batchSetStatus.do",
 						dataType: "json",
 						async :  false,
 						data: ({
@@ -1505,7 +1488,7 @@
 						}),
 						success: function (tipInfo)
 						{
-							var msg = tipInfo.showModel.msgTip;
+							var msg = tipInfo.messsage;
 							if(msg == '成功')
 							{
 								//加载完以后重新初始化
@@ -1540,10 +1523,10 @@
 		//生成单据编号
 		$.ajax({
 			type: "post",
-			url: path + "/depotHead/buildNumber.action",
+			url: path + "/depotHead/buildNumber.do",
 			data: {
 				Type: listType,
-				SubType: listSubType,
+				Subtype: listSubType,
 				BeginTime: beginTime,
 				EndTime: endTime
 			},
@@ -1578,7 +1561,7 @@
 		$("#addOrgan").off("click").on("click",function(){
 			$('#supplierDlg').dialog('open').dialog('setTitle','<img src="' + path + '/js/easyui-1.3.5/themes/icons/edit_add.png"/>&nbsp;增加供应商');
 		});
-	    url = path + '/depotHead/create.action';
+	    url = path + '/depotHead/create.do';
 
 		//零售单据修改收款时，自动计算找零
 		if(listSubType == "零售" || listSubType == "零售退货") {
@@ -1733,7 +1716,7 @@
 	    
 	    initTableData_material("edit",TotalPrice); //商品列表
 	    reject(); //撤销下、刷新商品列表                
-	    url = path + '/depotHead/update.action?depotHeadID=' + depotHeadInfo[0];
+	    url = path + '/depotHead/update.do?depotHeadID=' + depotHeadInfo[0];
 	}
 	
 	//查看信息
@@ -1833,12 +1816,12 @@
 				}
 				$.ajax({
 					type: "post",
-					url: path + "/person/getPersonByIds.action",
+					url: path + "/person/getPersonByIds.do",
 					data: {
 						PersonIDs: salesmanStr
 					},
 					success:function(res){
-						if(res){
+						if(res.sb){
 							$("#SalesmanShow").text(res); //销售人员列表
 						}
 					},
@@ -1849,23 +1832,13 @@
 			}
 		}
 	}
+
+
 	
 	//绑定操作事件
 	function bindEvent(){
-		showDepotHeadDetails(1,initPageSize); //初始化时自动查询
-		//搜索处理
-		$("#searchBtn").off("click").on("click",function(){
-			showDepotHeadDetails(1,initPageSize);
-			var opts = $("#tableData").datagrid('options');
-			var pager = $("#tableData").datagrid('getPager');
-			opts.pageNumber = 1;
-			opts.pageSize = initPageSize;
-			pager.pagination('refresh',
-			{
-				pageNumber:1,
-				pageSize:initPageSize
-			});
-		});
+		showDepotHeadDetails(); //初始化时自动查询
+
 
 		//重置按钮
 		$("#searchResetBtn").unbind().bind({
@@ -1889,7 +1862,7 @@
 			{
 				$.ajax({
 					type:"post",
-					url: path + "/depotHead/checkIsNumberExist.action",
+					url: path + "/depotHead/checkIsNumberExist.do",
 					dataType: "json",
 					async :  false,
 					data: ({
@@ -1898,7 +1871,7 @@
 					}),
 					success: function (tipInfo)
 					{
-						flag = tipInfo;
+						flag = tipInfo.flag;
 						if(tipInfo)
 						{
 							$.messager.alert('提示','抱歉，该单据编号已经存在','warning');
@@ -2069,46 +2042,48 @@
 				if($("#AccountId").val() === "many"){ //多账户
 					getAccountID = null;
 				}
-				$.ajax({
+                uuid = "cms"+guid();
+                $.ajax({
 					type:"post",
 					url: url,
 					dataType: "json",
 					async :  false,
 					data: ({
+						id:uuid,
 						Type: listType,
-						SubType: listSubType,
-						ProjectId: ProjectId,
-						AllocationProjectId: AllocationProjectId,
-						DefaultNumber: $.trim($("#Number").attr("data-defaultNumber")),//初始编号
+						Subtype: listSubType,
+						Projectid: ProjectId,
+                        Allocationprojectid: AllocationProjectId,
+						Defaultnumber: $.trim($("#Number").attr("data-defaultNumber")),//初始编号
 						Number: $.trim($("#Number").val()),
-						OperTime: $("#OperTime").val(),
-						OrganId: OrganId,
-						HandsPersonId: $.trim($("#HandsPersonId").val()),
+                        StrOpertime: $("#OperTime").val(),
+						Organid: OrganId,
+						Handspersonid: $.trim($("#HandsPersonId").val()),
 						Salesman: SalesmanStr, //销售人员
-						AccountId: getAccountID,
-						ChangeAmount: ChangeAmount, //付款/收款
-						TotalPrice: TotalPrice, //合计
-						PayType: thisPayType, //现付/预付款
+						Accountid: getAccountID,
+						Changeamount: ChangeAmount, //付款/收款
+						Totalprice: TotalPrice, //合计
+						Paytype: thisPayType, //现付/预付款
 						Remark: $.trim($("#Remark").val()),
-						AccountIdList: $("#AccountId").attr("data-accountarr"), //账户列表-多账户
-						AccountMoneyList: accountMoneyArr ? JSON.stringify(accountMoneyArr):"", //账户金额列表-多账户
+						Accountidlist: $("#AccountId").attr("data-accountarr"), //账户列表-多账户
+						Accountmoneylist: accountMoneyArr ? JSON.stringify(accountMoneyArr):"", //账户金额列表-多账户
 						Discount: $.trim($("#Discount").val()),
-						DiscountMoney: $.trim($("#DiscountMoney").val()),
-						DiscountLastMoney: $.trim($("#DiscountLastMoney").val()),
-						OtherMoney: $.trim($("#OtherMoney").val()), //采购费用、销售费用
-						OtherMoneyList: $("#OtherMoney").attr("data-itemarr"), //支出项目列表-涉及费用
-						OtherMoneyItem: $("#OtherMoney").attr("data-itemmoneyarr"), //支出项目金额列表-涉及费用
-						AccountDay: $("#AccountDay").val(), //结算天数
+						Discountmoney: $.trim($("#DiscountMoney").val()),
+						Discountlastmoney: $.trim($("#DiscountLastMoney").val()),
+						Othermoney: $.trim($("#OtherMoney").val()), //采购费用、销售费用
+						Othermoneylist: $("#OtherMoney").attr("data-itemarr"), //支出项目列表-涉及费用
+						Othermoneyitem: $("#OtherMoney").attr("data-itemmoneyarr"), //支出项目金额列表-涉及费用
+						Accountday: $("#AccountDay").val(), //结算天数
 						clientIp: clientIp
 					}),
 					success: function (tipInfo)
 					{
+                        var tipInfo=tipInfo.flag;
 						if(tipInfo)
 						{
 							function closeDialog(){
 								$('#depotHeadDlg').dialog('close');
-								var opts = $("#tableData").datagrid('options');
-								showDepotHeadDetails(opts.pageNumber,opts.pageSize);
+								showDepotHeadDetails();
 							}
 
 							if(thisPayType === "预付款") {
@@ -2122,14 +2097,14 @@
 								}
 								$.ajax({
 									type:"post",
-									url: path + "/supplier/updateAdvanceIn.action",
+									url: path + "/supplier/updateAdvanceIn.do",
 									dataType: "json",
 									data:{
 										SupplierID: OrganId, //会员id
-										AdvanceIn: 0 - advanceIn  //保存的同时扣掉用户的预付款
+										Advancein: 0 - advanceIn  //保存的同时扣掉用户的预付款
 									},
 									success: function(res){
-										if(res) {
+										if(res.flag) {
 											//保存会员预收款成功
 										}
 									},
@@ -2139,12 +2114,10 @@
 									}
 								});
 							}
-
 							//保存明细记录
 							if(depotHeadID ==0)
 							{
-								getMaxId(); //查找最大的Id
-								accept(depotHeadMaxId,closeDialog); //新增
+								accept(uuid,closeDialog); //新增
 							}
 							else
 							{
@@ -2523,7 +2496,7 @@
 				{
 					$.ajax({
 						type:"post",
-						url: path + "/supplier/checkIsNameExist.action",
+						url: path + "/supplier/checkIsNameExist.do",
 						dataType: "json",
 						async :  false,
 						data: ({
@@ -2532,8 +2505,8 @@
 						}),
 						success: function (tipInfo)
 						{
-							flag = tipInfo;
-							if(tipInfo)
+							flag = tipInfo.flag;
+							if(flag)
 							{
 								$.messager.alert('提示','单位名称已经存在','info');
 								return;
@@ -2568,7 +2541,7 @@
 					$.messager.alert('提示','期初应收和期初应付不能同时输入','info');
 					return;
 				}
-				var url = path + '/supplier/create.action';
+				var url = path + '/supplier/create.do';
 				$.ajax({
 					url: url,
 					type:"post",
@@ -2582,18 +2555,18 @@
 						email:$("#email").val(),
 						address:$("#address").val(),
 						fax:$("#fax").val(),
-						BeginNeedGet:$("#BeginNeedGet").val(),
-						BeginNeedPay:$("#BeginNeedPay").val(),
-						taxNum:$("#taxNum").val(),
-						taxRate:$("#taxRate").val(),
-						bankName:$("#bankName").val(),
-						accountNumber:$("#accountNumber").val(),
+						Beginneedget:$("#BeginNeedGet").val(),
+						Beginneedpay:$("#BeginNeedPay").val(),
+						taxnum:$("#taxNum").val(),
+						taxrate:$("#taxRate").val(),
+						bankname:$("#bankName").val(),
+						accountnumber:$("#accountNumber").val(),
 						description:$("#description").val(),
 						enabled:1,
 						clientIp: clientIp
 					},
 					success: function(res) {
-						if (res) {
+						if (res.flag) {
 							$('#supplierDlg').dialog('close');
 							initSupplier(); //刷新供应商
 						}
@@ -2603,11 +2576,11 @@
 		}
 	}
 
-	function showDepotHeadDetails(pageNo,pageSize){
+	function showDepotHeadDetails(){
 		var materialParam = $.trim($("#searchMaterial").val());
 		$.ajax({
 			type:"post",
-			url: path + "/depotHead/getHeaderIdByMaterial.action",
+			url: path + "/depotHead/getHeaderIdByMaterial.do",
 			dataType: "json",
 			data: ({
 				MaterialParam: materialParam,
@@ -2617,30 +2590,20 @@
 				if(res) {
 					var ids = res.ret;
 					if(ids){
-						$.ajax({
-							type: "post",
-							url: path + "/depotHead/findBy.action",
-							dataType: "json",
-							data: ({
-								Type: listType,
-								SubType: listSubType,
-								State: $.trim($("#searchState").val()),
-								Number: $.trim($("#searchNumber").val()),
-								BeginTime: $("#searchBeginTime").val(),
-								EndTime: $("#searchEndTime").val(),
-								dhIds: ids,
-								pageNo: pageNo,
-								pageSize: pageSize
-							}),
-							success: function (data) {
-								$("#tableData").datagrid('loadData', data);
-							},
-							//此处添加错误处理
-							error: function () {
-								$.messager.alert('查询提示', '查询数据后台异常，请稍后再试！', 'error');
-								return;
-							}
-						});
+
+                        var params={
+                            Type: listType,
+                            Subtype: listSubType,
+                            State: $.trim($("#searchState").val()),
+                            Number: $.trim($("#searchNumber").val()),
+                            BeginTime: $("#searchBeginTime").val(),
+                            EndTime: $("#searchEndTime").val(),
+                            dhIds: ids
+                        };
+                        var options=$('#tableData').datagrid('options');
+                        options.url=path + "/depotHead/findBy.do";
+                        // console.log(options);
+                        $("#tableData").datagrid('load',params);
 					}
 					else {
 						$("#tableData").datagrid('loadData', []);
@@ -2715,7 +2678,7 @@
 						return;
 					}
 					$.ajax({
-						url: path + "/material/findById.action",
+						url: path + "/material/findById.do",
 						type: "get",
 						dataType: "json",
 						data: {
@@ -2927,16 +2890,17 @@
 		var updated = $("#materialData").datagrid('getChanges', "updated");
 		$.ajax({
 			type: "post",
-			url: path + "/depotItem/saveDetials.action",
+			url: path + "/depotItem/saveDetials.do",
 			data: {
 				Inserted: JSON.stringify(inserted),
 				Deleted: JSON.stringify(deleted),
 				Updated: JSON.stringify(updated),
-				HeaderId:accepId,
+				Headerid:accepId,
 				clientIp: clientIp
 			},
 			success: function (tipInfo)
 			{
+				var tipInfo=tipInfo.flag;
 				if (tipInfo) {
 					$.messager.alert('提示','保存成功！','info');
 				}
@@ -2954,42 +2918,6 @@
 	    if (endEditing()) {
 	        $('#materialData').datagrid('acceptChanges');
 	    }
-	}
-	//获取MaxId
-	function getMaxId(){
-	    var depotHeadMax=null;
-		$.ajax({
-			type:"post",
-			url: path + "/depotHead/getMaxId.action",
-			//设置为同步
-			async:false,
-			dataType: "json",
-			success: function (systemInfo)
-			{
-				if(systemInfo)
-				{
-					depotHeadMax = systemInfo.showModel.map.depotHeadMax;
-					var msgTip = systemInfo.showModel.msgTip;
-					if(msgTip == "exceptoin")
-					{
-						$.messager.alert('提示','查找最大的Id异常,请与管理员联系！','error');
-						return;
-					}
-				}
-				else
-				{
-					depotHeadMax=null;
-				}
-			}
-		});
-		
-		if(depotHeadMax !=null)
-		{
-			if(depotHeadMax.length>0)
-			{
-				depotHeadMaxId=depotHeadMax[0];
-			}
-		}
 	}
 
 

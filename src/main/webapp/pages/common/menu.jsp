@@ -101,7 +101,7 @@
                 }
                 //按钮权限列表
                 else if (lei == 3) {
-                    var btnStr = userBusinessList[0].btnStr;
+                    var btnStr = userBusinessList[0].btnstr;
                     if (btnStr != null) {
                         btnStr = JSON.parse(btnStr);
                         for (var j = 0; j < btnStr.length; j++) {

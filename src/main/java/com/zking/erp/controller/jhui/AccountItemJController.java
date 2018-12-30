@@ -2,6 +2,7 @@ package com.zking.erp.controller.jhui;
 
 import com.zking.erp.base.BaseController;
 import com.zking.erp.model.jhui.AccountItem;
+import com.zking.erp.model.jhui.Log;
 import com.zking.erp.service.jhui.IAccountItemJService;
 import com.zking.erp.util.PageBean;
 import net.sf.json.JSONArray;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
+import java.sql.Timestamp;
 import java.util.*;
 
 @Controller
@@ -73,7 +75,7 @@ public class AccountItemJController extends BaseController{
      */
     @ResponseBody
     @RequestMapping("/saveDetials")
-    public Map<String,Object> saveDetials(AccountItem model) {
+    public Map<String,Object> saveDetials(HttpServletRequest request,AccountItem model) {
         System.out.println("================开始调用保存财务明细信息方法saveDetials=====================");
         Boolean flag = false;
         Map<String,Object> map=new HashMap<String, Object>();
@@ -165,13 +167,14 @@ public class AccountItemJController extends BaseController{
             }
         }
         System.out.println(">>>>>>>>>>>>>>>>>>>结束调用保存财务明细方法saveDetials()===================");
+        logService.create(new Log(getUser(request), "保存财务明细", model.getClientIp(),
+                new Timestamp(System.currentTimeMillis())
+                , tipType, "保存财务明细对应主表编号为  " + model.getHeaderid() + " " + tipMsg + "！", "保存财务明细" + tipMsg));
         return map;
-//        logService.create(new Logdetails(getUser(), "保存财务明细", model.getClientIp(),
-//                new Timestamp(System.currentTimeMillis())
-//                , tipType, "保存财务明细对应主表编号为  " + model.getHeaderId() + " " + tipMsg + "！", "保存财务明细" + tipMsg));
     }
 
 
 
 
 }
+

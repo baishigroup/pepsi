@@ -40,7 +40,7 @@
     zl=#{zl},
     sort=#{sort},
     remark=#{remark},
-    enabled=#{enabled},
+    enabled=#{enabled}
     where Id = #{id,jdbcType=VARCHAR}
   </update>
 
@@ -78,7 +78,7 @@
       SELECT  *
       FROM app   WHERE 1=1
       <if test="param2 != null and param2!=''" >
-        AND (name LIKE concat(concat('%',#{param2}),'%'))
+        AND (name =,#{param2})
       </if>
       <if test="param4 != null and param4!=''" >
         AND (id != #{param4})
@@ -101,7 +101,7 @@
   <delete id="delete" parameterType="com.zking.erp.model.jhui.App">
     delete from app
     where 1=1
-    <foreach collection="id" item="id" open=" and id in(" close=")" separator="," index="idx">
+    <foreach collection="ids" item="id" open=" and id in(" close=")" separator="," index="idx">
       #{id}
     </foreach>
   </delete>

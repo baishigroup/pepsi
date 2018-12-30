@@ -55,12 +55,14 @@ public class Supplier implements Serializable{
     /**
      * 供应商ID
      */
-    private String supplierID = "01";
+    private String supplierID = "0";
 
     /**
      * 供应商IDs 批量操作使用
      */
     private String supplierIDs = "";
+
+    private String ClientIp="0:0:0:0:0:0:0:1";
 
     public Supplier(String id, String supplier, String contacts, String phonenum, String email, String description, Integer isystem, String type, Integer enabled, Double advancein, Double beginneedget, Double beginneedpay, Double allneedget, Double allneedpay, String fax, String telephone, String address, String taxnum, String bankname, String accountnumber, Double taxrate) {
         this.id = id;
@@ -88,6 +90,14 @@ public class Supplier implements Serializable{
 
     public Supplier() {
         super();
+    }
+
+    public String getClientIp() {
+        return ClientIp;
+    }
+
+    public void setClientIp(String clientIp) {
+        ClientIp = clientIp;
     }
 
     public String getSupplierID() {

@@ -33,4 +33,32 @@ public class SupplierJServiceImpl implements ISupplierJService {
     public int updateById(Supplier record) {
         return supplierMapperJ.updateById(record);
     }
+
+    @Override
+    public List<Supplier> queryBySelect_cus(Supplier supplier) {
+        return supplierMapperJ.queryBySelect_cus(supplier);
+    }
+
+    @Override
+    public List<Supplier> queryById(Supplier supplier) {
+        return supplierMapperJ.queryById(supplier);
+    }
+
+    @Override
+    public List<Supplier> queryByTypeByIs(Supplier supplier) {
+        return supplierMapperJ.queryByTypeByIs(supplier);
+    }
+
+    @Override
+    public Boolean checkIsNameExist(String filedName, String filedVale, String idFiled, String objectID) {
+        List<Supplier> dataList = supplierMapperJ.checkIsNameExist(filedName, filedVale, idFiled, objectID);
+        if (null != dataList && dataList.size() > 0)
+            return true;
+        return false;
+    }
+
+    @Override
+    public int insert(Supplier record) {
+        return supplierMapperJ.insert(record);
+    }
 }

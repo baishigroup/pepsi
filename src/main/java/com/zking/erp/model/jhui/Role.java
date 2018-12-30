@@ -33,6 +33,16 @@ public class Role implements Serializable{
 
     private String[] ids=null;
 
+    /**
+     * UBType，UserBusiness类型
+     */
+    private String UBType = "";
+
+    /**
+     * UBKeyId，UserBusiness关键id
+     */
+    private String UBKeyId = "";
+
 
     public Role(String id, String name, String type, String value, String description) {
         this.id = id;
@@ -44,6 +54,22 @@ public class Role implements Serializable{
 
     public Role() {
         super();
+    }
+
+    public String getUBType() {
+        return UBType;
+    }
+
+    public void setUBType(String UBType) {
+        this.UBType = UBType;
+    }
+
+    public String getUBKeyId() {
+        return UBKeyId;
+    }
+
+    public void setUBKeyId(String UBKeyId) {
+        this.UBKeyId = UBKeyId;
     }
 
     public String getRoleID() {

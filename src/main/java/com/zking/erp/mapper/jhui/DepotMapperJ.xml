@@ -17,4 +17,21 @@
     id, name, address, warehousing, truckage, type, sort, remark
   </sql>
 
+  <select id="queryDepotByAll" resultType="com.zking.erp.model.jhui.Depot"
+          parameterType="com.zking.erp.model.jhui.Depot">
+    SELECT <include refid="Base_Column_List"/>
+    from depot depot0_ where 1=1 and depot0_.type=0 order by depot0_.sort asc
+  </select>
+
+  <select id="queryDepot" resultType="com.zking.erp.model.jhui.Depot"
+          parameterType="com.zking.erp.model.jhui.Depot">
+    SELECT <include refid="Base_Column_List"/>
+    from depot depot0_ where 1=1  order by depot0_.sort asc
+  </select>
+  <select id="quertByType" resultType="com.zking.erp.model.jhui.Depot"
+          parameterType="com.zking.erp.model.jhui.Depot">
+    SELECT <include refid="Base_Column_List"/>
+    from depot where 1=1 and type=#{type} ORDER  by sort asc
+  </select>
+
 </mapper>

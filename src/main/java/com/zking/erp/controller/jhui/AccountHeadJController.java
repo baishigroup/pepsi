@@ -2,6 +2,8 @@ package com.zking.erp.controller.jhui;
 
 import com.zking.erp.base.BaseController;
 import com.zking.erp.model.jhui.AccountHead;
+import com.zking.erp.model.jhui.Log;
+import com.zking.erp.model.jhui.User;
 import com.zking.erp.service.jhui.IAccountHeadJService;
 import com.zking.erp.util.PageBean;
 import com.zking.erp.util.Tools;
@@ -77,12 +79,12 @@ public class AccountHeadJController extends BaseController {
      */
     @RequestMapping("/update")
     @ResponseBody
-    public Map<String,Object> update(AccountHead model) {
+    public Map<String,Object> update(HttpServletRequest request,AccountHead model) {
         Boolean flag = false;
         Map<String,Object> map=new HashMap<String, Object>();
         try {
             //AccountHeadID即id
-            AccountHead accountHead = accountHeadService.queryAccountHeadById(model.getId());
+            AccountHead accountHead = accountHeadService.queryAccountHeadById(model.getAccountHeadID());
             accountHead.setType(model.getType());
             if (model.getOrganid() != null) {
                 accountHead.setOrganid(model.getOrganid());
@@ -114,19 +116,12 @@ public class AccountHeadJController extends BaseController {
             tipType = 1;
             System.out.println(">>>>>>>>>>>>>>>修改财务ID为 ："+model.getAccountHeadID() + "信息失败");
             e.printStackTrace();
-        } finally {
-            try {
-                map.put("flag",flag);
-                return  map;
-            } catch (Exception e) {
-                System.out.println(">>>>>>>>>>>>>>>修改财务回写客户端结果异常 ：");
-                e.printStackTrace();
-                throw new RuntimeException(e);
-            }
         }
-//        logService.create(new Logdetails(getUser(), "更新财务", model.getClientIp(),
-//                new Timestamp(System.currentTimeMillis())
-//                , tipType, "更新财务ID为  " + model.getAccountHeadID() + " " + tipMsg + "！", "更新财务" + tipMsg));
+        logService.create(new Log(getUser(request), "更新财务", model.getClientIp(),
+                new Timestamp(System.currentTimeMillis())
+                , tipType, "更新财务ID为  " + model.getAccountHeadID() + " " + tipMsg + "！", "更新财务" + tipMsg));
+        map.put("flag",flag);
+        return  map;
     }
 
     /**
@@ -136,7 +131,7 @@ public class AccountHeadJController extends BaseController {
      */
     @RequestMapping("/create")
     @ResponseBody
-    public Map<String,Object> create(AccountHead model) {
+    public Map<String,Object> create(HttpServletRequest request,AccountHead model) {
         System.out.println("==================开始调用增加财务信息方法create()===================");
         Boolean flag = false;
         Map<String,Object> map=new HashMap<String, Object>();
@@ -175,21 +170,12 @@ public class AccountHeadJController extends BaseController {
             tipMsg = "失败";
             tipType = 1;
             e.printStackTrace();
-        } finally {
-            try {
-                map.put("flag",flag);
-                return map;
-            } catch (Exception e) {
-                System.out.println(">>>>>>>>>>>>增加财务信息回写客户端结果异常");
-                e.printStackTrace();
-                System.out.println("==================结束调用增加财务方法create()===================");
-                throw new RuntimeException(e);
-            }
         }
-
-//        logService.create(new Logdetails(getUser(), "增加财务", model.getClientIp(),
-//                new Timestamp(System.currentTimeMillis())
-//                , tipType, "增加财务编号为  " + model.getBillNo() + " " + tipMsg + "！", "增加财务" + tipMsg));
+        logService.create(new Log(getUser(request), "增加财务", model.getClientIp(),
+                new Timestamp(System.currentTimeMillis())
+                , tipType, "增加财务编号为  " + model.getBillno() + " " + tipMsg + "！", "增加财务" + tipMsg));
+        map.put("flag",flag);
+        return map;
 
     }
 
@@ -200,7 +186,7 @@ public class AccountHeadJController extends BaseController {
      */
     @RequestMapping("/batchDelete")
     @ResponseBody
-    public Map<String,Object> batchDelete(AccountHead model) {
+    public Map<String,Object> batchDelete(HttpServletRequest request,AccountHead model) {
         Map<String,Object> map=new HashMap<String, Object>();
         try {
             accountHeadService.delete(model);
@@ -215,9 +201,9 @@ public class AccountHeadJController extends BaseController {
             e.printStackTrace();
         }
 
-//        logService.create(new Logdetails(getUser(), "批量删除财务", model.getClientIp(),
-//                new Timestamp(System.currentTimeMillis())
-//                , tipType, "批量删除财务ID为  " + model.getAccountHeadIDs() + " " + tipMsg + "！", "批量删除财务" + tipMsg));
+        logService.create(new Log(getUser(request), "批量删除财务", model.getClientIp(),
+                new Timestamp(System.currentTimeMillis())
+                , tipType, "批量删除财务ID为  " + model.getAccountHeadIDs() + " " + tipMsg + "！", "批量删除财务" + tipMsg));
         return map;
     }
 
@@ -228,7 +214,7 @@ public class AccountHeadJController extends BaseController {
      */
     @RequestMapping("/delete")
     @ResponseBody
-    public Map<String,Object> delete(AccountHead model) {
+    public Map<String,Object> delete(HttpServletRequest request,AccountHead model) {
         Map<String,Object> map=new HashMap<String, Object>();
         System.out.println("====================开始调用删除财务信息方法delete()================");
         try {
@@ -243,9 +229,9 @@ public class AccountHeadJController extends BaseController {
         }
         map.put("message",tipMsg);
 
-//        logService.create(new Logdetails(getUser(), "删除财务", model.getClientIp(),
-//                new Timestamp(System.currentTimeMillis())
-//                , tipType, "删除财务ID为  " + model.getAccountHeadID() + " " + tipMsg + "！", "删除财务" + tipMsg));
+        logService.create(new Log(getUser(request), "删除财务", model.getClientIp(),
+                new Timestamp(System.currentTimeMillis())
+                , tipType, "删除财务ID为  " + model.getAccountHeadID() + " " + tipMsg + "！", "删除财务" + tipMsg));
         System.out.println("====================结束调用删除财务信息方法delete()================");
         return map;
     }

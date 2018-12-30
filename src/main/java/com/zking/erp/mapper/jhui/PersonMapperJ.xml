@@ -16,5 +16,18 @@
       SELECT <include refid="Base_Column_List"/>
       FROM person person0_ WHERE 1=1 AND person0_.Type=#{type} ORDER BY person0_.Id ASC
     </select>
+  <select id="queryPersonAll" resultType="com.zking.erp.model.jhui.Person">
+    SELECT <include refid="Base_Column_List"/>
+    from person where 1=1 order by id asc
+  </select>
+    <select id="queryPersonByIds" resultType="com.zking.erp.model.jhui.Person"
+            parameterType="com.zking.erp.model.jhui.Person">
+      select <include refid="Base_Column_List"/>
+      from person where 1=1
+      <foreach collection="ids" item="id" open=" and id in(" close=")" separator="," index="idx">
+        #{id}
+      </foreach>
+      order by id asc
+    </select>
 
 </mapper>

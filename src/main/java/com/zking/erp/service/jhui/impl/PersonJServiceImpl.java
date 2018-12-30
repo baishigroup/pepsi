@@ -21,4 +21,16 @@ public class PersonJServiceImpl implements IPersonJService {
     public List<Person> queryPersonByType(Person person) {
         return personMapperJ.queryPersonByType(person);
     }
+
+    @Override
+    public List<Person> queryPersonAll() {
+        return personMapperJ.queryPersonAll();
+    }
+
+    @Override
+    public List<Person> queryPersonByIds(Person person) {
+        String[] split = person.getPersonIDs().split(",");
+        person.setIds(split);
+        return personMapperJ.queryPersonByIds(person);
+    }
 }

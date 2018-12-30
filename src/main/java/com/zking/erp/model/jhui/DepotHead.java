@@ -28,6 +28,7 @@ public class DepotHead implements Serializable{
     private Date createtime;
 
     private Date opertime;
+    private String StrOpertime;
 
     private String organid;
 
@@ -67,6 +68,49 @@ public class DepotHead implements Serializable{
 
     private Integer status;
 
+    //查询开始时间
+    private String BeginTime;
+    //查询结束时间
+    private String EndTime;
+    //查询月份
+    private String MonthTime;
+    //单位Id，用于查询单位的应收应付
+    private String supplierId;
+    //商品参数
+    private String MaterialParam;
+    //单据id列表
+    private String dhIds;
+    //单位类型，客户、供应商
+    private String supType;
+
+    /**
+     * 分类ID
+     */
+    private String depotHeadID = "0";
+
+    /**
+     * 分类IDs 批量操作使用
+     */
+    private String depotHeadIDs = "";
+
+    private String[] ids=null;
+
+    ///拥有的仓库信息
+   private String DepotIds="";
+
+    /**
+     * 用户IP，用户记录操作日志
+     */
+    private String clientIp = "";
+
+    private String ProjectName;//仓库Depot
+    private String OrganName;//供应商 Supplier
+    private String HandsPersonName;//经手人 Person
+    private String AccountName; //账户 Account
+    private String AllocationProjectName;//调拨时对方仓库Depot
+
+    private String mName;//商品信息
+
     public DepotHead(String id, String type, String subtype, String projectid, String defaultnumber, String checker, String number, String operpersonname, Date checktime, Date createtime, Date opertime, String organid, String handspersonid, String accountid, Double changeamount, String allocationprojectid, Double totalprice, String paytype, String remark, String salesman, String accountidlist, String accountmoneylist, Double discount, Double discountmoney, Double discountlastmoney, Double othermoney, String othermoneylist, String othermoneyitem, Integer accountday, Integer status) {
         this.id = id;
         this.type = type;
@@ -102,6 +146,158 @@ public class DepotHead implements Serializable{
 
     public DepotHead() {
         super();
+    }
+
+    public String getmName() {
+        return mName;
+    }
+
+    public void setmName(String mName) {
+        this.mName = mName;
+    }
+
+    public String getProjectName() {
+        return ProjectName;
+    }
+
+    public void setProjectName(String projectName) {
+        ProjectName = projectName;
+    }
+
+    public String getOrganName() {
+        return OrganName;
+    }
+
+    public void setOrganName(String organName) {
+        OrganName = organName;
+    }
+
+    public String getHandsPersonName() {
+        return HandsPersonName;
+    }
+
+    public void setHandsPersonName(String handsPersonName) {
+        HandsPersonName = handsPersonName;
+    }
+
+    public String getAccountName() {
+        return AccountName;
+    }
+
+    public void setAccountName(String accountName) {
+        AccountName = accountName;
+    }
+
+    public String getAllocationProjectName() {
+        return AllocationProjectName;
+    }
+
+    public void setAllocationProjectName(String allocationProjectName) {
+        AllocationProjectName = allocationProjectName;
+    }
+
+    public String getDepotIds() {
+        return DepotIds;
+    }
+
+    public void setDepotIds(String depotIds) {
+        DepotIds = depotIds;
+    }
+
+    public String getStrOpertime() {
+        return StrOpertime;
+    }
+
+    public void setStrOpertime(String strOpertime) {
+        StrOpertime = strOpertime;
+    }
+
+    public String getBeginTime() {
+        return BeginTime;
+    }
+
+    public void setBeginTime(String beginTime) {
+        BeginTime = beginTime;
+    }
+
+    public String getEndTime() {
+        return EndTime;
+    }
+
+    public void setEndTime(String endTime) {
+        EndTime = endTime;
+    }
+
+    public String getMonthTime() {
+        return MonthTime;
+    }
+
+    public void setMonthTime(String monthTime) {
+        MonthTime = monthTime;
+    }
+
+    public String getSupplierId() {
+        return supplierId;
+    }
+
+    public void setSupplierId(String supplierId) {
+        this.supplierId = supplierId;
+    }
+
+    public String getMaterialParam() {
+        return MaterialParam;
+    }
+
+    public void setMaterialParam(String materialParam) {
+        MaterialParam = materialParam;
+    }
+
+    public String getDhIds() {
+        return dhIds;
+    }
+
+    public void setDhIds(String dhIds) {
+        this.dhIds = dhIds;
+    }
+
+    public String getSupType() {
+        return supType;
+    }
+
+    public void setSupType(String supType) {
+        this.supType = supType;
+    }
+
+    public String getDepotHeadID() {
+        return depotHeadID;
+    }
+
+    public void setDepotHeadID(String depotHeadID) {
+        this.depotHeadID = depotHeadID;
+    }
+
+    public String getDepotHeadIDs() {
+        return depotHeadIDs;
+    }
+
+    public void setDepotHeadIDs(String depotHeadIDs) {
+        this.depotHeadIDs = depotHeadIDs;
+    }
+
+    public String[] getIds() {
+        return ids;
+    }
+
+    public void setIds(String[] ids) {
+        this.ids = ids;
+    }
+
+    public String getClientIp() {
+        return clientIp;
+    }
+
+    public void setClientIp(String clientIp) {
+        this.clientIp = clientIp;
     }
 
     public String getId() {

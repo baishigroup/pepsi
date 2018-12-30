@@ -15,6 +15,8 @@ public class SystemConfig implements Serializable{
     private String value;
 
     private String description;
+    private String ClientIp="0:0:0:0:0:0:0:1";
+
 
     public SystemConfig(String id, String type, String name, String value, String description) {
         this.id = id;
@@ -26,6 +28,14 @@ public class SystemConfig implements Serializable{
 
     public SystemConfig() {
         super();
+    }
+
+    public String getClientIp() {
+        return ClientIp;
+    }
+
+    public void setClientIp(String clientIp) {
+        ClientIp = clientIp;
     }
 
     public String getId() {

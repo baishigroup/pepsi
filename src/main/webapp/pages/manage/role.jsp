@@ -126,6 +126,9 @@
             //交替出现背景
             striped: true,
             //loadFilter: pagerFilter,
+            pageList:[2,5,10],
+            pageSize:10,		// 初始化每页显示条数
+            pageNumber:1,	// 初始化页码
             columns: [[
                 {field: 'Id', width: 35, align: "center", checkbox: true},
                 {title: '角色名称', field: 'Name', width: 200},
@@ -307,6 +310,7 @@
                         clientIp: '<%=clientIp %>'
                     }),
                     success: function (tipInfo) {
+                        var tipInfo=tipInfo.flag;
                         if (tipInfo) {
                             $('#roleDlg').dialog('close');
                             showRoleDetails();
@@ -387,22 +391,14 @@
     });
 
     function showRoleDetails() {
-        $.ajax({
-            type: "post",
-            url: "<%=path %>/role/findBy.do",
-            dataType: "json",
-            data: ({
-                name: $.trim($("#searchName").val()),
-            }),
-            success: function (data) {
-                $("#tableData").datagrid('loadData', data);
-            },
-            //此处添加错误处理
-            error: function () {
-                $.messager.alert('查询提示', '查询数据后台异常，请稍后再试！', 'error');
-                return;
-            }
-        });
+        var params={
+            name: $.trim($("#searchName").val()),
+        };
+        var options=$('#tableData').datagrid('options');
+        options.url="<%=path %>/role/findBy.do";
+        // console.log(options);
+        $("#tableData").datagrid('load',params);
+
     }
 
     //重置按钮

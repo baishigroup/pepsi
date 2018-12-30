@@ -33,5 +33,18 @@
     RetailPrice, LowPrice, PresetPriceOne, PresetPriceTwo, UnitId, FirstOutUnit, FirstInUnit, 
     PriceStrategy, Enabled, OtherField1, OtherField2, OtherField3
   </sql>
+    <select id="queryById" resultType="com.zking.erp.model.jhui.Material"
+            parameterType="com.zking.erp.model.jhui.Material">
+        SELECT u.id UnitId,u.UName UnitName, m.*  FROM material m LEFT JOIN unit u ON m.UnitId=u.id WHERE m.id=#{id}
+    </select>
+
+  <select id="queryBySelect" resultType="com.zking.erp.model.jhui.Material"
+          parameterType="com.zking.erp.model.jhui.Material">
+    SELECT u.id UnitId,u.UName UnitName, m.*  FROM material m LEFT JOIN unit u ON m.UnitId=u.id WHERE enabled=1 order by id asc
+  </select>
+
+    <select id="queryUnitName" resultType="com.zking.erp.model.jhui.Material">
+        SELECT unit.UName  FROM unit INNER JOIN material ON UnitId=unit.id WHERE material.id=#{mId}
+    </select>
 
 </mapper>

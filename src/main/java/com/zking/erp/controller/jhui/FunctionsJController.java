@@ -1,23 +1,27 @@
 package com.zking.erp.controller.jhui;
 
+import com.zking.erp.base.BaseController;
 import com.zking.erp.model.jhui.Functions;
+import com.zking.erp.model.jhui.Log;
 import com.zking.erp.model.jhui.vo.FunctionsVo;
 import com.zking.erp.service.jhui.IFunctionsJService;
 import com.zking.erp.service.jhui.IUserBusinessJService;
+import com.zking.erp.util.PageBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import javax.servlet.http.HttpServletRequest;
+import java.io.IOException;
+import java.sql.Timestamp;
+import java.util.*;
 
 @Controller
 @RequestMapping("/functions")
-public class FunctionsJController {
+public class FunctionsJController extends BaseController{
 
     @Autowired
     private IFunctionsJService functionsService;
@@ -284,6 +288,236 @@ public class FunctionsJController {
         return outer;
 
     }
+
+    /**
+     * 查找功能信息
+     *
+     * @return
+     */
+    @ResponseBody
+    @RequestMapping("/findBy")
+    public Map<String,Object> findBy(HttpServletRequest request,Functions model) {
+        try {
+            PageBean pageBean=new PageBean();
+            pageBean.setRequest(request);
+            List<Functions> dataList = functionsService.queryFunctionByLikePager(pageBean,model);
+//            {"total":28,"rows":[
+//                {"productid":"AV-CB-01","attr1":"Adult Male","itemid":"EST-18"}
+//            ]}
+            Map<String,Object> outer = new HashMap<String, Object>();
+            outer.put("total", pageBean.getTotal());
+            //存放数据json数组
+            List dataArray = new ArrayList();
+            if (null != dataList) {
+                for (Functions functions : dataList) {
+                    Map<String,Object> item = new HashMap<String, Object>();
+                    item.put("Id", functions.getId());
+                    item.put("Number", functions.getNumber());
+                    item.put("Name", functions.getName());
+                    item.put("PNumber", functions.getPnumber());
+                    item.put("URL", functions.getUrl());
+                    item.put("State", functions.getState());
+                    item.put("Sort", functions.getSort());
+                    item.put("Enabled", functions.getEnabled());
+                    item.put("Type", functions.getType());
+                    item.put("PushBtn", functions.getPushbtn());
+                    item.put("op", 1);
+                    dataArray.add(item);
+                }
+            }
+            outer.put("rows", dataArray);
+            //回写查询结果
+            return outer;
+        } catch (DataAccessException e) {
+            System.out.println(">>>>>>>>>>>>>>>>>>>查找功能信息异常");
+            e.printStackTrace();
+            throw new RuntimeException(e);
+        } catch (Exception e) {
+            System.out.println(">>>>>>>>>>>>>>>>>>>回写查询功能信息结果异常");
+            e.printStackTrace();
+            throw new RuntimeException(e);
+        }
+    }
+
+    /**
+     * 检查输入名称是否存在
+     */
+    @ResponseBody
+    @RequestMapping("/checkIsNameExist")
+    public Map<String,Object> checkIsNameExist(Functions model) {
+        Map<String,Object> map = new HashMap<String, Object>();
+        Boolean flag = false;
+        try {
+            flag = functionsService.checkIsNameExist("Name", model.getName(), "Id", model.getFunctionsID());
+        } catch (DataAccessException e) {
+            System.out.println(">>>>>>>>>>>>>>>>>检查功能名称为：" + model.getName() + " ID为： " + model.getFunctionsID() + " 是否存在异常！");
+        }
+        map.put("flag",flag);
+        return map;
+    }
+
+    /**
+     * 增加功能
+     *
+     * @return
+     */
+    @ResponseBody
+    @RequestMapping("/create")
+    public Map<String,Object> create(HttpServletRequest request,Functions model) {
+        System.out.println("==================开始调用增加功能信息方法create()===================");
+        Boolean flag = false;
+        Map<String,Object> map = new HashMap<String, Object>();
+        try {
+            model.setId(UUID.randomUUID().toString());
+            functionsService.insert(model);
+
+            //========标识位===========
+            flag = true;
+            //记录操作日志使用
+            tipMsg = "成功";
+            tipType = 0;
+        } catch (DataAccessException e) {
+            System.out.println(">>>>>>>>>>>>>>>>>>>增加功能信息异常");
+            flag = false;
+            tipMsg = "失败";
+            tipType = 1;
+            e.printStackTrace();
+        }
+            map.put("flag",flag);
+
+        logService.create(new Log(getUser(request), "增加功能", model.getClientIp(),
+                new Timestamp(System.currentTimeMillis())
+                , tipType, "增加功能名称为  " + model.getName() + " " + tipMsg + "！", "增加功能" + tipMsg));
+            System.out.println("==================结束调用增加功能方法create()===================");
+            return map;
+    }
+
+    /**
+     * 删除功能
+     *
+     * @return
+     */
+    @ResponseBody
+    @RequestMapping("/delete")
+    public Map<String,Object> delete(HttpServletRequest request,Functions model) {
+            System.out.println("====================开始调用删除功能信息方法delete()================");
+            Map<String,Object> map = new HashMap<String, Object>();
+            try {
+            functionsService.deleteById(model.getFunctionsID());
+            tipMsg = "成功";
+            tipType = 0;
+        } catch (DataAccessException e) {
+                System.out.println(">>>>>>>>>>>删除ID为 " + model.getFunctionsID() + "  的功能异常");
+            tipMsg = "失败";
+            tipType = 1;
+            e.printStackTrace();
+        }
+        map.put("message",tipMsg);
+        logService.create(new Log(getUser(request), "删除功能", model.getClientIp(),
+                new Timestamp(System.currentTimeMillis())
+                , tipType, "删除功能ID为  " + model.getFunctionsID() + " " + tipMsg + "！", "删除功能" + tipMsg));
+            System.out.println("====================结束调用删除功能信息方法delete()================");
+        return map;
+    }
+
+
+
+    /**
+     * 更新功能
+     *
+     * @return
+     */
+    @ResponseBody
+    @RequestMapping("/update")
+    public Map<String,Object> update(HttpServletRequest request,Functions model) {
+        Map<String,Object> map = new HashMap<String, Object>();
+        Boolean flag = false;
+        try {
+            Functions functions = functionsService.selectById(model.getFunctionsID());
+            functions.setNumber(model.getNumber());
+            functions.setName(model.getName());
+            functions.setPnumber(model.getPnumber());
+            functions.setUrl(model.getUrl());
+            functions.setState(model.getState());
+            functions.setSort(model.getSort());
+            functions.setEnabled(model.getEnabled());
+            functions.setType(model.getType());
+            functions.setPushbtn(model.getPushbtn());
+            functionsService.updateById(functions);
+
+            flag = true;
+            tipMsg = "成功";
+            tipType = 0;
+        } catch (DataAccessException e) {
+            System.out.println(">>>>>>>>>>>>>修改功能ID为 ： " + model.getFunctionsID() + "信息失败");
+            flag = false;
+            tipMsg = "失败";
+            tipType = 1;
+            e.printStackTrace();
+        }
+        map.put("flag",flag);
+        logService.create(new Log(getUser(request), "更新功能", model.getClientIp(),
+                new Timestamp(System.currentTimeMillis())
+                , tipType, "更新功能ID为  " + model.getFunctionsID() + " " + tipMsg + "！", "更新功能" + tipMsg));
+        return map;
+    }
+
+    /**
+     * 批量删除指定ID功能
+     *
+     * @return
+     */
+    @ResponseBody
+    @RequestMapping("/batchDelete")
+    public Map<String,Object>  batchDelete(HttpServletRequest request,Functions model) {
+        Map<String,Object> map = new HashMap<String, Object>();
+        try {
+            functionsService.delete(model);
+            map.put("message","成功");
+            //记录操作日志使用
+            tipMsg = "成功";
+            tipType = 0;
+        } catch (DataAccessException e) {
+            System.out.println(">>>>>>>>>>>批量删除功能ID为：" + model.getFunctionsIDs() + "信息异常");
+            tipMsg = "失败";
+            tipType = 1;
+            e.printStackTrace();
+        }
+
+        logService.create(new Log(getUser(request), "批量删除功能", model.getClientIp(),
+                new Timestamp(System.currentTimeMillis())
+                , tipType, "批量删除功能ID为  " + model.getFunctionsIDs() + " " + tipMsg + "！", "批量删除功能" + tipMsg));
+        return map;
+    }
+
+    @ResponseBody
+    @RequestMapping("/getPushBtn")
+    public List getPushBtn(){
+        List lst=new ArrayList();
+        Map<String,Object> map = new HashMap<String, Object>();
+        map.put("id",1);
+        map.put("text","导入导出");
+        Map<String,Object> map1 = new HashMap<String, Object>();
+        map1.put("id",2);
+        map1.put("text","启用禁用");
+        Map<String,Object> map2 = new HashMap<String, Object>();
+        map2.put("id",3);
+        map2.put("text","审核反审核");
+        Map<String,Object> map3 = new HashMap<String, Object>();
+        map3.put("id",4);
+        map3.put("text","打印");
+        Map<String,Object> map4 = new HashMap<String, Object>();
+        map4.put("id",5);
+        map4.put("text","作废");
+        lst.add(map);
+        lst.add(map1);
+        lst.add(map2);
+        lst.add(map3);
+        lst.add(map4);
+
+        return lst;
+    }
+
 
 
 

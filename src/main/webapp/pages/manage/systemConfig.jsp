@@ -65,7 +65,7 @@
                                 value: $(this).val()
                             },
                             success: function (res) {
-                                if (res) {
+                                if (res.flag) {
                                     status = true;
                                 }
                             },

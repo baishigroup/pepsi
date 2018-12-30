@@ -3,9 +3,12 @@ package com.zking.erp.service.jhui.impl;
 import com.zking.erp.mapper.jhui.UserMapperJ;
 import com.zking.erp.model.jhui.User;
 import com.zking.erp.service.jhui.IUserJService;
+import com.zking.erp.util.PageBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @Service
 @Transactional
@@ -69,5 +72,40 @@ public class UserJServiceImpl implements IUserJService {
     @Override
     public int updateById(User user) {
         return userMapperJ.updateById(user);
+    }
+
+    @Override
+    public List<User> queryUserByLikePager(PageBean pageBean,User user) {
+        return userMapperJ.queryUserByLikePager(user);
+    }
+
+    @Override
+    public Boolean checkIsNameExist(String field, String username, String userID) {
+        List<User> dataList = userMapperJ.checkIsNameExist(field,username,userID);
+        if (null != dataList && dataList.size() > 0)
+            return true;
+        return false;
+    }
+
+    @Override
+    public int insert(User user) {
+        return userMapperJ.insert(user);
+    }
+
+    @Override
+    public User selectById(String id) {
+        return userMapperJ.selectById(id);
+    }
+
+    @Override
+    public int deleteById(String id) {
+        return userMapperJ.deleteById(id);
+    }
+
+    @Override
+    public int delete(User user) {
+        String[] split = user.getUserIDs().split(",");
+        user.setIds(split);
+        return userMapperJ.delete(user);
     }
 }

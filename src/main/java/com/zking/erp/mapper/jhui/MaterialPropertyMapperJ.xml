@@ -3,7 +3,7 @@
 <mapper namespace="com.zking.erp.mapper.jhui.MaterialPropertyMapperJ" >
   <resultMap id="BaseResultMap" type="com.zking.erp.model.jhui.MaterialProperty" >
     <constructor >
-      <idArg column="id" jdbcType="VARBINARY" javaType="byte[]" />
+      <idArg column="id" jdbcType="VARCHAR" javaType="java.lang.String" />
       <arg column="nativeName" jdbcType="VARCHAR" javaType="java.lang.String" />
       <arg column="enabled" jdbcType="INTEGER" javaType="java.lang.Integer" />
       <arg column="sort" jdbcType="VARCHAR" javaType="java.lang.String" />
@@ -13,5 +13,30 @@
   <sql id="Base_Column_List" >
     id, nativeName, enabled, sort, anotherName
   </sql>
+
+  <select id="selectById" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select
+    <include refid="Base_Column_List" />
+    from materialproperty
+    where id = #{id,jdbcType=VARCHAR}
+  </select>
+  <select id="queryMaterialPropertyPager" resultType="com.zking.erp.model.jhui.MaterialProperty"
+          parameterType="com.zking.erp.model.jhui.MaterialProperty">
+    SELECT <include refid="Base_Column_List"/>
+    from materialproperty where 1=1
+    <if test="nativename!= null and nativename!=''" >
+      AND (nativename LIKE concat(concat('%',#{nativename}),'%'))
+    </if>
+    ORDER by sort
+  </select>
+
+  <update id="updateById" parameterType="com.zking.erp.model.jhui.MaterialProperty" >
+    update materialproperty
+    set nativeName = #{nativename,jdbcType=VARCHAR},
+    enabled = #{enabled,jdbcType=INTEGER},
+    sort = #{sort,jdbcType=VARCHAR},
+    anotherName = #{anothername,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
 
 </mapper>

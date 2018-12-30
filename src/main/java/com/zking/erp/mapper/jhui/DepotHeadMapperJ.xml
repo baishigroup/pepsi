@@ -43,4 +43,143 @@
     Status
   </sql>
 
+  <delete id="deleteById" parameterType="java.lang.String" >
+    delete from depothead
+    where Id = #{id,jdbcType=VARCHAR}
+  </delete>
+
+  <insert id="insert" parameterType="com.zking.erp.model.jhui.DepotHead" >
+    insert into depothead (Id, Type, SubType,
+    ProjectId, DefaultNumber, checker,
+    Number, OperPersonName, checktime,
+    CreateTime, OperTime, OrganId,
+    HandsPersonId, AccountId, ChangeAmount,
+    AllocationProjectId, TotalPrice, PayType,
+    Remark, Salesman, AccountIdList,
+    AccountMoneyList, Discount, DiscountMoney,
+    DiscountLastMoney, OtherMoney, OtherMoneyList,
+    OtherMoneyItem, AccountDay, Status
+    )
+    values (#{id,jdbcType=VARCHAR}, #{type,jdbcType=VARCHAR}, #{subtype,jdbcType=VARCHAR},
+    #{projectid,jdbcType=VARCHAR}, #{defaultnumber,jdbcType=VARCHAR}, #{checker,jdbcType=VARCHAR},
+    #{number,jdbcType=VARCHAR}, #{operpersonname,jdbcType=VARCHAR}, #{checktime,jdbcType=TIMESTAMP},
+    #{createtime,jdbcType=TIMESTAMP}, #{opertime,jdbcType=TIMESTAMP}, #{organid,jdbcType=VARCHAR},
+    #{handspersonid,jdbcType=VARCHAR}, #{accountid,jdbcType=VARCHAR}, #{changeamount,jdbcType=DOUBLE},
+    #{allocationprojectid,jdbcType=VARCHAR}, #{totalprice,jdbcType=DOUBLE}, #{paytype,jdbcType=VARCHAR},
+    #{remark,jdbcType=VARCHAR}, #{salesman,jdbcType=VARCHAR}, #{accountidlist,jdbcType=VARCHAR},
+    #{accountmoneylist,jdbcType=VARCHAR}, #{discount,jdbcType=DOUBLE}, #{discountmoney,jdbcType=DOUBLE},
+    #{discountlastmoney,jdbcType=DOUBLE}, #{othermoney,jdbcType=DOUBLE}, #{othermoneylist,jdbcType=VARCHAR},
+    #{othermoneyitem,jdbcType=VARCHAR}, #{accountday,jdbcType=INTEGER}, #{status,jdbcType=INTEGER}
+    )
+  </insert>
+
+  <select id="selectById" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select
+    <include refid="Base_Column_List" />
+    from depothead
+    where Id = #{id,jdbcType=VARCHAR}
+  </select>
+
+  <update id="updateById" parameterType="com.zking.erp.model.jhui.DepotHead" >
+    update depothead
+    set Type = #{type,jdbcType=VARCHAR},
+    SubType = #{subtype,jdbcType=VARCHAR},
+    ProjectId = #{projectid,jdbcType=VARCHAR},
+    DefaultNumber = #{defaultnumber,jdbcType=VARCHAR},
+    checker = #{checker,jdbcType=VARCHAR},
+    Number = #{number,jdbcType=VARCHAR},
+    OperPersonName = #{operpersonname,jdbcType=VARCHAR},
+    checktime = #{checktime,jdbcType=TIMESTAMP},
+    CreateTime = #{createtime,jdbcType=TIMESTAMP},
+    OperTime = #{opertime,jdbcType=TIMESTAMP},
+    OrganId = #{organid,jdbcType=VARCHAR},
+    HandsPersonId = #{handspersonid,jdbcType=VARCHAR},
+    AccountId = #{accountid,jdbcType=VARCHAR},
+    ChangeAmount = #{changeamount,jdbcType=DOUBLE},
+    AllocationProjectId = #{allocationprojectid,jdbcType=VARCHAR},
+    TotalPrice = #{totalprice,jdbcType=DOUBLE},
+    PayType = #{paytype,jdbcType=VARCHAR},
+    Remark = #{remark,jdbcType=VARCHAR},
+    Salesman = #{salesman,jdbcType=VARCHAR},
+    AccountIdList = #{accountidlist,jdbcType=VARCHAR},
+    AccountMoneyList = #{accountmoneylist,jdbcType=VARCHAR},
+    Discount = #{discount,jdbcType=DOUBLE},
+    DiscountMoney = #{discountmoney,jdbcType=DOUBLE},
+    DiscountLastMoney = #{discountlastmoney,jdbcType=DOUBLE},
+    OtherMoney = #{othermoney,jdbcType=DOUBLE},
+    OtherMoneyList = #{othermoneylist,jdbcType=VARCHAR},
+    OtherMoneyItem = #{othermoneyitem,jdbcType=VARCHAR},
+    AccountDay = #{accountday,jdbcType=INTEGER},
+    Status = #{status,jdbcType=INTEGER}
+    where Id = #{id,jdbcType=VARCHAR}
+  </update>
+
+    <delete id="delete" parameterType="com.zking.erp.model.jhui.DepotHead">
+    delete from depothead
+    where 1=1
+    <foreach collection="ids" item="id" open=" and id in(" close=")" separator="," index="idx">
+      #{id}
+    </foreach>
+  </delete>
+
+  <select id="checkIsNameExist" resultType="com.zking.erp.model.jhui.DepotHead">
+    SELECT  *
+    FROM depothead   WHERE 1=1
+    <if test="param2 != null and param2!=''" >
+      AND (number =#{param2})
+    </if>
+    <if test="param4 != null and param4!=''" >
+      AND (id != #{param4})
+    </if>
+  </select>
+    <select id="queryNumberByTypeByTime" resultType="com.zking.erp.model.jhui.DepotHead"
+            parameterType="com.zking.erp.model.jhui.DepotHead">
+        SELECT <include refid="Base_Column_List"/>
+        from depothead where 1=1 AND depothead0_.Type=#{type} AND depothead0_.OperTime &gt;=#{beginTime}
+        AND depothead0_.OperTime &lt;=#{endTime} AND depothead0_.SubType=#{subtype} ORDER BY depothead0_.Id DESC
+    </select>
+   
+    <select id="queryDepotHeadPager" resultType="com.zking.erp.model.jhui.DepotHead"
+            parameterType="com.zking.erp.model.jhui.DepotHead">
+        SELECT d1.name ProjectName,d2.name AllocationProjectName,s.Supplier OrganName,p.name HandsPersonName,d.* FROM depothead d
+        LEFT JOIN depot d1 ON d.ProjectId=d1.id LEFT JOIN depot d2 ON d.ProjectId=d2.id
+        LEFT JOIN supplier s ON d.OrganId=s.id LEFT JOIN person p ON d.HandsPersonId=p.id LEFT JOIN account a ON d.AccountId=a.id
+        WHERE 1=1
+        <if test="type != null and type!=''" >
+            AND (d.type = #{type})
+        </if>
+        <if test="subtype != null and subtype!=''" >
+            AND (d.subtype = #{subtype})
+        </if>
+        <if test="number != null and number!=''" >
+            AND (d.Number like concat(concat('%',#{number}),'%'))
+        </if>
+        <if test="beginTime != null and beginTime!=''" >
+            AND (d.OperTime &gt;=#{beginTime})
+        </if>
+        <if test="endTime != null and endTime!=''" >
+            AND (d.OperTime &lt;=#{endTime})
+        </if>
+        <if test="ids != null and ids!=''" >
+            <foreach collection="ids" item="id" open=" and d.id in(" close=")" separator="," index="idx">
+                #{id}
+            </foreach>
+        </if>
+        ORDER BY d.id DESC
+
+    </select>
+    <select id="queryMaterialsListByHeaderId" resultType="com.zking.erp.model.jhui.DepotHead"
+            parameterType="com.zking.erp.model.jhui.DepotHead">
+        SELECT GROUP_CONCAT(CONCAT(material.`Name`,' ',material.Model)) AS mName FROM depotitem INNER JOIN material
+                 ON depotitem.MaterialId = material.Id WHERE depotitem.HeaderId = #{depotHeadID}
+    </select>
+
+    <update id="updatebatchStatus" parameterType="com.zking.erp.model.jhui.DepotHead">
+        update depothead  set Status=#{status} where 1=1
+        <foreach collection="ids" item="id" open=" and id in(" close=")" separator="," index="idx">
+            #{id}
+        </foreach>
+    </update>
+
+
 </mapper>

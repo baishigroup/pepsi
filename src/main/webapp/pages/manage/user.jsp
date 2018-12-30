@@ -108,7 +108,6 @@
     //初始化界面
     $(function () {
         initTableData();
-        ininPager();
         browserFit();
     });
 
@@ -151,12 +150,13 @@
             //选中单行
             singleSelect: true,
             collapsible: false,
-            url: '<%=path %>/user/findBy.action?pageSize=' + initPageSize,
+            url: '<%=path %>/user/findBy.do',
             pagination: true,
             //交替出现背景
             striped: true,
-            pageSize: initPageSize,
-            pageList: initPageNum,
+            pageList:[2,5,10],
+            pageSize:10,		// 初始化每页显示条数
+            pageNumber:1,	// 初始化页码
             columns: [[
                 {field: 'id', width: 35, align: "center", checkbox:true},
                 {title: '用户名称', field: 'username', width: 80},
@@ -173,13 +173,13 @@
                         var rowInfo = rec.id + 'AaBb' + rec.username + 'AaBb' + rec.loginame + 'AaBb' + rec.position
                             + 'AaBb' + rec.department + 'AaBb' + rec.email + 'AaBb' + rec.phonenum + 'AaBb' + rec.ismanager
                             + 'AaBb' + rec.isystem + 'AaBb' + rec.description;
-                        if (1 == value) {
+                        // if (1 == value) {
                             str += '<img src="<%=path%>/js/easyui-1.3.5/themes/icons/pencil.png" style="cursor: pointer;" onclick="editUser(\'' + rowInfo + '\');"/>&nbsp;<a onclick="editUser(\'' + rowInfo + '\');" style="text-decoration:none;color:black;" href="javascript:void(0)">编辑</a>&nbsp;&nbsp;';
-                            str += '<img src="<%=path%>/js/easyui-1.3.5/themes/icons/edit_remove.png" style="cursor: pointer;" onclick="deleteUser(' + rec.id + ');"/>&nbsp;<a onclick="deleteUser(' + rec.id + ');" style="text-decoration:none;color:black;" href="javascript:void(0)">删除</a>&nbsp;&nbsp;';
-                        }
-                        else {
-                            str += '';
-                        }
+                            str += '<img src="<%=path%>/js/easyui-1.3.5/themes/icons/edit_remove.png" style="cursor: pointer;" onclick="deleteUser(\'' + rec.id + '\');"/>&nbsp;<a onclick="deleteUser(\'' + rec.id + '\');" style="text-decoration:none;color:black;" href="javascript:void(0)">删除</a>&nbsp;&nbsp;';
+                        // }
+                        // else {
+                        //     str += '';
+                        // }
                         return str;
                     }
                 }
@@ -229,28 +229,7 @@
         }
     });
 
-    //分页信息处理
-    function ininPager() {
-        try {
-            var opts = $("#tableData").datagrid('options');
-            var pager = $("#tableData").datagrid('getPager');
-            pager.pagination({
-                onSelectPage: function (pageNum, pageSize) {
-                    opts.pageNumber = pageNum;
-                    opts.pageSize = pageSize;
-                    pager.pagination('refresh',
-                        {
-                            pageNumber: pageNum,
-                            pageSize: pageSize
-                        });
-                    showUserDetails(pageNum, pageSize);
-                }
-            });
-        }
-        catch (e) {
-            $.messager.alert('异常处理提示', "分页信息异常 :  " + e.name + ": " + e.message, 'error');
-        }
-    }
+
 
     //删除用户信息
     function deleteUser(userID) {
@@ -258,20 +237,18 @@
             if (r) {
                 $.ajax({
                     type: "post",
-                    url: "<%=path %>/user/delete.action",
+                    url: "<%=path %>/user/delete.do",
                     dataType: "json",
                     data: ({
                         userID: userID,
                         clientIp: '<%=clientIp %>'
                     }),
                     success: function (tipInfo) {
-                        var msg = tipInfo.showModel.msgTip;
+                        var msg = tipInfo.message;
                         if (msg == '成功') {
                             //$('#tableData').datagrid('reload');
                             //加载完以后重新初始化
                             $("#searchBtn").click();
-                            //var opts = $("#tableData").datagrid('options');
-                            //showUserDetails(opts.pageNumber,opts.pageSize);
                         }
                         else
                             $.messager.alert('删除提示', '删除用户信息失败，请稍后再试！', 'error');
@@ -293,6 +270,10 @@
             $.messager.alert('删除提示', '没有记录被选中！', 'info');
             return;
         }
+        if (row.length == 1) {
+            deleteUser(row[0].id);
+            return;
+        }
         if (row.length > 0) {
             $.messager.confirm('删除确认', '确定要删除选中的' + row.length + '条用户信息吗？', function (r) {
                 if (r) {
@@ -310,7 +291,7 @@
                     } else {
                         $.ajax({
                             type: "post",
-                            url: "<%=path %>/user/batchDelete.action",
+                            url: "<%=path %>/user/batchDelete.do",
                             dataType: "json",
                             async: false,
                             data: ({
@@ -318,7 +299,7 @@
                                 clientIp: '<%=clientIp %>'
                             }),
                             success: function (tipInfo) {
-                                var msg = tipInfo.showModel.msgTip;
+                                var msg = tipInfo.message;
                                 if (msg == '成功') {
                                     //$('#tableData').datagrid('reload');
                                     //加载完以后重新初始化
@@ -357,7 +338,7 @@
         $("#username").focus();
         orgusername = "";
         userID = 0;
-        url = '<%=path %>/user/create.action';
+        url = '<%=path %>/user/create.do';
     }
 
     //重置用户密码
@@ -366,12 +347,13 @@
             if (r) {
                 $.ajax({
                     type: "post",
-                    url: "<%=path %>/user/resetPwd.action",
+                    url: "<%=path %>/user/resetPwd.do",
                     dataType: "json",
                     data: ({
                         userID: userID
                     }),
                     success: function (res) {
+                        var res=flag;
                         if (res) {
                             var flag = res - 0;
                             if (flag) {
@@ -409,7 +391,8 @@
                     return $(this).form('validate');
                 },
                 success: function (result) {
-                    var result = eval('(' + result + ')');
+                    var result = eval('(' + result + ')').flag;
+                    console.log(result);
                     if (!result) {
                         $.messager.show({
                             title: '错误提示',
@@ -417,12 +400,12 @@
                         });
                     }
                     else {
+                        $.messager.alert('提示', '保存成功', 'info');
                         $('#userDlg').dialog('close');
                         //$('#tableData').datagrid('reload');
                         //加载完以后重新初始化
                         //$("#searchBtn").click();
-                        var opts = $("#tableData").datagrid('options');
-                        showUserDetails(opts.pageNumber, opts.pageSize);
+                        showUserDetails();
                     }
                 }
             });
@@ -449,7 +432,7 @@
         userID = usernameInfo[0];
         //焦点在名称输入框==定焦在输入文字后面
         $("#username").val("").focus().val(usernameInfo[1]);
-        url = '<%=path %>/user/update.action?userID=' + usernameInfo[0];
+        url = '<%=path %>/user/update.do?userID=' + usernameInfo[0];
     }
 
     //$("#username").unbind().bind({
@@ -465,7 +448,7 @@
         if (usernameName.length > 0 && (orgusername.length == 0 || usernameName != orgusername)) {
             $.ajax({
                 type: "post",
-                url: "<%=path %>/user/checkIsNameExist.action",
+                url: "<%=path %>/user/checkIsNameExist.do",
                 dataType: "json",
                 async: false,
                 data: ({
@@ -473,8 +456,8 @@
                     username: usernameName
                 }),
                 success: function (tipInfo) {
-                    flag = tipInfo;
-                    if (tipInfo) {
+                    flag = tipInfo.flag;
+                    if (flag) {
                         $.messager.alert('提示', '用户名称已经存在', 'info');
                         //alert("用户名称已经存在");
                         //$("#username").val("");
@@ -494,20 +477,12 @@
     //搜索处理
     $("#searchBtn").unbind().bind({
         click: function () {
-            showUserDetails(1, initPageSize);
-            var opts = $("#tableData").datagrid('options');
-            var pager = $("#tableData").datagrid('getPager');
-            opts.pageNumber = 1;
-            opts.pageSize = initPageSize;
-            pager.pagination('refresh',
-                {
-                    pageNumber: 1,
-                    pageSize: initPageSize
-                });
+            showUserDetails();
+
         }
     });
 
-    function showUserDetails(pageNo, pageSize) {
+    function showUserDetails() {
         $.ajax({
             type: "post",
             url: "<%=path %>/user/findBy.action",
@@ -515,11 +490,10 @@
             data: ({
                 username: $.trim($("#searchUsername").val()),
                 loginame: $.trim($("#searchLoginame").val()),
-                pageNo: pageNo,
-                pageSize: pageSize
             }),
             success: function (data) {
                 $("#tableData").datagrid('loadData', data);
+                data.pageNumber=1;
                 //$('#tableData').datagrid('reload');
             },
             //此处添加错误处理

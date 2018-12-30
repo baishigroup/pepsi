@@ -44,8 +44,36 @@
     from supplier
     where id = #{id,jdbcType=VARCHAR}
   </select>
+  <select id="queryBySelect_cus" resultType="com.zking.erp.model.jhui.Supplier"
+          parameterType="com.zking.erp.model.jhui.Supplier">
+    SELECT <include refid="Base_Column_List"/>
+    from supplier where 1=1
+    and type='客户' and enabled=1 order by id desc
+  </select>
+    <select id="queryById" resultType="com.zking.erp.model.jhui.Supplier"
+            parameterType="com.zking.erp.model.jhui.Supplier">
+      SELECT <include refid="Base_Column_List"/>
+      from supplier where 1=1 and id=#{id}
+    </select>
+  <select id="queryByTypeByIs" resultType="com.zking.erp.model.jhui.Supplier"
+          parameterType="com.zking.erp.model.jhui.Supplier">
+    SELECT <include refid="Base_Column_List"/>
+    from supplier where 1=1 and type='会员' and isystem=0 ORDER by id desc
+  </select>
 
-  <update id="updateById" parameterType="com.zking.erp.model.jhui.Supplier" >
+  <select id="checkIsNameExist" resultType="com.zking.erp.model.jhui.Supplier">
+    SELECT  *
+    FROM supplier   WHERE 1=1
+    <if test="param2 != null and param2!=''" >
+      AND (supplier =#{param2})
+    </if>
+    <if test="param4 != null and param4!=''" >
+      AND (id != #{param4})
+    </if>
+
+  </select>
+
+    <update id="updateById" parameterType="com.zking.erp.model.jhui.Supplier" >
     update supplier
     set supplier = #{supplier,jdbcType=VARCHAR},
     contacts = #{contacts,jdbcType=VARCHAR},
@@ -69,5 +97,24 @@
     taxRate = #{taxrate,jdbcType=DOUBLE}
     where id = #{id,jdbcType=VARCHAR}
   </update>
+
+  <insert id="insert" parameterType="com.zking.erp.model.jhui.Supplier" >
+    insert into supplier (id, supplier, contacts,
+    phonenum, email, description,
+    isystem, type, enabled,
+    AdvanceIn, BeginNeedGet, BeginNeedPay,
+    AllNeedGet, AllNeedPay, fax,
+    telephone, address, taxNum,
+    bankName, accountNumber, taxRate
+    )
+    values (#{id,jdbcType=VARCHAR}, #{supplier,jdbcType=VARCHAR}, #{contacts,jdbcType=VARCHAR},
+    #{phonenum,jdbcType=VARCHAR}, #{email,jdbcType=VARCHAR}, #{description,jdbcType=VARCHAR},
+    #{isystem,jdbcType=INTEGER}, #{type,jdbcType=VARCHAR}, #{enabled,jdbcType=INTEGER},
+    #{advancein,jdbcType=DOUBLE}, #{beginneedget,jdbcType=DOUBLE}, #{beginneedpay,jdbcType=DOUBLE},
+    #{allneedget,jdbcType=DOUBLE}, #{allneedpay,jdbcType=DOUBLE}, #{fax,jdbcType=VARCHAR},
+    #{telephone,jdbcType=VARCHAR}, #{address,jdbcType=VARCHAR}, #{taxnum,jdbcType=VARCHAR},
+    #{bankname,jdbcType=VARCHAR}, #{accountnumber,jdbcType=VARCHAR}, #{taxrate,jdbcType=DOUBLE}
+    )
+  </insert>
 
 </mapper>

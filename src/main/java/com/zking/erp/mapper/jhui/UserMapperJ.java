@@ -25,6 +25,24 @@ public interface UserMapperJ {
      */
     int updateById(User user);
 
+    List<User> queryUserByLikePager(User user);
+
+    /**
+     * 检查是否重名
+     * @param field
+     * @param username
+     * @param userID
+     */
+    List<User> checkIsNameExist(String field, String username, String userID);
+
+    int insert(User user);
+
+    User selectById(String id);
+
+    int deleteById(String id);
+
+    int delete(User user);
+
 
 
 

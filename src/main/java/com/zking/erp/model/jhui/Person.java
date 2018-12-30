@@ -12,6 +12,17 @@ public class Person implements Serializable{
 
     private String name;
 
+    /**
+     * 分类ID
+     */
+    private String personID = "0";
+
+    /**
+     * 分类IDs 批量操作使用
+     */
+    private String personIDs = "";
+    private String[] ids=null;
+
     public Person(String id, String type, String name) {
         this.id = id;
         this.type = type;
@@ -20,6 +31,30 @@ public class Person implements Serializable{
 
     public Person() {
         super();
+    }
+
+    public String getPersonID() {
+        return personID;
+    }
+
+    public void setPersonID(String personID) {
+        this.personID = personID;
+    }
+
+    public String getPersonIDs() {
+        return personIDs;
+    }
+
+    public void setPersonIDs(String personIDs) {
+        this.personIDs = personIDs;
+    }
+
+    public String[] getIds() {
+        return ids;
+    }
+
+    public void setIds(String[] ids) {
+        this.ids = ids;
     }
 
     public String getId() {

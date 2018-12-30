@@ -1,8 +1,10 @@
 package com.zking.erp.controller.jhui;
 
 import com.zking.erp.base.BaseController;
+import com.zking.erp.model.jhui.Log;
 import com.zking.erp.model.jhui.Role;
 import com.zking.erp.service.jhui.IRoleJService;
+import com.zking.erp.service.jhui.IUserBusinessJService;
 import com.zking.erp.util.PageBean;
 import net.sf.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,6 +14,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
+import java.io.IOException;
+import java.sql.Timestamp;
 import java.util.*;
 
 @Controller
@@ -20,6 +24,57 @@ public class RoleJController extends BaseController {
 
     @Autowired
     private IRoleJService roleService;
+
+    @Autowired
+    private IUserBusinessJService userBusinessService;
+
+    /**
+     * 用户对应角色显示
+     *
+     * @return
+     */
+    @RequestMapping("/findUserRole")
+    @ResponseBody
+    public List findUserRole(Role model) {
+        List lst=new ArrayList();
+        try {
+           PageBean pageBean=new PageBean();
+           pageBean.setPagination(false);
+            List<Role> dataList = roleService.queryRolePager(model,pageBean);
+            Map<String,Object> outer = new HashMap<String, Object>();
+            outer.put("id", 1);
+            outer.put("text", "角色列表");
+            outer.put("state", "open");
+            //存放数据json数组
+            List dataArray = new ArrayList();
+            if (null != dataList) {
+                for (Role role : dataList) {
+                    Map<String,Object> item = new HashMap<String, Object>();
+                    item.put("id", role.getId());
+                    item.put("text", role.getName());
+                    //勾选判断1
+                    Boolean flag = false;
+                    try {
+                        flag = userBusinessService.checkIsUserBusinessExist("Type", model.getUBType(), "KeyId", model.getUBKeyId(), "Value", "[" + role.getId().toString() + "]");
+                    } catch (DataAccessException e) {
+                        System.out.println(">>>>>>>>>>>>>>>>>设置用户对应的角色：类型" + model.getUBType() + " KeyId为： " + model.getUBKeyId() + " 存在异常！");
+                    }
+                    if (flag == true) {
+                        item.put("checked", true);
+                    }
+                    //结束
+                    dataArray.add(item);
+                }
+            }
+            outer.put("children", dataArray);
+            lst.add(outer);
+        } catch (DataAccessException e) {
+            System.out.println(">>>>>>>>>>>>>>>>>>>查找角色异常");
+            e.printStackTrace();
+        }
+        return lst;
+    }
+
 
     /**
      * 查找角色信息
@@ -72,7 +127,7 @@ public class RoleJController extends BaseController {
      */
     @RequestMapping("/create")
     @ResponseBody
-    public Map<String,Object> create(Role model) {
+    public Map<String,Object> create(HttpServletRequest request,Role model) {
         System.out.println("==================开始调用增加角色信息方法create()===================");
         Map<String,Object> map=new HashMap<String, Object>();
         Boolean flag = false;
@@ -93,16 +148,12 @@ public class RoleJController extends BaseController {
             tipMsg = "失败";
             tipType = 1;
             e.printStackTrace();
-        } finally {
-            map.put("flag",flag);
-            System.out.println(">>>>>>>>>>>>>>>>>>>增加角色信息返回客户端结果异常");
-            System.out.println("==================结束调用增加角色方法create()===================");
-            return map;
         }
-
-//        logService.create(new Logdetails(getUser(), "增加角色", model.getClientIp(),
-//                new Timestamp(System.currentTimeMillis())
-//                , tipType, "增加角色名称为  " + model.getName() + " " + tipMsg + "！", "增加角色" + tipMsg));
+            map.put("flag",flag);
+        logService.create(new Log(getUser(request), "增加角色", model.getClientIp(),
+                new Timestamp(System.currentTimeMillis())
+                , tipType, "增加角色名称为  " + model.getName() + " " + tipMsg + "！", "增加角色" + tipMsg));
+        return map;
     }
 
     /**
@@ -112,7 +163,7 @@ public class RoleJController extends BaseController {
      */
     @RequestMapping("/update")
     @ResponseBody
-    public Map<String,Object> update(Role model) {
+    public Map<String,Object> update(HttpServletRequest request,Role model) {
         Map<String,Object> map=new HashMap<String, Object>();
         Boolean flag = false;
         try {
@@ -137,10 +188,10 @@ public class RoleJController extends BaseController {
                 e.printStackTrace();
             }
         }
+        logService.create(new Log(getUser(request), "更新角色", model.getClientIp(),
+                new Timestamp(System.currentTimeMillis())
+                , tipType, "更新角色ID为  " + model.getRoleID() + " " + tipMsg + "！", "更新角色" + tipMsg));
         return map;
-//        logService.create(new Logdetails(getUser(), "更新角色", model.getClientIp(),
-//                new Timestamp(System.currentTimeMillis())
-//                , tipType, "更新角色ID为  " + model.getRoleID() + " " + tipMsg + "！", "更新角色" + tipMsg));
     }
 
 
@@ -151,7 +202,7 @@ public class RoleJController extends BaseController {
      */
     @RequestMapping("/delete")
     @ResponseBody
-    public  Map<String,Object> delete(Role model) {
+    public  Map<String,Object> delete(HttpServletRequest request,Role model) {
         Map<String,Object> map=new HashMap<String, Object>();
         System.out.println("====================开始调用删除角色信息方法delete()================");
         try {
@@ -165,9 +216,9 @@ public class RoleJController extends BaseController {
             e.printStackTrace();
         }
         map.put("message",tipMsg);
-//        logService.create(new Logdetails(getUser(), "删除角色", model.getClientIp(),
-//                new Timestamp(System.currentTimeMillis())
-//                , tipType, "删除角色ID为  " + model.getRoleID() + " " + tipMsg + "！", "删除角色" + tipMsg));
+        logService.create(new Log(getUser(request), "删除角色", model.getClientIp(),
+                new Timestamp(System.currentTimeMillis())
+                , tipType, "删除角色ID为  " + model.getRoleID() + " " + tipMsg + "！", "删除角色" + tipMsg));
         System.out.println("====================结束调用删除角色信息方法delete()================");
         return map;
     }
@@ -179,7 +230,7 @@ public class RoleJController extends BaseController {
      */
     @RequestMapping("/batchDelete")
     @ResponseBody
-    public Map<String,Object> batchDelete(Role model) {
+    public Map<String,Object> batchDelete(HttpServletRequest request,Role model) {
         Map<String,Object> map=new HashMap<String, Object>();
         try {
             roleService.delete(model);
@@ -194,9 +245,9 @@ public class RoleJController extends BaseController {
             e.printStackTrace();
         }
 
-//        logService.create(new Logdetails(getUser(), "批量删除角色", model.getClientIp(),
-//                new Timestamp(System.currentTimeMillis())
-//                , tipType, "批量删除角色ID为  " + model.getRoleIDs() + " " + tipMsg + "！", "批量删除角色" + tipMsg));
+        logService.create(new Log(getUser(request), "批量删除角色", model.getClientIp(),
+                new Timestamp(System.currentTimeMillis())
+                , tipType, "批量删除角色ID为  " + model.getRoleIDs() + " " + tipMsg + "！", "批量删除角色" + tipMsg));
         return map;
     }
 

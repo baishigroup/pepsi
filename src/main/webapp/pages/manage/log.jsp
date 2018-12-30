@@ -92,7 +92,6 @@
     //初始化界面
     $(function () {
         initTableData();
-        ininPager();
         //初始化系统基础信息
         initSystemData();
         //初始化页面系统基础信息选项卡
@@ -119,17 +118,18 @@
             checkOnSelect: false,
             //交替出现背景
             striped: true,
-            url: '<%=path %>/log/findBy.action?pageSize=' + initPageSize,
+            url: '<%=path %>/log/findBy.do',
             pagination: true,
             //loadFilter: pagerFilter,
-            pageSize: initPageSize,
-            pageList: initPageNum,
+            pageList:[2,5,10],
+            pageSize:10,		// 初始化每页显示条数
+            pageNumber:1,	// 初始化页码
             columns: [[
                 {title: '操作模块', field: 'operation', width: 120},
                 {title: '操作人员', field: 'username', width: 80, align: "center"},
                 {title: '操作IP', field: 'clientIP', width: 90, align: "center"},
                 {title: '操作时间', field: 'createTime', width: 130, align: "center"},
-                {title: '操作详情', field: 'details', width: 380},
+                {title: '操作详情', field: 'details'},
                 {title: '操作状态', field: 'status', width: 70},
                 {title: '备注', field: 'remark', width: 180}
             ]],
@@ -156,42 +156,21 @@
         }
     });
 
-    //分页信息处理
-    function ininPager() {
-        try {
-            var opts = $("#tableData").datagrid('options');
-            var pager = $("#tableData").datagrid('getPager');
-            pager.pagination({
-                onSelectPage: function (pageNum, pageSize) {
-                    opts.pageNumber = pageNum;
-                    opts.pageSize = pageSize;
-                    pager.pagination('refresh',
-                        {
-                            pageNumber: pageNum,
-                            pageSize: pageSize
-                        });
-                    showLogDetails(pageNum, pageSize);
-                }
-            });
-        }
-        catch (e) {
-            $.messager.alert('异常处理提示', "分页信息异常 :  " + e.name + ": " + e.message, 'error');
-        }
-    }
+
 
 
     //初始化系统基础信息
     function initSystemData() {
         $.ajax({
             type: "post",
-            url: "<%=path%>/log/getBasicData.action",
+            url: "<%=path%>/log/getBasicData.do",
             //设置为同步
             async: false,
             dataType: "json",
             success: function (systemInfo) {
                 //成功关闭loading
-                userList = systemInfo.showModel.map.userList;
-                var msgTip = systemInfo.showModel.msgTip;
+                userList = systemInfo.userList;
+                var msgTip = systemInfo.message;
                 if (msgTip == "exceptoin") {
                     $.messager.alert('提示', '查找系统基础信息异常,请与管理员联系！', 'error');
                     return;
@@ -220,45 +199,24 @@
     //搜索处理
     $("#searchBtn").unbind().bind({
         click: function () {
-            showLogDetails(1, initPageSize);
-            var opts = $("#tableData").datagrid('options');
-            var pager = $("#tableData").datagrid('getPager');
-            opts.pageNumber = 1;
-            opts.pageSize = initPageSize;
-            pager.pagination('refresh',
-                {
-                    pageNumber: 1,
-                    pageSize: initPageSize
-                });
+            showLogDetails();
         }
     });
 
-    function showLogDetails(pageNo, pageSize) {
-        $.ajax({
-            type: "post",
-            url: "<%=path %>/log/findBy.action",
-            dataType: "json",
-            data: ({
-                operation: $.trim($("#searchOperation").val()),
-                usernameID: $.trim($("#searchUsernameID").val()),
-                clientIp: $.trim($("#searchIP").val()),
-                status: $.trim($("#searchStatus").val()),
-                beginTime: $.trim($("#searchBeginTime").datebox("getValue")),
-                endTime: $.trim($("#searchEndTime").datebox("getValue")),
-                contentdetails: $.trim($("#searchDesc").val()),
-                pageNo: pageNo,
-                pageSize: pageSize
-            }),
-            success: function (data) {
-                $("#tableData").datagrid('loadData', data);
-                //$('#tableData').datagrid('reload');
-            },
-            //此处添加错误处理
-            error: function () {
-                $.messager.alert('查询提示', '查询数据后台异常，请稍后再试！', 'error');
-                return;
-            }
-        });
+    function showLogDetails() {
+        var params={
+            operation: $.trim($("#searchOperation").val()),
+            userid: $.trim($("#searchUsernameID").val()),
+            clientIp: $.trim($("#searchIP").val()),
+            status: $.trim($("#searchStatus").val()),
+            beginTime: $.trim($("#searchBeginTime").datebox("getValue")),
+            endTime: $.trim($("#searchEndTime").datebox("getValue")),
+            contentdetails: $.trim($("#searchDesc").val()),
+        };
+        var options=$('#tableData').datagrid('options');
+        options.url="<%=path %>/log/findBy.do";
+        // console.log(options);
+        $("#tableData").datagrid('load',params);
     }
 
     //重置按钮
