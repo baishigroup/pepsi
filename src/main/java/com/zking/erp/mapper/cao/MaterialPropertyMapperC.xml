@@ -3,7 +3,7 @@
 <mapper namespace="com.zking.erp.mapper.cao.MaterialPropertyMapperC" >
   <resultMap id="BaseResultMap" type="com.zking.erp.model.cao.MaterialProperty" >
     <constructor >
-      <idArg column="id" jdbcType="VARBINARY" javaType="byte[]" />
+      <idArg column="id" jdbcType="VARCHAR" javaType="java.lang.String" />
       <arg column="nativeName" jdbcType="VARCHAR" javaType="java.lang.String" />
       <arg column="enabled" jdbcType="INTEGER" javaType="java.lang.Integer" />
       <arg column="sort" jdbcType="VARCHAR" javaType="java.lang.String" />
@@ -13,5 +13,10 @@
   <sql id="Base_Column_List" >
     id, nativeName, enabled, sort, anotherName
   </sql>
+    <select id="queryMaterialProPager" resultType="com.zking.erp.model.cao.MaterialProperty"
+            parameterType="com.zking.erp.model.cao.MaterialProperty">
+      SELECT <include refid="Base_Column_List"/>
+      from materialproperty  WHERE 1=1 ORDER BY sort ASC
+    </select>
 
 </mapper>

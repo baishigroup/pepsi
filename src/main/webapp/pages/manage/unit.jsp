@@ -83,7 +83,6 @@
     //初始化界面
     $(function () {
         initTableData();
-        ininPager();
         initForm();
     });
 
@@ -99,6 +98,7 @@
     //初始化表格数据
     function initTableData() {
         $('#tableData').datagrid({
+            url: '<%=path %>/cao/unit/findBy.do',
             //title:'计量单位列表',
             //iconCls:'icon-save',
             //width:700,
@@ -114,13 +114,13 @@
             //fitColumns:true,
             //单击行是否选中
             checkOnSelect: false,
-            url: '<%=path %>/unit/findBy.action?pageSize=' + initPageSize,
             pagination: true,
             //交替出现背景
             striped: true,
             //loadFilter: pagerFilter,
-            pageSize: initPageSize,
-            pageList: initPageNum,
+            pageList:[2,5,10,15],
+            pageSize: 10,
+            pageNumber: 1,
             columns: [[
                 {field: 'id', width: 35, align: "center", checkbox: true},
                 {
@@ -130,7 +130,7 @@
                         var rowInfo = rec.id + 'AaBb' + rec.UName;
                         if (1 == value) {
                             str += '<img title="编辑" src="<%=path%>/js/easyui-1.3.5/themes/icons/pencil.png" style="cursor: pointer;" onclick="editUnit(\'' + rowInfo + '\');"/>&nbsp;&nbsp;&nbsp;';
-                            str += '<img title="删除" src="<%=path%>/js/easyui-1.3.5/themes/icons/edit_remove.png" style="cursor: pointer;" onclick="deleteUnit(' + rec.id + ');"/>';
+                            str += '<img title="删除" src="<%=path%>/js/easyui-1.3.5/themes/icons/edit_remove.png" style="cursor: pointer;" onclick="deleteUnit(\'' + rec.id + '\');"/>';
                         }
                         return str;
                     }
@@ -179,27 +179,6 @@
         }
     });
 
-    //分页信息处理
-    function ininPager() {
-        try {
-            var opts = $("#tableData").datagrid('options');
-            var pager = $("#tableData").datagrid('getPager');
-            pager.pagination({
-                onSelectPage: function (pageNum, pageSize) {
-                    opts.pageNumber = pageNum;
-                    opts.pageSize = pageSize;
-                    pager.pagination('refresh', {
-                        pageNumber: pageNum,
-                        pageSize: pageSize
-                    });
-                    showUnitDetails(pageNum, pageSize);
-                }
-            });
-        }
-        catch (e) {
-            $.messager.alert('异常处理提示', "分页信息异常 :  " + e.name + ": " + e.message, 'error');
-        }
-    }
 
     //删除计量单位
     function deleteUnit(unitID) {
@@ -207,14 +186,14 @@
             if (r) {
                 $.ajax({
                     type: "post",
-                    url: "<%=path %>/unit/delete.action",
+                    url: "<%=path %>/cao/unit/delete.do",
                     dataType: "json",
                     data: ({
-                        unitID: unitID,
+                        id: unitID,
                         clientIp: '<%=clientIp %>'
                     }),
                     success: function (tipInfo) {
-                        var msg = tipInfo.showModel.msgTip;
+                        var msg = tipInfo.message;
                         if (msg == '成功') {
                             //加载完以后重新初始化
                             $("#searchBtn").click();
@@ -239,7 +218,11 @@
             $.messager.alert('删除提示', '没有记录被选中！', 'info');
             return;
         }
-        if (row.length > 0) {
+        if (row.length == 1) {
+            deleteUnit(row[0].id);
+            return;
+        }
+        if (row.length > 1) {
             $.messager.confirm('删除确认', '确定要删除选中的' + row.length + '条计量单位信息吗？', function (r) {
                 if (r) {
                     var ids = "";
@@ -248,12 +231,14 @@
                             ids += row[i].id;
                             break;
                         }
-                        //alert(row[i].id);
+                        alert(row[i].id);
                         ids += row[i].id + ",";
                     }
+
+
                     $.ajax({
                         type: "post",
-                        url: "<%=path %>/unit/batchDelete.action",
+                        url: "<%=path %>/cao/unit/batchDelete.do",
                         dataType: "json",
                         async: false,
                         data: ({
@@ -261,7 +246,7 @@
                             clientIp: '<%=clientIp %>'
                         }),
                         success: function (tipInfo) {
-                            var msg = tipInfo.showModel.msgTip;
+                            var msg = tipInfo.message;
                             if (msg == '成功') {
                                 //加载完以后重新初始化
                                 $("#searchBtn").click();
@@ -296,7 +281,7 @@
         $("#unitName").text("");
         orgUnit = "";
         unitID = 0;
-        url = '<%=path %>/unit/create.action';
+        url = '<%=path %>/cao/unit/create.do';
     }
 
     //保存信息
@@ -317,7 +302,7 @@
                     dataType: "json",
                     async: false,
                     data: ({
-                        UName: name,
+                        uname: name,
                         clientIp: '<%=clientIp %>'
                     }),
                     success: function (tipInfo) {
@@ -325,7 +310,7 @@
                             $('#unitDlg').dialog('close');
 
                             var opts = $("#tableData").datagrid('options');
-                            showUnitDetails(opts.pageNumber, opts.pageSize);
+                            showUnitDetails();
                         }
                         else {
                             $.messager.show({
@@ -365,29 +350,32 @@
         lastNum = lastNum.replace(")", "");
         $("#otherNum").val(lastNum);
         $("#unitName").text(basicName);
-        url = '<%=path %>/unit/update.action?unitID=' + unitInfo[0];
+        url = '<%=path %>/cao/unit/update.do?id=' + unitInfo[0];
     }
 
     //检查名称是否存在 ++ 重名无法提示问题需要跟进
     function checkUnitName() {
-        var name = $.trim($("#name").val());
+        var basicName = $.trim($("#basicName").val());
+        var otherName = $.trim($("#otherName").val());
+        var otherNum = $.trim($("#otherNum").val());
+        var name = basicName + "," + otherName + "(1:" + otherNum + ")";
         //表示是否存在 true == 存在 false = 不存在
         var flag = false;
         //开始ajax名称检验，不能重名
         if (name.length > 0 && (orgUnit.length == 0 || name != orgUnit)) {
             $.ajax({
                 type: "post",
-                url: "<%=path %>/unit/checkIsNameExist.action",
+                url: "<%=path %>/cao/unit/checkIsNameExist.do",
                 dataType: "json",
                 async: false,
                 data: ({
-                    unitID: unitID,
-                    UName: name
+                    id: unitID,
+                    uname: name
                 }),
                 success: function (tipInfo) {
-                    flag = tipInfo;
-                    if (tipInfo) {
-                        $.messager.alert('提示', '计量单位名称已经存在', 'info');
+                    flag = tipInfo.flag;
+                    if (flag) {
+                        $.messager.alert('提示', '计量单位名称已经存在','info');
                         return;
                     }
                 },
@@ -404,39 +392,20 @@
     //搜索处理
     $("#searchBtn").unbind().bind({
         click: function () {
-            showUnitDetails(1, initPageSize);
-            var opts = $("#tableData").datagrid('options');
-            var pager = $("#tableData").datagrid('getPager');
-            opts.pageNumber = 1;
-            opts.pageSize = initPageSize;
-            pager.pagination('refresh',
-                {
-                    pageNumber: 1,
-                    pageSize: initPageSize
-                });
+            showUnitDetails( );
         }
     });
 
-    function showUnitDetails(pageNo, pageSize) {
-        $.ajax({
-            type: "post",
-            url: "<%=path %>/unit/findBy.action",
-            dataType: "json",
-            data: ({
-                UName: $.trim($("#searchName").val()),
-                pageNo: pageNo,
-                pageSize: pageSize
-            }),
-            success: function (data) {
-                $("#tableData").datagrid('loadData', data);
-            },
-            //此处添加错误处理
-            error: function () {
-                $.messager.alert('查询提示', '查询数据后台异常，请稍后再试！', 'error');
-                return;
-            }
-        });
+    function showUnitDetails( ) {
+        var params={
+            uname: $.trim($("#searchName").val())
+        }
+        var options=$("#tableData").datagrid('options');
+        options.url="<%=path %>/cao/unit/findBy.do";
+        $("#tableData").datagrid('load', params);
+
     }
+
 
     //重置按钮
     $("#searchResetBtn").unbind().bind({

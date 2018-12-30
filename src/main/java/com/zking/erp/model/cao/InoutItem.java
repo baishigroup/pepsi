@@ -14,6 +14,29 @@ public class InoutItem implements Serializable{
 
     private String remark;
 
+    /**
+     * IDs 批量操作使用
+     */
+    private String unitIDs = "";
+
+    private String[] ids=null;
+
+    public String getUnitIDs() {
+        return unitIDs;
+    }
+
+    public void setUnitIDs(String unitIDs) {
+        this.unitIDs = unitIDs;
+    }
+
+    public String[] getIds() {
+        return ids;
+    }
+
+    public void setIds(String[] ids) {
+        this.ids = ids;
+    }
+
     public InoutItem(String id, String name, String type, String remark) {
         this.id = id;
         this.name = name;

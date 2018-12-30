@@ -108,7 +108,6 @@
     //初始化界面
     $(function () {
         initTableData();
-        ininPager();
         initForm();
     });
 
@@ -124,6 +123,7 @@
     //初始化表格数据
     function initTableData() {
         $('#tableData').datagrid({
+            url: '<%=path %>/cao/depot/findBy.do?type=0',
             //title:'仓库列表',
             //iconCls:'icon-save',
             //width:700,
@@ -139,13 +139,13 @@
             //fitColumns:true,
             //单击行是否选中
             checkOnSelect: false,
-            url: '<%=path %>/depot/findBy.action?pageSize=' + initPageSize,
             pagination: true,
             //交替出现背景
             striped: true,
             //loadFilter: pagerFilter,
-            pageSize: initPageSize,
-            pageList: initPageNum,
+            pageList:[2,5,10,15],
+            pageSize: 10,
+            pageNumber: 1,
             columns: [[
                 {field: 'id', width: 35, align: "center", checkbox: true},
                 {
@@ -156,7 +156,7 @@
                             + rec.address + 'AaBb' + rec.warehousing + 'AaBb' + rec.truckage;
                         if (1 == value) {
                             str += '<img title="编辑" src="<%=path%>/js/easyui-1.3.5/themes/icons/pencil.png" style="cursor: pointer;" onclick="editDepot(\'' + rowInfo + '\');"/>&nbsp;&nbsp;&nbsp;';
-                            str += '<img title="删除" src="<%=path%>/js/easyui-1.3.5/themes/icons/edit_remove.png" style="cursor: pointer;" onclick="deleteDepot(' + rec.id + ');"/>';
+                            str += '<img title="删除" src="<%=path%>/js/easyui-1.3.5/themes/icons/edit_remove.png" style="cursor: pointer;" onclick="deleteDepot(\'' + rec.id + '\');"/>';
                         }
                         return str;
                     }
@@ -210,27 +210,6 @@
         }
     });
 
-    //分页信息处理
-    function ininPager() {
-        try {
-            var opts = $("#tableData").datagrid('options');
-            var pager = $("#tableData").datagrid('getPager');
-            pager.pagination({
-                onSelectPage: function (pageNum, pageSize) {
-                    opts.pageNumber = pageNum;
-                    opts.pageSize = pageSize;
-                    pager.pagination('refresh', {
-                        pageNumber: pageNum,
-                        pageSize: pageSize
-                    });
-                    showDepotDetails(pageNum, pageSize);
-                }
-            });
-        }
-        catch (e) {
-            $.messager.alert('异常处理提示', "分页信息异常 :  " + e.name + ": " + e.message, 'error');
-        }
-    }
 
     //删除供应商信息
     function deleteDepot(depotID) {
@@ -238,14 +217,14 @@
             if (r) {
                 $.ajax({
                     type: "post",
-                    url: "<%=path %>/depot/delete.action",
+                    url: "<%=path %>/cao/depot/delete.do",
                     dataType: "json",
                     data: ({
-                        depotID: depotID,
+                        id: depotID,
                         clientIp: '<%=clientIp %>'
                     }),
                     success: function (tipInfo) {
-                        var msg = tipInfo.showModel.msgTip;
+                        var msg = tipInfo.message;
                         if (msg == '成功') {
                             //加载完以后重新初始化
                             $("#searchBtn").click();
@@ -270,7 +249,11 @@
             $.messager.alert('删除提示', '没有记录被选中！', 'info');
             return;
         }
-        if (row.length > 0) {
+        if (row.length == 1) {
+            deleteDepot(row[0].id);
+            return;
+        }
+        if (row.length > 1) {
             $.messager.confirm('删除确认', '确定要删除选中的' + row.length + '条仓库信息吗？', function (r) {
                 if (r) {
                     var ids = "";
@@ -284,7 +267,7 @@
                     }
                     $.ajax({
                         type: "post",
-                        url: "<%=path %>/depot/batchDelete.action",
+                        url: "<%=path %>/cao/depot/batchDelete.do",
                         dataType: "json",
                         async: false,
                         data: ({
@@ -292,7 +275,7 @@
                             clientIp: '<%=clientIp %>'
                         }),
                         success: function (tipInfo) {
-                            var msg = tipInfo.showModel.msgTip;
+                            var msg = tipInfo.message;
                             if (msg == '成功') {
                                 //加载完以后重新初始化
                                 $("#searchBtn").click();
@@ -327,7 +310,7 @@
 
         orgDepot = "";
         depotID = 0;
-        url = '<%=path %>/depot/create.action';
+        url = '<%=path %>/cao/depot/create.do';
     }
 
     //保存信息
@@ -353,11 +336,11 @@
                     clientIp: '<%=clientIp %>'
                 }),
                 success: function (tipInfo) {
-                    if (tipInfo) {
+                    if (tipInfo.message) {
                         $('#depotDlg').dialog('close');
 
                         var opts = $("#tableData").datagrid('options');
-                        showDepotDetails(opts.pageNumber, opts.pageSize);
+                        showDepotDetails();
                     }
                     else {
                         $.messager.show({
@@ -393,7 +376,7 @@
         depotID = depotInfo[0];
         //焦点在名称输入框==定焦在输入文字后面
         $("#name").val("").focus().val(depotInfo[1]);
-        url = '<%=path %>/depot/update.action?depotID=' + depotInfo[0];
+        url = '<%=path %>/cao/depot/update.do?id=' + depotInfo[0];
     }
 
     //检查名称是否存在 ++ 重名无法提示问题需要跟进
@@ -405,7 +388,7 @@
         if (name.length > 0 && (orgDepot.length == 0 || name != orgDepot)) {
             $.ajax({
                 type: "post",
-                url: "<%=path %>/depot/checkIsNameExist.action",
+                url: "<%=path %>/cao/depot/checkIsNameExist.do",
                 dataType: "json",
                 async: false,
                 data: ({
@@ -413,8 +396,8 @@
                     name: name
                 }),
                 success: function (tipInfo) {
-                    flag = tipInfo;
-                    if (tipInfo) {
+                    flag = tipInfo.flag;
+                    if (flag) {
                         $.messager.alert('提示', '仓库名称已经存在', 'info');
                         //alert("仓库名称已经存在");
                         //$("#name").val("");
@@ -434,40 +417,20 @@
     //搜索处理
     $("#searchBtn").unbind().bind({
         click: function () {
-            showDepotDetails(1, initPageSize);
-            var opts = $("#tableData").datagrid('options');
-            var pager = $("#tableData").datagrid('getPager');
-            opts.pageNumber = 1;
-            opts.pageSize = initPageSize;
-            pager.pagination('refresh',
-                {
-                    pageNumber: 1,
-                    pageSize: initPageSize
-                });
+            showDepotDetails();
         }
     });
 
-    function showDepotDetails(pageNo, pageSize) {
-        $.ajax({
-            type: "post",
-            url: "<%=path %>/depot/findBy.action",
-            dataType: "json",
-            data: ({
-                name: $.trim($("#searchName").val()),
-                type: 0,  //仓库
-                remark: $.trim($("#searchRemark").val()),
-                pageNo: pageNo,
-                pageSize: pageSize
-            }),
-            success: function (data) {
-                $("#tableData").datagrid('loadData', data);
-            },
-            //此处添加错误处理
-            error: function () {
-                $.messager.alert('查询提示', '查询数据后台异常，请稍后再试！', 'error');
-                return;
-            }
-        });
+    function showDepotDetails() {
+        var params={
+            name: $.trim($("#searchName").val()),
+            type: 0,  //仓库
+            remark: $.trim($("#searchRemark").val())
+        }
+        var options=$("#tableData").datagrid('options');
+        options.url="<%=path %>/cao/depot/findBy.do";
+        $("#tableData").datagrid('load',params);
+
     }
 
     //重置按钮

@@ -17,13 +17,13 @@
     function initSystemData_account(){
         $.ajax({
             type:"post",
-            url: path + "/account/getAccount.action",
+            url: path + "/cao/account/getAccount.do",
             //设置为同步
             async:false,
             dataType: "json",
             success: function (systemInfo) {
-                accountList = systemInfo.showModel.map.accountList;
-                var msgTip = systemInfo.showModel.msgTip;
+                accountList = systemInfo.accountList;
+                var msgTip = systemInfo.message;
                 if(msgTip == "exceptoin") {
                     $.messager.alert('提示','查找账户信息异常,请与管理员联系！','error');
                     return;
@@ -35,7 +35,7 @@
     function initMProperty(){
         $.ajax({
             type: "post",
-            url: path + "/materialProperty/findBy.action",
+            url: path + "/cao/materialProperty/findBy.do",
             dataType: "json",
             //设置为同步
             async:false,
@@ -63,7 +63,7 @@
     function initOutItemList(){
         $.ajax({
             type:"post",
-            url: path + "/inOutItem/findBySelect.action?type=out",
+            url: path + "/cao/inOutItem/findBySelect.do?type=out",
             //设置为同步
             async:false,
             dataType: "json",
@@ -176,14 +176,15 @@
         //如果是进货、销售
         if(billType == "material"){
             $.ajax({
-                url: path + "/depotHead/getDetailByNumber.action",
+                url: path + "/cao/depotHead/getDetailByNumber.do",
                 data: {
                     Number: number
                 },
                 type: "get",
                 success: function (res) {
                     if(res){
-                        var data = JSON.parse(res);
+                        // var data = JSON.parse(res);
+                        var data = res;
                         var manyAccountMoney = 0; //多账户合计-零售
                         if(data.AccountName){
                             $("#bill .AccountIdShow").text(data.AccountName); //结算账户
@@ -274,13 +275,13 @@
                                 }
                                 $.ajax({
                                     type: "post",
-                                    url: path + "/person/getPersonByIds.action",
+                                    url: path + "/cao/person/getPersonByIds.do",
                                     data: {
                                         PersonIDs: salesmanStr
                                     },
                                     success:function(res){
-                                        if(res){
-                                            $("#bill .SalesmanShow").text(res); //销售人员列表
+                                        if(res.sb){
+                                            $("#bill .SalesmanShow").text(res.sb); //销售人员列表
                                         }
                                     },
                                     error:function(){
@@ -296,14 +297,14 @@
         //如果是财务单据
         else if(billType == "account"){
             $.ajax({
-                url: path + "/accountHead/getDetailByNumber.action",
+                url: path + "/cao/accountHead/getDetailByNumber.do",
                 data: {
                     BillNo: number
                 },
                 type: "get",
                 success: function (res) {
                     if (res) {
-                        var data = JSON.parse(res);
+                        var data = res;
                         $("#bill .BillNoShow").text(data.BillNo);
                         $("#bill .BillTimeShow").text(data.BillTime);
                         $("#bill .RemarkShow").text(data.Remark);
@@ -387,7 +388,7 @@
         });
         $.ajax({
             type:"post",
-            url: path + '/depotItem/findBy.action?HeaderId=' + depotHeadID,
+            url: path + '/cao/depotItem/findBy.do?Headerid=' + depotHeadID,
             data: {
                 mpList: mPropertyList
             },
@@ -442,7 +443,7 @@
         });
         $.ajax({
             type:"post",
-            url: path + '/accountItem/findBy.action?HeaderId=' + accountHeadID,
+            url: path + '/cao/accountItem/findBy.do?Headerid=' + accountHeadID,
             dataType: "json",
             success: function (res) {
                 var EachAmount = TotalPrice;

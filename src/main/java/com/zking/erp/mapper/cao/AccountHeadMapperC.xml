@@ -19,5 +19,32 @@
     Id, Type, OrganId, HandsPersonId, ChangeAmount, TotalPrice, AccountId, BillNo, BillTime, 
     Remark
   </sql>
+  <select id="queryAccountSumByHead" resultType="com.zking.erp.model.cao.AccountHead">
+    SELECT <include refid="Base_Column_List"/>
+    from accounthead  where 1=1 and AccountId=#{param1}
+    <if test="param2 != null and param2!=''" >
+      <if test="param3 eq 'month' " >
+        and BillTime &gt;=concat(#{param2},'-01 00:00:00')
+        and BillTime &lt;=concat(#{param2},'-31 00:00:00')
+      </if>
+      <if test="param3 eq 'date' " >
+        and BillTime &lt;=#{param2}
+      </if>
+    </if>
+  </select>
+
+  <select id="queryAccountSumByItem" resultType="com.zking.erp.model.cao.AccountHead">
+    SELECT <include refid="Base_Column_List"/>
+    from accounthead  where 1=1
+    <if test="param1 != null and param1!=''" >
+      <if test="param2 eq 'month' " >
+        and BillTime &gt;=concat(#{param1},'-01 00:00:00')
+        and BillTime &lt;=concat(#{param1},'-31 00:00:00')
+      </if>
+      <if test="param2 eq 'date' " >
+        and BillTime &lt;=#{param1}
+      </if>
+    </if>
+  </select>
 
 </mapper>

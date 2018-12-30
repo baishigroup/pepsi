@@ -64,7 +64,6 @@
     //初始化界面
     $(function () {
         initTableData();
-        ininPager();
         print();
     });
 
@@ -87,13 +86,14 @@
             checkOnSelect: false,
             //交替出现背景
             striped: true,
-            url: '<%=path %>/account/findBy.action?pageSize=' + initPageSize,
+            url: '<%=path %>/cao/account/findBy.do',
             pagination: true,
             //自动截取数据
             //nowrap : true,
             //loadFilter: pagerFilter,
-            pageSize: initPageSize,
-            pageList: initPageNum,
+            pageList:[2,5,10,15],
+            pageSize: 10,
+            pageNumber: 1,
             columns: [[
                 {title: '名称', field: 'name', width: 100},
                 {title: '编号', field: 'serialNo', width: 150, align: "center"},
@@ -130,76 +130,37 @@
         }
     });
 
-    //分页信息处理
-    function ininPager() {
-        try {
-            var opts = $("#tableData").datagrid('options');
-            var pager = $("#tableData").datagrid('getPager');
-            pager.pagination({
-                onSelectPage: function (pageNum, pageSize) {
-                    opts.pageNumber = pageNum;
-                    opts.pageSize = pageSize;
-                    pager.pagination('refresh',
-                        {
-                            pageNumber: pageNum,
-                            pageSize: pageSize
-                        });
-                    showAccountDetails(pageNum, pageSize);
-                }
-            });
-        }
-        catch (e) {
-            $.messager.alert('异常处理提示', "分页信息异常 :  " + e.name + ": " + e.message, 'error');
-        }
-    }
+
 
     //搜索处理
     $("#searchBtn").unbind().bind({
         click: function () {
-            showAccountDetails(1, initPageSize);
-            var opts = $("#tableData").datagrid('options');
-            var pager = $("#tableData").datagrid('getPager');
-            opts.pageNumber = 1;
-            opts.pageSize = initPageSize;
-            pager.pagination('refresh',
-                {
-                    pageNumber: 1,
-                    pageSize: initPageSize
-                });
+            showAccountDetails( );
         }
     });
 
-    function showAccountDetails(pageNo, pageSize) {
-        $.ajax({
-            type: "post",
-            url: "<%=path %>/account/findBy.action",
-            dataType: "json",
-            data: ({
-                name: $.trim($("#searchName").val()),
-                serialNo: $.trim($("#searchSerialNo").val()),
-                pageNo: pageNo,
-                pageSize: pageSize
-            }),
-            success: function (data) {
-                $("#tableData").datagrid('loadData', data);
-            },
-            //此处添加错误处理
-            error: function () {
-                $.messager.alert('查询提示', '查询数据后台异常，请稍后再试！', 'error');
-                return;
-            }
-        });
+    function showAccountDetails( ) {
+        var params={
+            name: $.trim($("#searchName").val()),
+            serialno: $.trim($("#searchSerialNo").val()),
+        };
+        var options=$('#tableData').datagrid('options');
+        options.url="<%=path %>/cao/account/findBy.do";
+        // console.log(options);
+        $("#tableData").datagrid('load',params);
     }
 
     function showAccountInOutList(accountInfo) {
+        console.log(accountInfo);
         var info = accountInfo.split("AaBb");
+        console.log(info);
         var accountId = info[0];
+        console.log(accountId);
         var initialAmount = info[3];
         $('#accountDetailListDlg').dialog('open').dialog('setTitle', '<img src="<%=path%>/js/easyui-1.3.5/themes/icons/pencil.png"/>&nbsp;查看账户流水');
         $(".window-mask").css({width: webW, height: webH});
         initAccountDetailData(accountId);
-        getAccountInOutList(accountId, initialAmount, 1, initPageSize);
-        ininAccountDetailPager(accountId, initialAmount);
+        getAccountInOutList(accountId, initialAmount);
     }
 
     //初始化表格数据
@@ -219,8 +180,9 @@
             //交替出现背景
             striped: true,
             pagination: true,
-            pageSize: initPageSize,
-            pageList: initPageNum,
+            pageList:[2,5,10,15],
+            pageSize: 10,
+            pageNumber: 1,
             columns: [[
                 {
                     title: '单据编号', field: 'number', width: 150,
@@ -260,48 +222,18 @@
         });
     }
 
-    //分页信息处理
-    function ininAccountDetailPager(accountId, initialAmount) {
-        try {
-            var opts = $("#accountTableData").datagrid('options');
-            var pager = $("#accountTableData").datagrid('getPager');
-            pager.pagination({
-                onSelectPage: function (pageNum, pageSize) {
-                    opts.pageNumber = pageNum;
-                    opts.pageSize = pageSize;
-                    pager.pagination('refresh', {
-                        pageNumber: pageNum,
-                        pageSize: pageSize
-                    });
-                    getAccountInOutList(accountId, initialAmount, pageNum, pageSize);
-                }
-            });
-        }
-        catch (e) {
-            $.messager.alert('异常处理提示', "分页信息异常 :  " + e.name + ": " + e.message, 'error');
-        }
-    }
 
-    function getAccountInOutList(accountId, initialAmount, pageNo, pageSize) {
-        $.ajax({
-            type: "get",
-            url: "<%=path %>/account/findAccountInOutList.action",
-            dataType: "json",
-            data: ({
-                accountID: accountId,
-                initialAmount: initialAmount,
-                pageNo: pageNo,
-                pageSize: pageSize
-            }),
-            success: function (res) {
-                $("#accountTableData").datagrid('loadData', res);
-            },
-            //此处添加错误处理
-            error: function () {
-                $.messager.alert('查询提示', '查询数据后台异常，请稍后再试！', 'error');
-                return;
-            }
-        });
+
+    function getAccountInOutList(accountId, initialAmount) {
+        alert(accountId+"zzzz"+initialAmount);
+        var params={
+            accountID: accountId,
+            initialamount: initialAmount,
+        };
+        var options=$('#accountTableData').datagrid('options');
+        options.url="<%=path %>/cao/account/findAccountInOutList.do";
+        // console.log(options);
+        $("#accountTableData").datagrid('load',params);
     }
 
     //报表打印

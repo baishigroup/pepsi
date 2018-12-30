@@ -251,7 +251,7 @@
 <!-- 导入excel表格 -->
 <div id="importExcelDlg" class="easyui-dialog" style="width:400px; padding:10px 20px;"
      closed="true" buttons="#dlg-buttons5" modal="true" collapsible="false" closable="true">
-    <form id="importExcelFM" method="post" enctype="multipart/form-data" action="<%=path%>/material/importExcel.action">
+    <form id="importExcelFM" method="post" enctype="multipart/form-data" action="<%=path%>/cao/material/importExcel.do">
         <div class="fitem" style="padding:5px">
             <label>文件名称&nbsp;&nbsp;</label>
             <input name="materialFile" id="materialFile" type="file" style="width: 230px;height: 20px"/>
@@ -296,7 +296,6 @@
         priceKeyUp();//价格触发事件
         initMPropertyShort(); //初始化商品属性
         initTableData();
-        ininPager();
         initForm();
         bindEvent();
     });
@@ -305,7 +304,7 @@
     function initMProperty() {
         $.ajax({
             type: "post",
-            url: "<%=path%>/materialProperty/findBy.action",
+            url: "<%=path%>/cao/materialProperty/findBy.do",
             dataType: "json",
             success: function (res) {
                 if (res && res.rows) {
@@ -323,7 +322,7 @@
     function initSystemData(parentid_search) {
         $.ajax({
             type: "post",
-            url: "<%=path%>/materialCategory/getBasicData.action",
+            url: "<%=path%>/cao/materialCategory/getBasicData.do",
             data: ({
                 ParentId: parentid_search
             }),
@@ -331,8 +330,8 @@
             async: false,
             dataType: "json",
             success: function (systemInfo) {
-                materialCategoryList = systemInfo.showModel.map.materialCategoryList;
-                var msgTip = systemInfo.showModel.msgTip;
+                materialCategoryList = systemInfo.materialCategoryList;
+                var msgTip = systemInfo.message;
                 if (msgTip == "exceptoin") {
                     $.messager.alert('提示', '查找商品异常,请与管理员联系！', 'error');
                     return;
@@ -547,7 +546,7 @@
     function initMPropertyShort() {
         $.ajax({
             type: "post",
-            url: "<%=path %>/materialProperty/findBy.action",
+            url: "<%=path %>/cao/materialProperty/findBy.do",
             dataType: "json",
             async: false,
             success: function (res) {
@@ -577,6 +576,7 @@
         $("#searchPanel").panel({width: webW - 2});
         $("#tablePanel").panel({width: webW - 2});
         $('#tableData').datagrid({
+            url: '',
             //title:'商品列表',
             //iconCls:'icon-save',
             //width:700,
@@ -596,8 +596,9 @@
             //交替出现背景
             striped: true,
             //loadFilter: pagerFilter,
-            pageSize: initPageSize,
-            pageList: initPageNum,
+            pageList:[2,5,10,15],
+            pageSize: 10,
+            pageNumber: 1,
             columns: [[
                 {field: 'Id', width: 35, align: "center", checkbox: true},
                 {
@@ -610,7 +611,7 @@
                             + 'AaBb' + rec.Mfrs + 'AaBb' + rec.OtherField1 + 'AaBb' + rec.OtherField2 + 'AaBb' + rec.OtherField3;
                         if (1 == value) {
                             str += '<img title="编辑" src="<%=path%>/js/easyui-1.3.5/themes/icons/pencil.png" style="cursor: pointer;" onclick="editMaterial(\'' + rowInfo + '\');"/>&nbsp;&nbsp;&nbsp;';
-                            str += '<img title="删除" src="<%=path%>/js/easyui-1.3.5/themes/icons/edit_remove.png" style="cursor: pointer;" onclick="deleteMaterial(' + rec.Id + ');"/>';
+                            str += '<img title="删除" src="<%=path%>/js/easyui-1.3.5/themes/icons/edit_remove.png" style="cursor: pointer;" onclick="deleteMaterial(\'' + rec.Id + '\');"/>';
                         }
                         return str;
                     }
@@ -628,9 +629,9 @@
                         //查询库存
                         $.ajax({
                             type: "get",
-                            url: '<%=path %>/depotItem/findStockNumByMaterialId.action',
+                            url: '<%=path %>/cao/depotItem/findStockNumByMaterialId.do',
                             data: {
-                                MaterialId: mId,
+                                Materialid: mId,
                                 MonthTime: monthTime
                             },
                             dataType: "json",
@@ -644,8 +645,7 @@
                                             $('#materialDetailListDlg').dialog('open').dialog('setTitle', '<img src="<%=path%>/js/easyui-1.3.5/themes/icons/pencil.png"/>&nbsp;查看出入库明细');
                                             $(".window-mask").css({width: webW, height: webH});
                                             initMaterialDetailData(mId);
-                                            getMaterialInOutList(mId, 1, initPageSize);
-                                            ininMaterialDetailPager(mId);
+                                            getMaterialInOutList(mId);
                                         });
                                     }
                                 }
@@ -727,7 +727,7 @@
                 return;
             }
         });
-        showMaterialDetails(1, initPageSize);
+        showMaterialDetails();
     }
 
     //初始化表格数据
@@ -747,8 +747,9 @@
             //交替出现背景
             striped: true,
             pagination: true,
-            pageSize: initPageSize,
-            pageList: initPageNum,
+            pageList:[2,5,10,15],
+            pageSize: 10,
+            pageNumber: 1,
             columns: [[
                 {
                     title: '单据编号', field: 'Number', width: 150,
@@ -768,47 +769,15 @@
         });
     }
 
-    //分页信息处理
-    function ininMaterialDetailPager(mId) {
-        try {
-            var opts = $("#materialTableData").datagrid('options');
-            var pager = $("#materialTableData").datagrid('getPager');
-            pager.pagination({
-                onSelectPage: function (pageNum, pageSize) {
-                    opts.pageNumber = pageNum;
-                    opts.pageSize = pageSize;
-                    pager.pagination('refresh', {
-                        pageNumber: pageNum,
-                        pageSize: pageSize
-                    });
-                    getMaterialInOutList(mId, pageNum, pageSize);
-                }
-            });
-        }
-        catch (e) {
-            $.messager.alert('异常处理提示', "分页信息异常 :  " + e.name + ": " + e.message, 'error');
-        }
-    }
 
-    function getMaterialInOutList(mId, pageNo, pageSize) {
-        $.ajax({
-            type: "get",
-            url: "<%=path %>/depotItem/findDetailByTypeAndMaterialId.action",
-            dataType: "json",
-            data: ({
-                MaterialId: mId,
-                pageNo: pageNo,
-                pageSize: pageSize
-            }),
-            success: function (res) {
-                $("#materialTableData").datagrid('loadData', res);
-            },
-            //此处添加错误处理
-            error: function () {
-                $.messager.alert('查询提示', '查询数据后台异常，请稍后再试！', 'error');
-                return;
-            }
-        });
+
+    function getMaterialInOutList(mId) {
+        var params={
+            Materialid: mId
+        };
+        var options=$('#materialTableData').datagrid('options');
+        options.url="<%=path %>/cao/depotItem/findDetailByTypeAndMaterialId.do";
+        $("#materialTableData").datagrid('load',params);
     }
 
     //初始化键盘enter事件
@@ -828,43 +797,20 @@
         }
     });
 
-    //分页信息处理
-    function ininPager() {
-        try {
-            var opts = $("#tableData").datagrid('options');
-            var pager = $("#tableData").datagrid('getPager');
-            pager.pagination({
-                onSelectPage: function (pageNum, pageSize) {
-                    opts.pageNumber = pageNum;
-                    opts.pageSize = pageSize;
-                    pager.pagination('refresh',
-                        {
-                            pageNumber: pageNum,
-                            pageSize: pageSize
-                        });
-                    showMaterialDetails(pageNum, pageSize);
-                }
-            });
-        }
-        catch (e) {
-            $.messager.alert('异常处理提示', "分页信息异常 :  " + e.name + ": " + e.message, 'error');
-        }
-    }
-
     //删除商品信息
     function deleteMaterial(materialID) {
         $.messager.confirm('删除确认', '确定要删除此商品信息吗？', function (r) {
             if (r) {
                 $.ajax({
                     type: "post",
-                    url: "<%=path %>/material/delete.action",
+                    url: "<%=path %>/cao/material/delete.do",
                     dataType: "json",
                     data: ({
-                        materialID: materialID,
+                        id: materialID,
                         clientIp: '<%=clientIp %>'
                     }),
                     success: function (tipInfo) {
-                        var msg = tipInfo.showModel.msgTip;
+                        var msg = tipInfo.message;
                         if (msg == '成功') {
                             //加载完以后重新初始化
                             $("#searchBtn").click();
@@ -889,6 +835,10 @@
             $.messager.alert('删除提示', '没有记录被选中！', 'info');
             return;
         }
+        if (row.length == 1) {
+            deleteMaterial(row[0].id);
+            return;
+        }
         if (row.length > 0) {
             $.messager.confirm('删除确认', '确定要删除选中的' + row.length + '条商品信息吗？', function (r) {
                 if (r) {
@@ -903,7 +853,7 @@
                     }
                     $.ajax({
                         type: "post",
-                        url: "<%=path %>/material/batchDelete.action",
+                        url: "<%=path %>/cao/material/batchDelete.do",
                         dataType: "json",
                         async: false,
                         data: ({
@@ -911,7 +861,7 @@
                             clientIp: '<%=clientIp %>'
                         }),
                         success: function (tipInfo) {
-                            var msg = tipInfo.showModel.msgTip;
+                            var msg = tipInfo.message;
                             if (msg == '成功') {
                                 //加载完以后重新初始化
                                 $("#searchBtn").click();
@@ -951,16 +901,16 @@
                     }
                     $.ajax({
                         type: "post",
-                        url: "<%=path%>/material/batchSetEnable.action",
+                        url: "<%=path%>/cao/material/batchSetEnable.do",
                         dataType: "json",
                         async: false,
                         data: ({
-                            enabled: true,
+                            enabled: 1,
                             materialIDs: ids,
                             clientIp: '<%=clientIp %>'
                         }),
                         success: function (tipInfo) {
-                            var msg = tipInfo.showModel.msgTip;
+                            var msg = tipInfo.message;
                             if (msg == '成功') {
                                 //加载完以后重新初始化
                                 $("#searchBtn").click();
@@ -1000,16 +950,16 @@
                     }
                     $.ajax({
                         type: "post",
-                        url: "<%=path%>/material/batchSetEnable.action",
+                        url: "<%=path%>/cao/material/batchSetEnable.do",
                         dataType: "json",
                         async: false,
                         data: ({
-                            enabled: false,
+                            enabled: 0,
                             materialIDs: ids,
                             clientIp: '<%=clientIp %>'
                         }),
                         success: function (tipInfo) {
-                            var msg = tipInfo.showModel.msgTip;
+                            var msg = tipInfo.message;
                             if (msg == '成功') {
                                 //加载完以后重新初始化
                                 $("#searchBtn").click();
@@ -1045,7 +995,7 @@
 
     //导出数据
     function setOutputFun() {
-        window.location.href = "<%=path%>/material/exportExcel.action?browserType=" + getOs();
+        window.location.href = "<%=path%>/cao/material/exportExcel.do?browserType=" + getOs();
     }
 
     //增加
@@ -1176,7 +1126,7 @@
         oldUnit = "";
         oldManyUnit = "";
         materialID = 0;
-        url = '<%=path %>/material/create.action';
+        url = '<%=path %>/cao/material/create.do';
     }
 
     //检查商品名称是否存在 ++ 重名无法提示问题需要跟进
@@ -1200,11 +1150,11 @@
                 || mUnit != oldUnit || mUnitId != oldManyUnit))) {
             $.ajax({
                 type: "post",
-                url: "<%=path%>/material/checkIsExist.action",
+                url: "<%=path%>/cao/material/checkIsExist.do",
                 dataType: "json",
                 async: false,
                 data: ({
-                    MaterialID: materialID,
+                    id: materialID,
                     Name: mName,
                     Model: mModel,
                     Color: mColor,
@@ -1217,8 +1167,8 @@
                     UnitId: mUnitId
                 }),
                 success: function (tipInfo) {
-                    flag = tipInfo;
-                    if (tipInfo) {
+                    flag = tipInfo.flag;
+                    if (flag) {
                         $.messager.alert('提示', '商品信息已经存在', 'info');
                         return;
                     }
@@ -1303,6 +1253,7 @@
                 FirstOutUnit: $.trim($("#FirstOutUnit").val()),
                 FirstInUnit: $.trim($("#FirstInUnit").val()),
                 PriceStrategy: JSON.stringify(priceStrategy), //价格列表
+                // PriceStrategy: priceStrategy, //价格列表
                 Remark: $.trim($("#Remark").val()),
                 clientIp: '<%=clientIp %>'
             }),
@@ -1310,8 +1261,7 @@
                 if (tipInfo) {
                     $('#materialDlg').dialog('close');
 
-                    var opts = $("#tableData").datagrid('options');
-                    showMaterialDetails(opts.pageNumber, opts.pageSize);
+                    showMaterialDetails( );
                 }
                 else {
                     $.messager.show({
@@ -1334,16 +1284,16 @@
     function findByTypeId(Id) {
         $.ajax({
             type: "post",
-            url: "<%=path%>/materialCategory/findById.action",
+            url: "<%=path%>/cao/materialCategory/findById.do",
             data: ({
-                MaterialCategoryID: Id
+                id: Id
             }),
             //设置为同步
             async: false,
             dataType: "json",
             success: function (res) {
                 if (res) {
-                    mId = res.parentId;
+                    mId = res.parentid;
                     mName = res.name;
                 }
             }
@@ -1450,9 +1400,9 @@
         }
         //单独查询商品的价格列表
         $.ajax({
-            url: '<%=path %>/material/findById.action',
+            url: '<%=path %>/cao/material/findById.do',
             data: {
-                MaterialID: materialInfo[0]
+                id: materialInfo[0]
             },
             type: "get",
             dataType: "json",
@@ -1497,7 +1447,7 @@
         $("#Name").val("").focus().val(materialInfo[1]);
         //选中基本资料tab
         $("#materialFM #tt .tabs li").first().click();
-        url = '<%=path %>/material/update.action?materialID=' + materialInfo[0];
+        url = '<%=path %>/cao/material/update.do?id=' + materialInfo[0];
     }
 
     $("#mTypeChange").off("click").on("click", function () {
@@ -1511,20 +1461,13 @@
     //搜索处理
     $("#searchBtn").unbind().bind({
         click: function () {
-            showMaterialDetails(1, initPageSize);
-            var opts = $("#tableData").datagrid('options');
-            var pager = $("#tableData").datagrid('getPager');
-            opts.pageNumber = 1;
-            opts.pageSize = initPageSize;
-            pager.pagination('refresh', {
-                pageNumber: 1,
-                pageSize: initPageSize
-            });
+            showMaterialDetails();
+
         }
     });
 
 
-    function showMaterialDetails(pageNo, pageSize) {
+    function showMaterialDetails() {
         if (setCategoryId != "1") {
             cid = 2;
         }
@@ -1533,17 +1476,15 @@
         }
         $.ajax({
             type: "post",
-            url: "<%=path %>/material/findBy.action",
+            url: "<%=path %>/cao/material/findBy.do",
             dataType: "json",
             data: ({
                 Name: $.trim($("#searchName").val()),
                 Model: $.trim($("#searchModel").val()),
                 Color: $.trim($("#searchColor").val()),
-                CategoryId: cid,
+                Categoryid: cid,
                 CategoryIds: setCategoryId,
-                mpList: mPropertyListShort,
-                pageNo: pageNo,
-                pageSize: pageSize
+                mpList: mPropertyListShort
             }),
             success: function (data) {
                 $("#tableData").datagrid('loadData', data);
@@ -1575,12 +1516,13 @@
     function bindEvent() {
         //下拉绑定事件
         $.ajax({
-            url: "<%=path %>/unit/findUnitDownList.action",
+            url: "<%=path %>/cao/unit/findUnitDownList.do",
             type: "post",
             dateType: "json",
             success: function (res) {
                 if (res) {
-                    res = JSON.parse(res);
+                    //res = JSON.parse(res);
+                    res = res;
                     var options = "";
                     if (res.length) {
                         for (var i = 0; i < res.length; i++) {
@@ -1629,7 +1571,7 @@
             setTimeout(function () {
                 $.messager.progress('close');
                 var opts = $("#tableData").datagrid('options');
-                showMaterialDetails(opts.pageNumber, opts.pageSize);
+                showMaterialDetails();
             }, 3300);
         });
     }

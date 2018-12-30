@@ -7,8 +7,46 @@
       <arg column="UName" jdbcType="VARCHAR" javaType="java.lang.String" />
     </constructor>
   </resultMap>
+  <resultMap id="UnitResult" type="com.zking.erp.model.cao.Unit">
+    <result column="uname" property="uname" javaType="java.lang.String"/>
+  </resultMap>
   <sql id="Base_Column_List" >
     id, UName
   </sql>
+  <insert id="insertUnit" parameterType="com.zking.erp.model.cao.Unit">
+      insert into unit(id,uname) VALUES (#{id},#{uname})
+    </insert>
+  <update id="updateUnitById" parameterType="com.zking.erp.model.cao.Unit">
+    UPDATE unit set uname=#{uname} where id=#{id}
+  </update>
+  <delete id="deleteUnitById" parameterType="java.lang.String">
+    delete from unit where id=#{id}
+  </delete>
+  <delete id="deleteUnitByIds" parameterType="com.zking.erp.model.cao.Unit">
+    delete from unit
+    <foreach collection="ids" item="id" open=" where id in(" close=")" separator="," index="idx">
+    #{id}
+  </foreach>
+  </delete>
+  <select id="queryUnitPager" resultMap="UnitResult"
+          parameterType="com.zking.erp.model.cao.Unit">
+    select <include refid="Base_Column_List"/>
+    from unit where 1=1
+    <if test="null!=uname and ''!=uname">
+      and uname like concat(concat('%',#{uname}),'%')
+    </if>
+    order by id asc
+  </select>
+  <select id="checkIsNameExist" resultType="com.zking.erp.model.cao.Unit">
+    select <include refid="Base_Column_List"/>
+    from unit where 1=1
+    <if test="null!=param2 and ''!=param2">
+      and (uname=#{param2})
+    </if>
+    <if test="null!=param4 and ''!=param4">
+      and (id !=#{param4})
+    </if>
+  </select>
+
 
 </mapper>

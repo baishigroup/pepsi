@@ -10,8 +10,35 @@ public class Unit implements Serializable{
 
     private String uname;
 
+    /**
+     * IDs 批量操作使用
+     */
+    private String unitIDs = "";
+
+    private String[] ids=null;
+
+    public String getUnitIDs() {
+        return unitIDs;
+    }
+
+    public void setUnitIDs(String unitIDs) {
+        this.unitIDs = unitIDs;
+    }
+
+    public String[] getIds() {
+        return ids;
+    }
+
+    public void setIds(String[] ids) {
+        this.ids = ids;
+    }
+
     public Unit(String id, String uname) {
         this.id = id;
+        this.uname = uname;
+    }
+
+    public Unit(String uname) {
         this.uname = uname;
     }
 

@@ -101,7 +101,6 @@
         initSystemData(1);
         initSelectInfo(1);
         initTableData();
-        ininPager();
         initForm();
     });
 
@@ -109,16 +108,16 @@
     function initSystemData(parentid_search) {
         $.ajax({
             type: "post",
-            url: "<%=path%>/materialCategory/getBasicData.action",
+            url: "<%=path%>/cao/materialCategory/getBasicData.do",
             data: ({
-                ParentId: parentid_search
+                parentid: parentid_search
             }),
             //设置为同步
             async: false,
             dataType: "json",
             success: function (systemInfo) {
-                materialCategoryList = systemInfo.showModel.map.materialCategoryList;
-                var msgTip = systemInfo.showModel.msgTip;
+                materialCategoryList = systemInfo.materialCateList;
+                var msgTip = systemInfo.message;
                 if (msgTip == "exceptoin") {
                     $.messager.alert('提示', '查找商品类别异常,请与管理员联系！', 'error');
                     return;
@@ -218,6 +217,7 @@
     //初始化表格数据
     function initTableData() {
         $('#tableData').datagrid({
+            url: '<%=path %>/cao/materialCategory/findBy.do?parentid=1',
             //title:'商品类别列表',
             //iconCls:'icon-save',
             //width:700,
@@ -233,13 +233,13 @@
             //fitColumns:true,
             //单击行是否选中
             //checkOnSelect : false,
-            url: '<%=path %>/materialCategory/findBy.action?pageSize=' + initPageSize + '&ParentId=1',
             pagination: true,
             //交替出现背景
             striped: true,
             //loadFilter: pagerFilter,
-            pageSize: initPageSize,
-            pageList: initPageNum,
+            pageList:[2,5,10,15],
+            pageSize: 10,
+            pageNumber: 1,
             columns: [[
                 {field: 'Id', width: 35, align: "center", checkbox: true},
                 {title: '名称', field: 'Name', width: 250},
@@ -249,7 +249,7 @@
                         var rowInfo = rec.Id + 'AaBb' + rec.ParentId + 'AaBb' + rec.CategoryLevel + 'AaBb' + rec.Name;
                         if (1 == value) {
                             str += '<img src="<%=path%>/js/easyui-1.3.5/themes/icons/pencil.png" style="cursor: pointer;" onclick="editMaterialCategory(\'' + rowInfo + '\');"/>&nbsp;<a onclick="editMaterialCategory(\'' + rowInfo + '\');" style="text-decoration:none;color:black;" href="javascript:void(0)">编辑</a>&nbsp;&nbsp;';
-                            str += '<img src="<%=path%>/js/easyui-1.3.5/themes/icons/edit_remove.png" style="cursor: pointer;" onclick="deleteMaterialCategory(' + rec.Id + ');"/>&nbsp;<a onclick="deleteMaterialCategory(' + rec.Id + ');" style="text-decoration:none;color:black;" href="javascript:void(0)">删除</a>&nbsp;&nbsp;';
+                            str += '<img src="<%=path%>/js/easyui-1.3.5/themes/icons/edit_remove.png" style="cursor: pointer;" onclick="deleteMaterialCategory(\'' + rec.Id + '\');"/>&nbsp;<a onclick="deleteMaterialCategory(\'' + rec.Id + '\');" style="text-decoration:none;color:black;" href="javascript:void(0)">删除</a>&nbsp;&nbsp;';
                         }
                         return str;
                     }
@@ -298,28 +298,6 @@
         }
     });
 
-    //分页信息处理
-    function ininPager() {
-        try {
-            var opts = $("#tableData").datagrid('options');
-            var pager = $("#tableData").datagrid('getPager');
-            pager.pagination({
-                onSelectPage: function (pageNum, pageSize) {
-                    opts.pageNumber = pageNum;
-                    opts.pageSize = pageSize;
-                    pager.pagination('refresh',
-                        {
-                            pageNumber: pageNum,
-                            pageSize: pageSize
-                        });
-                    showMaterialCategoryDetails(pageNum, pageSize);
-                }
-            });
-        }
-        catch (e) {
-            $.messager.alert('异常处理提示', "分页信息异常 :  " + e.name + ": " + e.message, 'error');
-        }
-    }
 
     //删除商品类别信息
     function deleteMaterialCategory(materialCategoryID) {
@@ -327,14 +305,14 @@
             if (r) {
                 $.ajax({
                     type: "post",
-                    url: "<%=path %>/materialCategory/delete.action",
+                    url: "<%=path %>/cao/materialCategory/delete.do",
                     dataType: "json",
                     data: ({
-                        materialCategoryID: materialCategoryID,
+                        id: materialCategoryID,
                         clientIp: '<%=clientIp %>'
                     }),
                     success: function (tipInfo) {
-                        var msg = tipInfo.showModel.msgTip;
+                        var msg = tipInfo.message;
                         if (msg == '成功') {
                             //加载完以后重新初始化
                             $("#searchBtn").click();
@@ -359,6 +337,10 @@
             $.messager.alert('删除提示', '没有记录被选中！', 'info');
             return;
         }
+        if (row.length == 1) {
+            deleteMaterialCategory(row[0].id);
+            return;
+        }
         if (row.length > 0) {
             $.messager.confirm('删除确认', '确定要删除选中的' + row.length + '条商品类别信息吗？', function (r) {
                 if (r) {
@@ -373,7 +355,7 @@
                     }
                     $.ajax({
                         type: "post",
-                        url: "<%=path %>/materialCategory/batchDelete.action",
+                        url: "<%=path %>/cao/materialCategory/batchDelete.do",
                         dataType: "json",
                         async: false,
                         data: ({
@@ -381,7 +363,7 @@
                             clientIp: '<%=clientIp %>'
                         }),
                         success: function (tipInfo) {
-                            var msg = tipInfo.showModel.msgTip;
+                            var msg = tipInfo.message;
                             if (msg == '成功') {
                                 //加载完以后重新初始化
                                 $("#searchBtn").click();
@@ -416,13 +398,15 @@
 
         orgMaterialCategory = "";
         materialCategoryID = 0;
-        url = '<%=path %>/materialCategory/create.action';
+        url = '<%=path %>/cao/materialCategory/create.do';
     }
 
     //保存信息
     $("#saveMaterialCategory").unbind().bind({
         click: function () {
             if (!$('#materialCategoryFM').form('validate'))
+                return;
+            else if (checkName())
                 return;
             else {
                 var parent = 1;
@@ -438,9 +422,9 @@
                     dataType: "json",
                     async: false,
                     data: ({
-                        ParentId: parent,
-                        CategoryLevel: $("#CategoryLevel").val(),
-                        Name: $.trim($("#Name").val()),
+                        parentid: parent,
+                        categorylevel: $("#CategoryLevel").val(),
+                        name: $.trim($("#Name").val()),
                         clientIp: '<%=clientIp %>'
                     }),
                     success: function (tipInfo) {
@@ -448,7 +432,7 @@
                             $('#materialCategoryDlg').dialog('close');
 
                             var opts = $("#tableData").datagrid('options');
-                            showMaterialCategoryDetails(opts.pageNumber, opts.pageSize);
+                            showMaterialCategoryDetails();
                         }
                         else {
                             $.messager.show({
@@ -482,27 +466,51 @@
         materialCategoryID = materialCategoryInfo[0];
         //焦点在名称输入框==定焦在输入文字后面
         $("#Name").val("").focus().val(materialCategoryInfo[3]);
-        url = '<%=path %>/materialCategory/update.action?materialCategoryID=' + materialCategoryInfo[0];
+        url = '<%=path %>/cao/materialCategory/update.do?id=' + materialCategoryInfo[0];
+    }
+
+    //检查名称是否存在 ++
+    function checkName() {
+        var name = $.trim($("#Name").val());
+        //表示是否存在 true == 存在 false = 不存在
+        var flag = false;
+        //开始ajax名称检验，不能重名
+        if (name.length > 0 && (orgMaterialCategory.length == 0 || name != orgMaterialCategory)) {
+            $.ajax({
+                type: "post",
+                url: "<%=path %>/cao/materialCategory/checkIsNameExist.do",
+                dataType: "json",
+                async: false,
+                data: ({
+                    id: materialCategoryID,
+                    name: name
+                }),
+                success: function (tipInfo) {
+                    flag = tipInfo.flag;
+                    if (flag) {
+                        $.messager.alert('提示', '计量单位名称已经存在','info');
+                        return;
+                    }
+                },
+                //此处添加错误处理
+                error: function () {
+                    $.messager.alert('提示', '检查计量单位名称是否存在异常，请稍后再试！', 'error');
+                    return;
+                }
+            });
+        }
+        return flag;
     }
 
     //搜索处理
     $("#searchBtn").unbind().bind({
         click: function () {
-            showMaterialCategoryDetails(1, initPageSize);
-            var opts = $("#tableData").datagrid('options');
-            var pager = $("#tableData").datagrid('getPager');
-            opts.pageNumber = 1;
-            opts.pageSize = initPageSize;
-            pager.pagination('refresh',
-                {
-                    pageNumber: 1,
-                    pageSize: initPageSize
-                });
+            showMaterialCategoryDetails();
         }
     });
 
 
-    function showMaterialCategoryDetails(pageNo, pageSize) {
+    function showMaterialCategoryDetails() {
         var parent = 1;
         if ($("#searchParentId_f").val() != "" && $("#searchParentId_f").val() != null) {
             parent = $("#searchParentId_f").val();
@@ -516,13 +524,11 @@
         }
         $.ajax({
             type: "post",
-            url: "<%=path %>/materialCategory/findBy.action",
+            url: "<%=path %>/cao/materialCategory/findBy.do",
             dataType: "json",
             data: ({
-                Name: $.trim($("#searchName").val()),
-                ParentId: parent,
-                pageNo: pageNo,
-                pageSize: pageSize
+                name: $.trim($("#searchName").val()),
+                parentid: parent
             }),
             success: function (data) {
                 $("#tableData").datagrid('loadData', data);

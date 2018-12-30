@@ -2,51 +2,274 @@ package com.zking.erp.model.cao;
 
 import lombok.ToString;
 
+import java.io.InputStream;
 import java.io.Serializable;
+import java.util.List;
+import java.util.Map;
 
 @ToString
 public class Supplier implements Serializable{
-    private String id;
+    private String id="";
 
-    private String supplier;
+    private String supplier="";
 
-    private String contacts;
+    private String contacts="";
 
-    private String phonenum;
+    private String phonenum="";
 
-    private String email;
+    private String email="";
 
-    private String description;
+    private String description="";
 
-    private Integer isystem;
+    private Integer isystem=1;
 
-    private String type;
+    private String type="";
 
-    private Integer enabled;
+    private Integer enabled=0;
 
-    private Double advancein;
+    private Double advancein=0d;
 
-    private Double beginneedget;
+    private Double beginneedget=0d;
 
-    private Double beginneedpay;
+    private Double beginneedpay=0d;
 
-    private Double allneedget;
+    private Double allneedget=0d;
 
-    private Double allneedpay;
+    private Double allneedpay=0d;
 
-    private String fax;
+    private String fax="";
 
-    private String telephone;
+    private String telephone="";
 
-    private String address;
+    private String address="";
 
-    private String taxnum;
+    private String taxnum="";
 
-    private String bankname;
+    private String bankname="";
 
-    private String accountnumber;
+    private String accountnumber="";
 
-    private Double taxrate;
+    private Double taxrate=0d;
+
+    //根据ID批量删除
+    private List<String> supplierIDs;
+
+    public List<String> getSupplierIDs() {
+        return supplierIDs;
+    }
+
+    /**
+     * 用户IP，用户记录操作日志
+     */
+    private String clientIp = "";
+    private String browserType = ""; //浏览器类型
+    private String fileName = ""; //文件名称
+    private InputStream excelStream;  //输入流，导出excel文件
+
+    /**
+     * 名称
+     */
+    public static final int EXCEL_SUPPLIER = 0;
+
+    /**
+     * 类型
+     */
+    public static final int EXCEL_TYPE = 1;
+
+    /**
+     * 联系人
+     */
+    public static final int EXCEL_CONTACTS = 2;
+
+    /**
+     * 电话
+     */
+    public static final int EXCEL_PHONE_NUM = 3;
+
+    /**
+     * 电子邮箱
+     */
+    public static final int EXCEL_EMAIL = 4;
+
+    /**
+     * 预收款
+     */
+    public static final int EXCEL_ADVANCE_IN = 5;
+
+    /**
+     * 期初应收
+     */
+    public static final int EXCEL_BEGIN_NEED_GET = 6;
+
+    /**
+     * 期初应付
+     */
+    public static final int EXCEL_BEGIN_NEED_PAY = 7;
+
+    /**
+     * 备注
+     */
+    public static final int EXCEL_DESCRIPTION = 8;
+
+    /**
+     * 传真
+     */
+    public static final int EXCEL_FAX = 9;
+
+    /**
+     * 手机
+     */
+    public static final int EXCEL_TELEPHONE = 10;
+
+    /**
+     * 地址
+     */
+    public static final int EXCEL_ADDRESS = 11;
+
+    /**
+     * 纳税人识别号
+     */
+    public static final int EXCEL_TAX_NUM = 12;
+
+    /**
+     * 开户行
+     */
+    public static final int EXCEL_BANK_NAME = 13;
+
+    /**
+     * 账号
+     */
+    public static final int EXCEL_ACCOUNT_NUMBER = 14;
+
+    /**
+     * 税率
+     */
+    public static final int EXCEL_TAX_RATE = 15;
+
+
+    /**
+     * 表头
+     */
+    public static final int EXCEL_TABLE_HEAD = 0;
+
+    /**
+     * action返回excel结果
+     */
+    public static final String EXCEL = "excel";
+
+
+    //----------以下属性导入exel表格使用--------------------
+    /**
+     * 类型 right--正确 warn--警告  wrong--错误
+     */
+    private Map<Integer, String> cellInfo;
+
+    /**
+     * 行号
+     */
+    private Integer rowLineNum;
+
+    private String advanceInStr;
+
+    private String beginNeedGetStr;
+
+    private String beginNeedPayStr;
+
+    private String taxRateStr;
+
+    private String enabledStr;
+
+    public Map<Integer, String> getCellInfo() {
+        return cellInfo;
+    }
+
+    public void setCellInfo(Map<Integer, String> cellInfo) {
+        this.cellInfo = cellInfo;
+    }
+
+    public Integer getRowLineNum() {
+        return rowLineNum;
+    }
+
+    public void setRowLineNum(Integer rowLineNum) {
+        this.rowLineNum = rowLineNum;
+    }
+
+    public String getAdvanceInStr() {
+        return advanceInStr;
+    }
+
+    public void setAdvanceInStr(String advanceInStr) {
+        this.advanceInStr = advanceInStr;
+    }
+
+    public String getBeginNeedGetStr() {
+        return beginNeedGetStr;
+    }
+
+    public void setBeginNeedGetStr(String beginNeedGetStr) {
+        this.beginNeedGetStr = beginNeedGetStr;
+    }
+
+    public String getBeginNeedPayStr() {
+        return beginNeedPayStr;
+    }
+
+    public void setBeginNeedPayStr(String beginNeedPayStr) {
+        this.beginNeedPayStr = beginNeedPayStr;
+    }
+
+    public String getTaxRateStr() {
+        return taxRateStr;
+    }
+
+    public void setTaxRateStr(String taxRateStr) {
+        this.taxRateStr = taxRateStr;
+    }
+
+    public String getEnabledStr() {
+        return enabledStr;
+    }
+
+    public void setEnabledStr(String enabledStr) {
+        this.enabledStr = enabledStr;
+    }
+
+    public String getClientIp() {
+        return clientIp;
+    }
+
+    public void setClientIp(String clientIp) {
+        this.clientIp = clientIp;
+    }
+
+    public String getBrowserType() {
+        return browserType;
+    }
+
+    public void setBrowserType(String browserType) {
+        this.browserType = browserType;
+    }
+
+    public String getFileName() {
+        return fileName;
+    }
+
+    public void setFileName(String fileName) {
+        this.fileName = fileName;
+    }
+
+    public InputStream getExcelStream() {
+        return excelStream;
+    }
+
+    public void setExcelStream(InputStream excelStream) {
+        this.excelStream = excelStream;
+    }
+
+    public void setSupplierIDs(List<String> supplierIDs) {
+        this.supplierIDs = supplierIDs;
+    }
 
     public Supplier(String id, String supplier, String contacts, String phonenum, String email, String description, Integer isystem, String type, Integer enabled, Double advancein, Double beginneedget, Double beginneedpay, Double allneedget, Double allneedpay, String fax, String telephone, String address, String taxnum, String bankname, String accountnumber, Double taxrate) {
         this.id = id;

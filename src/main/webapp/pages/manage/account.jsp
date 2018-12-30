@@ -69,7 +69,7 @@
         </div>
         <div class="fitem" style="padding:5px">
             <label id="serialNoLabel">编号</label>
-            <input name="serialNo" id="serialNo" class="easyui-validatebox"
+            <input name="serialno" id="serialNo" class="easyui-validatebox"
                    data-options="required:true,validType:'length[2,30]'" style="width: 230px;height: 20px"/>
         </div>
         <div class="fitem" style="padding:5px">
@@ -103,7 +103,6 @@
     //初始化界面
     $(function () {
         initTableData();
-        ininPager();
     });
 
     //初始化表格数据
@@ -119,10 +118,11 @@
             collapsible: false,
             //交替出现背景
             striped: true,
-            url: '<%=path %>/account/findBy.action?pageSize=' + initPageSize,
+            url: '<%=path %>/cao/account/findBy.do',
             pagination: true,
-            pageSize: initPageSize,
-            pageList: initPageNum,
+            pageList:[2,5,10,15],
+            pageSize: 10,
+            pageNumber: 1,
             columns: [[
                 {field: 'id', width: 35, align: "center", checkbox: true},
                 {title: '名称', field: 'name', width: 100},
@@ -132,7 +132,7 @@
                 {
                     title: '是否默认', field: 'isDefault', width: 100, align: "center",
                     formatter: function (value, rec) {
-                        if (rec.isDefault) {
+                        if (rec.isDefault==1) {
                             return "<b style='color:green'>是</b>";
                         }
                         else {
@@ -205,28 +205,7 @@
         }
     });
 
-    //分页信息处理
-    function ininPager() {
-        try {
-            var opts = $("#tableData").datagrid('options');
-            var pager = $("#tableData").datagrid('getPager');
-            pager.pagination({
-                onSelectPage: function (pageNum, pageSize) {
-                    opts.pageNumber = pageNum;
-                    opts.pageSize = pageSize;
-                    pager.pagination('refresh',
-                        {
-                            pageNumber: pageNum,
-                            pageSize: pageSize
-                        });
-                    showAccountDetails(pageNum, pageSize);
-                }
-            });
-        }
-        catch (e) {
-            $.messager.alert('异常处理提示', "分页信息异常 :  " + e.name + ": " + e.message, 'error');
-        }
-    }
+
 
     //删除结算账户
     function deleteAccount(accountInfo) {
@@ -235,7 +214,7 @@
                 var accountTotalInfo = accountInfo.split("AaBb");
                 $.ajax({
                     type: "post",
-                    url: "<%=path %>/account/delete.action",
+                    url: "<%=path %>/cao/account/delete.do",
                     dataType: "json",
                     data: ({
                         accountID: accountTotalInfo[0],
@@ -243,7 +222,7 @@
                         clientIp: '<%=clientIp %>'
                     }),
                     success: function (tipInfo) {
-                        var msg = tipInfo.showModel.msgTip;
+                        var msg = tipInfo.message;
                         if (msg == '成功')
                         //加载完以后重新初始化
                             $("#searchBtn").click();
@@ -267,6 +246,10 @@
             $.messager.alert('删除提示', '没有记录被选中！', 'info');
             return;
         }
+        if (row.length == 1) {
+            deleteAccount(row[0].id);
+            return;
+        }
         if (row.length > 0) {
             $.messager.confirm('删除确认', '确定要删除选中的' + row.length + '条结算账户吗？', function (r) {
                 if (r) {
@@ -280,7 +263,7 @@
                     }
                     $.ajax({
                         type: "post",
-                        url: "<%=path %>/account/batchDelete.action",
+                        url: "<%=path %>/cao/account/batchDelete.do",
                         dataType: "json",
                         async: false,
                         data: ({
@@ -288,7 +271,7 @@
                             clientIp: '<%=clientIp %>'
                         }),
                         success: function (tipInfo) {
-                            var msg = tipInfo.showModel.msgTip;
+                            var msg = tipInfo.message;
                             if (msg == '成功') {
                                 //加载完以后重新初始化
                                 $("#searchBtn").click();
@@ -327,7 +310,7 @@
         $("#account").focus();
         orgAccount = "";
         accountID = 0;
-        url = '<%=path %>/account/create.action';
+        url = '<%=path %>/cao/account/create.do';
     }
 
     //设为默认操作事件
@@ -342,16 +325,16 @@
             function setDefault(accountID, isDefault) {
                 $.ajax({
                     type: "post",
-                    url: "<%=path %>/account/updateAmountIsDefault.action",
+                    url: "<%=path %>/cao/account/updateAmountIsDefault.do",
                     dataType: "json",
                     async: false,
                     data: ({
                         AccountID: accountID,
-                        IsDefault: isDefault,
+                        isdefault: isDefault,
                         clientIp: '<%=clientIp %>'
                     }),
                     success: function (res) {
-                        if (res == "true" && isDefault) {
+                        if (res.flag == "true" && isDefault==1) {
 
                         }
                         else {
@@ -360,17 +343,17 @@
                     },
                     //此处添加错误处理
                     error: function () {
-                        $.messager.alert('删除提示', '删除结算账户异常，请稍后再试！', 'error');
+                        $.messager.alert('提示', '设为默认账户异常，请稍后再试！', 'error');
                         return;
                     }
                 });
             }
 
             if (row.length == 1) {
-                setDefault(row[0].id, true); //设置默认
+                setDefault(row[0].id, "1"); //设置默认
                 for (var i = 0; i < allRow.length; i++) {
                     if (allRow[i].id != row[0].id) {
-                        setDefault(allRow[i].id, false);
+                        setDefault(allRow[i].id, "0");
                     }
                 }
                 setTimeout(function () {
@@ -394,7 +377,7 @@
                     return $(this).form('validate');
                 },
                 success: function (result) {
-                    var result = eval('(' + result + ')');
+                    var result = eval('(' + result + ')').flag;
                     if (!result) {
                         $.messager.show({
                             title: '错误提示',
@@ -406,8 +389,7 @@
                         //$('#tableData').datagrid('reload');
                         //加载完以后重新初始化
                         //$("#searchBtn").click();
-                        var opts = $("#tableData").datagrid('options');
-                        showAccountDetails(opts.pageNumber, opts.pageSize);
+                        showAccountDetails( );
                     }
                 }
             });
@@ -432,7 +414,7 @@
         accountID = accountInfo[0];
         //焦点在名称输入框==定焦在输入文字后面
         $("#account").val("").focus().val(accountInfo[1]);
-        url = '<%=path %>/account/update.action?accountID=' + accountInfo[0];
+        url = '<%=path %>/cao/account/update.do?accountID=' + accountInfo[0];
     }
 
     //检查结算账户 名称是否存在 ++ 重名无法提示问题需要跟进
@@ -444,7 +426,7 @@
         if (accountName.length > 0 && (orgAccount.length == 0 || accountName != orgAccount)) {
             $.ajax({
                 type: "post",
-                url: "<%=path %>/account/checkIsNameExist.action",
+                url: "<%=path %>/cao/account/checkIsNameExist.do",
                 dataType: "json",
                 async: false,
                 data: ({
@@ -452,8 +434,8 @@
                     name: accountName
                 }),
                 success: function (tipInfo) {
-                    flag = tipInfo;
-                    if (tipInfo) {
+                    flag = tipInfo.flag;
+                    if (flag) {
                         $.messager.alert('提示', '结算账户名称已经存在', 'info');
                         return;
                     }
@@ -471,40 +453,19 @@
     //搜索处理
     $("#searchBtn").unbind().bind({
         click: function () {
-            showAccountDetails(1, initPageSize);
-            var opts = $("#tableData").datagrid('options');
-            var pager = $("#tableData").datagrid('getPager');
-            opts.pageNumber = 1;
-            opts.pageSize = initPageSize;
-            pager.pagination('refresh',
-                {
-                    pageNumber: 1,
-                    pageSize: initPageSize
-                });
+            showAccountDetails();
         }
     });
 
-    function showAccountDetails(pageNo, pageSize) {
-        $.ajax({
-            type: "post",
-            url: "<%=path %>/account/findBy.action",
-            dataType: "json",
-            data: ({
-                name: $.trim($("#searchName").val()),
-                serialNo: $.trim($("#searchSerialNo").val()),
-                remark: $.trim($("#searchRemark").val()),
-                pageNo: pageNo,
-                pageSize: pageSize
-            }),
-            success: function (data) {
-                $("#tableData").datagrid('loadData', data);
-            },
-            //此处添加错误处理
-            error: function () {
-                $.messager.alert('查询提示', '查询数据后台异常，请稍后再试！', 'error');
-                return;
-            }
-        });
+    function showAccountDetails() {
+        var params={
+            name: $.trim($("#searchName").val()),
+            serialno: $.trim($("#searchSerialNo").val()),
+            remark: $.trim($("#searchRemark").val()),
+        };
+        var options=$('#tableData').datagrid('options');
+        options.url="<%=path %>/cao/account/findBy.do";
+        $("#tableData").datagrid('load',params);
     }
 
     function showAccountInOutList(accountInfo) {
@@ -514,8 +475,7 @@
         $('#accountDetailListDlg').dialog('open').dialog('setTitle', '<img src="<%=path%>/js/easyui-1.3.5/themes/icons/pencil.png"/>&nbsp;查看账户流水');
         $(".window-mask").css({width: webW, height: webH});
         initAccountDetailData(accountId);
-        getAccountInOutList(accountId, initialAmount, 1, initPageSize);
-        ininAccountDetailPager(accountId, initialAmount);
+        getAccountInOutList(accountId, initialAmount);
     }
 
     //初始化表格数据
@@ -576,48 +536,16 @@
         });
     }
 
-    //分页信息处理
-    function ininAccountDetailPager(accountId, initialAmount) {
-        try {
-            var opts = $("#accountTableData").datagrid('options');
-            var pager = $("#accountTableData").datagrid('getPager');
-            pager.pagination({
-                onSelectPage: function (pageNum, pageSize) {
-                    opts.pageNumber = pageNum;
-                    opts.pageSize = pageSize;
-                    pager.pagination('refresh', {
-                        pageNumber: pageNum,
-                        pageSize: pageSize
-                    });
-                    getAccountInOutList(accountId, initialAmount, pageNum, pageSize);
-                }
-            });
-        }
-        catch (e) {
-            $.messager.alert('异常处理提示', "分页信息异常 :  " + e.name + ": " + e.message, 'error');
-        }
-    }
 
-    function getAccountInOutList(accountId, initialAmount, pageNo, pageSize) {
-        $.ajax({
-            type: "get",
-            url: "<%=path %>/account/findAccountInOutList.action",
-            dataType: "json",
-            data: ({
-                accountID: accountId,
-                initialAmount: initialAmount,
-                pageNo: pageNo,
-                pageSize: pageSize
-            }),
-            success: function (res) {
-                $("#accountTableData").datagrid('loadData', res);
-            },
-            //此处添加错误处理
-            error: function () {
-                $.messager.alert('查询提示', '查询数据后台异常，请稍后再试！', 'error');
-                return;
-            }
-        });
+    function getAccountInOutList(accountId, initialAmount) {
+        var params={
+            accountID: accountId,
+            initialamount: initialAmount,
+        };
+        var options=$('#accountTableData').datagrid('options');
+        options.url="<%=path %>/cao/account/findAccountInOutList.do";
+        // console.log(options);
+        $("#accountTableData").datagrid('load',params);
     }
 
     //重置按钮
