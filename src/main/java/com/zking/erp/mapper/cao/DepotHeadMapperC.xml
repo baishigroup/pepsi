@@ -131,7 +131,7 @@
         and OperTime &lt;=concat(#{param2},'-31 00:00:00')
       </if>
       <if test="param3 eq 'date' " >
-        and OperTime &lt;=#{param2}
+      and OperTime &lt;=#{param2}
       </if>
     </if>
   </select>
