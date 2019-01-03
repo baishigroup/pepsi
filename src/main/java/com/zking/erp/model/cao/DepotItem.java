@@ -17,6 +17,8 @@ public class DepotItem implements Serializable{
     private Double opernumber;
 
     private Double basicnumber;
+    private String MONTH;
+    private String year;
 
     private Double unitprice;
 
@@ -55,6 +57,7 @@ public class DepotItem implements Serializable{
     private String MaterialName;
     private String MaterialModel;
     private String MaterialUnit;
+    private String MaterialColor;
 
 
     private String UnitId;
@@ -70,8 +73,8 @@ public class DepotItem implements Serializable{
     private String Deleted = "";    //json删除记录
     private String Updated = "";    //json修改记录
 
-    private String HeadIds = "";    //表头集合列表
-    private String MaterialIds = "";    //材料列表
+    private String[] HeadIds;    //表头集合列表
+    private String[] MaterialIds;    //材料列表
     private String MonthTime = "";  //月份
     private String ProjectId = null;
     private String browserType = "";
@@ -83,6 +86,9 @@ public class DepotItem implements Serializable{
     private String number;
     private String type;
     private String OperTime;
+
+    //统计
+
 
     public DepotItem(String id, String headerid, String materialid, String munit, Double opernumber, Double basicnumber, Double unitprice, Double taxunitprice, Double allprice, String remark, String img, Double incidentals, String depotid, String anotherdepotid, Double taxrate, Double taxmoney, Double taxlastmoney, String otherfield1, String otherfield2, String otherfield3, String otherfield4, String otherfield5, String mtype) {
         this.id = id;
@@ -112,6 +118,22 @@ public class DepotItem implements Serializable{
 
     public DepotItem() {
         super();
+    }
+
+    public String getYear() {
+        return year;
+    }
+
+    public void setYear(String year) {
+        this.year = year;
+    }
+
+    public String getMONTH() {
+        return MONTH;
+    }
+
+    public void setMONTH(String MONTH) {
+        this.MONTH = MONTH;
     }
 
     public String getNumber() {
@@ -160,6 +182,14 @@ public class DepotItem implements Serializable{
 
     public void setMaterialUnit(String materialUnit) {
         MaterialUnit = materialUnit;
+    }
+
+    public String getMaterialColor() {
+        return MaterialColor;
+    }
+
+    public void setMaterialColor(String materialColor) {
+        MaterialColor = materialColor;
     }
 
     public String getUnitId() {
@@ -218,19 +248,19 @@ public class DepotItem implements Serializable{
         Updated = updated;
     }
 
-    public String getHeadIds() {
+    public String[] getHeadIds() {
         return HeadIds;
     }
 
-    public void setHeadIds(String headIds) {
+    public void setHeadIds(String[] headIds) {
         HeadIds = headIds;
     }
 
-    public String getMaterialIds() {
+    public String[] getMaterialIds() {
         return MaterialIds;
     }
 
-    public void setMaterialIds(String materialIds) {
+    public void setMaterialIds(String[] materialIds) {
         MaterialIds = materialIds;
     }
 

@@ -22,6 +22,8 @@ public class Depot implements Serializable {
 
     private String remark;
 
+    private String clientIp;
+
     /**
      * IDs 批量操作使用
      */
@@ -58,6 +60,14 @@ public class Depot implements Serializable {
 
     public Depot() {
         super();
+    }
+
+    public String getClientIp() {
+        return clientIp;
+    }
+
+    public void setClientIp(String clientIp) {
+        this.clientIp = clientIp;
     }
 
     public String getId() {

@@ -19,6 +19,8 @@ public class Person implements Serializable{
 
     private String[] ids=null;
 
+    private String clientIp;
+
     public String getPersonIDs() {
         return personIDs;
     }
@@ -43,6 +45,14 @@ public class Person implements Serializable{
 
     public Person() {
         super();
+    }
+
+    public String getClientIp() {
+        return clientIp;
+    }
+
+    public void setClientIp(String clientIp) {
+        this.clientIp = clientIp;
     }
 
     public String getId() {

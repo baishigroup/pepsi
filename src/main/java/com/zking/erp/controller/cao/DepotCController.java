@@ -2,6 +2,7 @@ package com.zking.erp.controller.cao;
 
 import com.zking.erp.base.BaseController;
 import com.zking.erp.model.cao.Depot;
+import com.zking.erp.model.jhui.Log;
 import com.zking.erp.service.cao.IDepotCService;
 import com.zking.erp.util.PageBean;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
+import java.sql.Timestamp;
 import java.util.*;
 
 @Controller
@@ -22,14 +24,14 @@ public class DepotCController extends BaseController{
 
     @RequestMapping("/create")
     @ResponseBody
-    public Map<String,Object> create(Depot depot){
+    public Map<String,Object> create(HttpServletRequest request,Depot model){
         Map<String,Object> map = new HashMap<String, Object>();
-        depot.setId(UUID.randomUUID().toString().replace("-"," "));
+        model.setId(UUID.randomUUID().toString().replace("-"," "));
 
         System.out.println("==================开始调用增加仓库信息方法create()===================");
         Boolean flag = false;
         try {
-            depotService.insertDepot(depot);
+            depotService.insertDepot(model);
             map.put("message","true");
 
             //========标识位===========
@@ -53,9 +55,9 @@ public class DepotCController extends BaseController{
             }
         }
 
-//        logService.create(new Logdetails(getUser(), "增加仓库信息单位", model.getClientIp(),
-//                new Timestamp(System.currentTimeMillis())
-//                , tipType, "增加仓库信息单位名称为  " + model.getUName() + " " + tipMsg + "！", "增加仓库信息单位" + tipMsg));
+        logService.create(new Log(getUser(request), "增加仓库信息单位", model.getClientIp(),
+                new Timestamp(System.currentTimeMillis())
+                , tipType, "增加仓库信息单位名称为  " + model.getName() + " " + tipMsg + "！", "增加仓库信息单位" + tipMsg));
         System.out.println("==================结束调用增加仓库方法create()===================");
         return map;
     }
@@ -108,27 +110,27 @@ public class DepotCController extends BaseController{
 
     @RequestMapping("/delete")
     @ResponseBody
-    public Map<String,Object> delete(Depot depot){
+    public Map<String,Object> delete(HttpServletRequest request,Depot model){
         Map<String,Object> m = new HashMap<>();
 
         System.out.println("====================开始调用删除仓库信息方法delete()================");
         try {
-            depotService.deleteDepotById(depot.getId());
-            System.out.println(depot.getId());
+            depotService.deleteDepotById(model.getId());
+            System.out.println(model.getId());
             m.put("message","成功");
             //tipMsg = "成功";
             tipType = 0;
         } catch (DataAccessException e) {
-            System.out.println(">>>>>>>>>>>删除ID为 " + depot.getId() + "  的仓库信息异常");
+            System.out.println(">>>>>>>>>>>删除ID为 " + model.getId() + "  的仓库信息异常");
             m.put("message","失败");
             //tipMsg = "失败";
             tipType = 1;
             e.printStackTrace();
         }
 
-//        logService.create(new Logdetails(getUser(), "删除仓库信息", model.getClientIp(),
-//                new Timestamp(System.currentTimeMillis())
-//                , tipType, "删除仓库信息ID为  " + model.getUnitID() + " " + tipMsg + "！", "删除仓库信息" + tipMsg));
+        logService.create(new Log(getUser(request), "删除仓库信息", model.getClientIp(),
+                new Timestamp(System.currentTimeMillis())
+                , tipType, "删除仓库信息ID为  " + model.getId() + " " + tipMsg + "！", "删除仓库信息" + tipMsg));
         System.out.println("====================结束调用删除仓库信息方法delete()================");
 
         return m;
@@ -136,50 +138,50 @@ public class DepotCController extends BaseController{
 
     @RequestMapping("/batchDelete")
     @ResponseBody
-    public Map<String,Object> batchDelete(Depot depot){
+    public Map<String,Object> batchDelete(HttpServletRequest request,Depot model){
         Map<String,Object> m = new HashMap<>();
 
-        String[] split = depot.getDepotIDs().split(",");
-        depot.setIds(split);
+        String[] split = model.getDepotIDs().split(",");
+        model.setIds(split);
 
 
         System.out.println("====================开始调用批量删除仓库信息方法batchDelete()================");
         try {
-            depotService.deleteDepotByIds(depot);
+            depotService.deleteDepotByIds(model);
             m.put("message","成功");
             //记录操作日志使用
             tipMsg = "成功";
             tipType = 0;
         } catch (DataAccessException e) {
-            System.out.println(">>>>>>>>>>>批量删除仓库信息ID为：" + depot.getDepotIDs() + "信息异常");
+            System.out.println(">>>>>>>>>>>批量删除仓库信息ID为：" + model.getDepotIDs() + "信息异常");
             tipMsg = "失败";
             tipType = 1;
             e.printStackTrace();
         }
 
-//        logService.create(new Logdetails(getUser(), "批量删除仓库信息", model.getClientIp(),
-//                new Timestamp(System.currentTimeMillis())
-//                , tipType, "批量删除计仓库信息ID为  " + model.getUnitIDs() + " " + tipMsg + "！", "批量删除仓库信息" + tipMsg));
+        logService.create(new Log(getUser(request), "批量删除仓库信息", model.getClientIp(),
+                new Timestamp(System.currentTimeMillis())
+                , tipType, "批量删除计仓库信息ID为  " + model.getIds() + " " + tipMsg + "！", "批量删除仓库信息" + tipMsg));
         System.out.println("====================结束调用批量删除仓库信息方法batchDelete()================");
         return m;
     }
 
     @RequestMapping("/update")
     @ResponseBody
-    public Map<String,Object> update(Depot depot){
+    public Map<String,Object> update(HttpServletRequest request,Depot model){
         Map<String,Object> m = new HashMap<>();
 
         System.out.println("====================开始调用修改仓库信息方法update()================");
         Boolean flag = false;
         try {
-            depotService.updateDepotById(depot);
+            depotService.updateDepotById(model);
 
             flag = true;
             m.put("message","成功");
             //tipMsg = "成功";
             tipType = 0;
         } catch (DataAccessException e) {
-            System.out.println(">>>>>>>>>>>>>修改仓库信息ID为 ： " + depot.getId() + "信息失败");
+            System.out.println(">>>>>>>>>>>>>修改仓库信息ID为 ： " + model.getId() + "信息失败");
             flag = false;
             m.put("message","失败");
             //tipMsg = "失败";
@@ -194,9 +196,9 @@ public class DepotCController extends BaseController{
             }
         }
 
-//        logService.create(new Logdetails(getUser(), "更新仓库信息", model.getClientIp(),
-//                new Timestamp(System.currentTimeMillis())
-//                , tipType, "更新仓库信息ID为  " + model.getUnitID() + " " + tipMsg + "！", "更新仓库信息" + tipMsg));
+        logService.create(new Log(getUser(request), "更新仓库信息", model.getClientIp(),
+                new Timestamp(System.currentTimeMillis())
+                , tipType, "更新仓库信息ID为  " + model.getIds() + " " + tipMsg + "！", "更新仓库信息" + tipMsg));
 
         System.out.println("====================结束调用修改仓库信息方法update()================");
         return m;

@@ -61,7 +61,6 @@
         $("#searchMonth").val(thisDate);
         initMProperty(); //初始化商品属性
         initTableData();
-        ininPager();
         search();
         print();
     });
@@ -70,7 +69,7 @@
     function initMProperty() {
         $.ajax({
             type: "post",
-            url: "<%=path %>/materialProperty/findBy.action",
+            url: "<%=path %>/cao/materialProperty/findBy.do",
             dataType: "json",
             success: function (res) {
                 if (res && res.rows) {
@@ -140,41 +139,9 @@
         }
     });
 
-    //分页信息处理
-    function ininPager() {
-        try {
-            var opts = $("#tableData").datagrid('options');
-            var pager = $("#tableData").datagrid('getPager');
-            pager.pagination({
-                onSelectPage: function (pageNum, pageSize) {
-                    opts.pageNumber = pageNum;
-                    opts.pageSize = pageSize;
-                    pager.pagination('refresh',
-                        {
-                            pageNumber: pageNum,
-                            pageSize: pageSize
-                        });
-                    showDetails(pageNum, pageSize);
-                }
-            });
-        }
-        catch (e) {
-            $.messager.alert('异常处理提示', "分页信息异常 :  " + e.name + ": " + e.message, 'error');
-        }
-    }
-
     //搜索处理
     function search() {
-        showDetails(1, initPageSize);
-        var opts = $("#tableData").datagrid('options');
-        var pager = $("#tableData").datagrid('getPager');
-        opts.pageNumber = 1;
-        opts.pageSize = initPageSize;
-        pager.pagination('refresh',
-            {
-                pageNumber: 1,
-                pageSize: initPageSize
-            });
+        showDetails();
     }
 
     $("#searchBtn").unbind().bind({
@@ -183,10 +150,10 @@
         }
     });
 
-    function showDetails(pageNo, pageSize) {
+    function showDetails() {
         $.ajax({
             type: "post",
-            url: "<%=path %>/depotHead/findByMonth.action",
+            url: "<%=path %>/cao/depotHead/findByMonth.do",
             dataType: "json",
             data: ({
                 MonthTime: $("#searchMonth").val()
@@ -197,18 +164,16 @@
                     //获取排序后的产品ID
                     $.ajax({
                         type: "post",
-                        url: "<%=path %>/material/findByOrder.action",
+                        url: "<%=path %>/cao/material/findByOrder.do",
                         dataType: "json",
                         success: function (resNew) {
                             var MIds = resNew.mIds;
                             if (MIds) {
                                 $.ajax({
                                     type: "post",
-                                    url: "<%=path %>/depotItem/saleOut.action",
+                                    url: "<%=path %>/cao/depotItem/saleOut.do",
                                     dataType: "json",
                                     data: ({
-                                        pageNo: pageNo,
-                                        pageSize: pageSize,
                                         MonthTime: $("#searchMonth").val(),
                                         HeadIds: HeadIds,
                                         MaterialIds: MIds,

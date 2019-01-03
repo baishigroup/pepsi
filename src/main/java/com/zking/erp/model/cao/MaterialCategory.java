@@ -23,6 +23,8 @@ public class MaterialCategory implements Serializable{
 
     private String ParentName;
 
+    private String clientIp;
+
 
 
     public MaterialCategory(String id, String name, Integer categorylevel, String parentid) {
@@ -34,6 +36,14 @@ public class MaterialCategory implements Serializable{
 
     public MaterialCategory() {
         super();
+    }
+
+    public String getClientIp() {
+        return clientIp;
+    }
+
+    public void setClientIp(String clientIp) {
+        this.clientIp = clientIp;
     }
 
     public String getParentName() {

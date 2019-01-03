@@ -9,7 +9,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Map;
 
 @Service
 @Transactional
@@ -37,5 +36,20 @@ public class DepotItemCServiceImpl implements IDepotItemCService {
     @Override
     public List<DepotItem> queryDetailByMIdPager(PageBean pageBean, String MId) {
         return depotItemMapperC.queryDetailByMIdPager(MId);
+    }
+
+    @Override
+    public List<DepotItem> buyOrSale(String type, String subType, String MId, String MonthTime, String sumType) {
+        return depotItemMapperC.buyOrSale(type, subType, MId, MonthTime, sumType);
+    }
+
+    @Override
+    public List<DepotItem> queryBuyInPager(DepotItem depotItem,PageBean pageBean) {
+        return depotItemMapperC.queryBuyInPager(depotItem);
+    }
+
+    @Override
+    public List<DepotItem> salesTrendAnalysis(String year) {
+        return depotItemMapperC.salesTrendAnalysis(year);
     }
 }

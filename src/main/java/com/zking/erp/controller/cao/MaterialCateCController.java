@@ -2,6 +2,7 @@ package com.zking.erp.controller.cao;
 
 import com.zking.erp.base.BaseController;
 import com.zking.erp.model.cao.MaterialCategory;
+import com.zking.erp.model.jhui.Log;
 import com.zking.erp.service.cao.IMaterialCategoryCService;
 import com.zking.erp.util.PageBean;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
+import java.sql.Timestamp;
 import java.util.*;
 
 @Controller
@@ -37,7 +39,7 @@ public class MaterialCateCController extends BaseController{
 
     @RequestMapping("/create")
     @ResponseBody
-    public Map<String,Object> create(MaterialCategory model){
+    public Map<String,Object> create(HttpServletRequest request,MaterialCategory model){
         Map<String,Object> map = new HashMap<String, Object>();
         model.setId(UUID.randomUUID().toString().replace("-"," "));
 
@@ -68,9 +70,9 @@ public class MaterialCateCController extends BaseController{
             }
         }
 
-//        logService.create(new Logdetails(getUser(), "增加商品类别", model.getClientIp(),
-//                new Timestamp(System.currentTimeMillis())
-//                , tipType, "增加商品类别名称为  " + model.getUName() + " " + tipMsg + "！", "增加商品类别" + tipMsg));
+        logService.create(new Log(getUser(request), "增加商品类别", model.getClientIp(),
+                new Timestamp(System.currentTimeMillis())
+                , tipType, "增加商品类别名称为  " + model.getName() + " " + tipMsg + "！", "增加商品类别" + tipMsg));
         System.out.println("==================结束调用增加商品类别方法create()===================");
         return map;
     }
@@ -104,7 +106,7 @@ public class MaterialCateCController extends BaseController{
 
     @RequestMapping("/delete")
     @ResponseBody
-    public Map<String,Object> delete(MaterialCategory model){
+    public Map<String,Object> delete(HttpServletRequest request,MaterialCategory model){
         Map<String,Object> m = new HashMap<>();
 
         System.out.println("====================开始调用删除商品类别方法delete()================");
@@ -122,9 +124,9 @@ public class MaterialCateCController extends BaseController{
             e.printStackTrace();
         }
 
-//        logService.create(new Logdetails(getUser(), "删除商品类别", model.getClientIp(),
-//                new Timestamp(System.currentTimeMillis())
-//                , tipType, "删除商品类别ID为  " + model.getUnitID() + " " + tipMsg + "！", "删除商品类别" + tipMsg));
+        logService.create(new Log(getUser(request), "删除商品类别", model.getClientIp(),
+                new Timestamp(System.currentTimeMillis())
+                , tipType, "删除商品类别ID为  " + model.getIds() + " " + tipMsg + "！", "删除商品类别" + tipMsg));
         System.out.println("====================结束调用删除商品类别方法delete()================");
 
         return m;
@@ -132,7 +134,7 @@ public class MaterialCateCController extends BaseController{
 
     @RequestMapping("/batchDelete")
     @ResponseBody
-    public Map<String,Object> batchDelete(MaterialCategory model){
+    public Map<String,Object> batchDelete(HttpServletRequest request,MaterialCategory model){
         Map<String,Object> m = new HashMap<>();
 
         String[] split = model.getMaterialCategoryIDs().split(",");
@@ -153,16 +155,16 @@ public class MaterialCateCController extends BaseController{
             e.printStackTrace();
         }
 
-//        logService.create(new Logdetails(getUser(), "批量删除商品类别", model.getClientIp(),
-//                new Timestamp(System.currentTimeMillis())
-//                , tipType, "批量删除商品类别ID为  " + model.getUnitIDs() + " " + tipMsg + "！", "批量删除商品类别" + tipMsg));
+        logService.create(new Log(getUser(request), "批量删除商品类别", model.getClientIp(),
+                new Timestamp(System.currentTimeMillis())
+                , tipType, "批量删除商品类别ID为  " + model.getIds() + " " + tipMsg + "！", "批量删除商品类别" + tipMsg));
         System.out.println("====================结束调用批量删除商品类别方法batchDelete()================");
         return m;
     }
 
     @RequestMapping("/update")
     @ResponseBody
-    public Map<String,Object> update(MaterialCategory model){
+    public Map<String,Object> update(HttpServletRequest request,MaterialCategory model){
         Map<String,Object> m = new HashMap<>();
 
         System.out.println("====================开始调用修改商品类别方法update()================");
@@ -190,9 +192,9 @@ public class MaterialCateCController extends BaseController{
             }
         }
 
-//        logService.create(new Logdetails(getUser(), "更新商品类别", model.getClientIp(),
-//                new Timestamp(System.currentTimeMillis())
-//                , tipType, "更新商品类别ID为  " + model.getUnitID() + " " + tipMsg + "！", "更新商品类别" + tipMsg));
+        logService.create(new Log(getUser(request), "更新商品类别", model.getClientIp(),
+                new Timestamp(System.currentTimeMillis())
+                , tipType, "更新商品类别ID为  " + model.getIds() + " " + tipMsg + "！", "更新商品类别" + tipMsg));
 
         System.out.println("====================结束调用修改商品类别方法update()================");
         return m;

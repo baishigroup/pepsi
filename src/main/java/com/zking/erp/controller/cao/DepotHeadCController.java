@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -159,6 +158,38 @@ public class DepotHeadCController {
             e.printStackTrace();
         }
         return allReturn;
+    }
+
+    /**
+     * 查找单据_根据月份(报表)
+     *
+     * @return
+     */
+    @ResponseBody
+    @RequestMapping("/findByMonth")
+    public Map<String,Object> findByMonth(HttpServletRequest request) {
+        System.out.println("------------查找单据_根据月份(报表)-------------");
+        try {
+            PageBean pageBean = new PageBean();
+            pageBean.setRequest(request);
+            List<DepotHead> dataList = depotHeadService.queryByMonthPager(pageBean);
+            Map<String,Object> outer = new HashMap<String, Object>();
+            String headId = "";
+            if (null != dataList) {
+                for (DepotHead depotHead : dataList) {
+                    headId = headId + depotHead.getId() + ",";
+                }
+            }
+            if (headId != "") {
+                headId = headId.substring(0, headId.lastIndexOf(","));
+            }
+            outer.put("HeadIds", headId);
+            return outer;
+        } catch (Exception e) {
+            System.out.println(">>>>>>>>>>>>>>>>>>>查找单据信息异常");
+            e.printStackTrace();
+            throw new RuntimeException(e);
+        }
     }
 
 }

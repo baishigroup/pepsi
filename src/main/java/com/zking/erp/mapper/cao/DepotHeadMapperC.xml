@@ -55,7 +55,7 @@
         and organid=#{organid}
       </if>
       <if test="null!=opertime and ''!=opertime">
-        and opertime &lt;= #{type}
+        and opertime &lt;= #{opertime}
       </if>
 
     </select>
@@ -124,7 +124,7 @@
   <select id="queryManyAccountSum" resultType="com.zking.erp.model.cao.DepotHead">
     SELECT <include refid="Base_Column_List"/>
     from depothead  where 1=1 and
-    AccountIdList like concat(concat('%',#{id}),'%')
+    AccountIdList like concat(concat('%',#{param1}),'%')
     <if test="param2 != null and param2!=''" >
       <if test="param3 eq 'month' " >
         and OperTime &gt;=concat(#{param2},'-01 00:00:00')
@@ -135,6 +135,14 @@
       </if>
     </if>
   </select>
+  <select id="queryByMonthPager" resultType="com.zking.erp.model.cao.DepotHead">
+    SELECT <include refid="Base_Column_List"/>
+    FROM depothead WHERE 1=1
+    <if test="null!=OperTime and ''!=OperTime">
+      and OperTime = #{OperTime}
+    </if>
+  </select>
+
 
 
 </mapper>

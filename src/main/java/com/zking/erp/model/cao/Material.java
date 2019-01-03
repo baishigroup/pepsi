@@ -69,12 +69,12 @@ public class Material implements Serializable{
 
     private String CategoryName;
 
+    private String clientIp;
+
     /**
      * CategoryIds 用于in子查询
      */
     private String CategoryIds = "1";
-
-
 
     public Material(String id, String categoryid, String name, String mfrs, Double packing, Double safetystock, String model, String standard, String color, String unit, String remark, Double retailprice, Double lowprice, Double presetpriceone, Double presetpricetwo, String unitId, String firstoutunit, String firstinunit, String pricestrategy, Integer enabled, String otherfield1, String otherfield2, String otherfield3) {
         this.id = id;
@@ -104,6 +104,14 @@ public class Material implements Serializable{
 
     public Material() {
         super();
+    }
+
+    public String getClientIp() {
+        return clientIp;
+    }
+
+    public void setClientIp(String clientIp) {
+        this.clientIp = clientIp;
     }
 
     public String getCategoryIds() {
@@ -158,8 +166,8 @@ public class Material implements Serializable{
         return UnitId;
     }
 
-    public void setUnitId(String unitId) {
-        UnitId = unitId;
+    public void setUnitId(String unitId){
+        UnitId=this.UnitId;
     }
 
     public String getUnitName() {

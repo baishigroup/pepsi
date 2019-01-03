@@ -16,4 +16,16 @@ public interface DepotItemMapperC {
 
     List<DepotItem> queryDetailByMIdPager(String MId);
 
+    //统计相关
+    List<DepotItem> buyOrSale(String type, String subType, String MId, String MonthTime,String sumType);
+
+    List<DepotItem> queryBuyInPager(DepotItem depotItem);
+
+    /**
+     * 销量趋势
+     * @param year
+     * @return
+     */
+    List<DepotItem> salesTrendAnalysis(String year);
+
 }

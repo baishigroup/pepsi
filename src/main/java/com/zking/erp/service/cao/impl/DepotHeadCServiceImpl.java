@@ -47,4 +47,9 @@ public class DepotHeadCServiceImpl implements IDepotHeadCService {
     public List<DepotHead> queryManyAccountSum(String id, String timeStr, String type) {
         return depotHeadMapperC.queryManyAccountSum(id,timeStr,type);
     }
+
+    @Override
+    public List<DepotHead> queryByMonthPager(PageBean pageBean) {
+        return depotHeadMapperC.queryByMonthPager();
+    }
 }
