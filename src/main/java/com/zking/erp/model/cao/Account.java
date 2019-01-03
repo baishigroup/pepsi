@@ -3,6 +3,7 @@ package com.zking.erp.model.cao;
 import lombok.ToString;
 
 import java.io.Serializable;
+import java.util.Arrays;
 
 @ToString
 public class Account implements Serializable{
@@ -20,7 +21,7 @@ public class Account implements Serializable{
 
     private Integer isdefault;
 
-    private String accountID;
+    private String accountID="";
 
     /**
      * IDs 批量操作使用
@@ -65,6 +66,8 @@ public class Account implements Serializable{
         this.remark = remark;
         this.isdefault = isdefault;
     }
+
+
 
     public String getClientIp() {
         return clientIp;
@@ -208,6 +211,17 @@ public class Account implements Serializable{
                 ", currentamount=" + currentamount +
                 ", remark='" + remark + '\'' +
                 ", isdefault=" + isdefault +
+                ", accountID='" + accountID + '\'' +
+                ", accountIDs='" + accountIDs + '\'' +
+                ", ids=" + Arrays.toString(ids) +
+                ", clientIp='" + clientIp + '\'' +
+                ", Number='" + Number + '\'' +
+                ", newType='" + newType + '\'' +
+                ", supplier='" + supplier + '\'' +
+                ", ChangeAmount='" + ChangeAmount + '\'' +
+                ", oTime='" + oTime + '\'' +
+                ", AList='" + AList + '\'' +
+                ", AMList='" + AMList + '\'' +
                 '}';
     }
 }

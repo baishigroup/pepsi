@@ -93,7 +93,7 @@ public class AccountCController extends BaseController {
                 }
             }
             outer.put("rows", dataArray);
-           return outer;
+            return outer;
         } catch (DataAccessException e) {
             System.out.println(">>>>>>>>>查找结算账户信息异常");
             e.printStackTrace();
@@ -357,7 +357,7 @@ public class AccountCController extends BaseController {
 //        logService.create(new Logdetails(getUser(), "更新结算账户", model.getClientIp(),
 //                new Timestamp(System.currentTimeMillis())
 //                , tipType, "更新结算账户ID为  " + model.getAccountID() + " " + tipMsg + "！", "更新结算账户" + tipMsg));
-    return map;
+        return map;
     }
 
 
@@ -391,7 +391,7 @@ public class AccountCController extends BaseController {
 //            logService.create(new Logdetails(getUser(), "更新默认账户", model.getClientIp(), new Timestamp(System.currentTimeMillis()),
 //                    tipType, "更新账户ID" + model.getAccountID() + "为默认账户" + tipMsg + "！", "更新默认账户" + tipMsg));
         }
-    return map;
+        return map;
     }
 
     /**

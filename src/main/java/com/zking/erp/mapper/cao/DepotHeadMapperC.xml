@@ -36,29 +36,29 @@
     </constructor>
   </resultMap>
   <sql id="Base_Column_List" >
-    Id, Type, SubType, ProjectId, DefaultNumber, checker, Number, OperPersonName, checktime, 
-    CreateTime, OperTime, OrganId, HandsPersonId, AccountId, ChangeAmount, AllocationProjectId, 
-    TotalPrice, PayType, Remark, Salesman, AccountIdList, AccountMoneyList, Discount, 
-    DiscountMoney, DiscountLastMoney, OtherMoney, OtherMoneyList, OtherMoneyItem, AccountDay, 
+    Id, Type, SubType, ProjectId, DefaultNumber, checker, Number, OperPersonName, checktime,
+    CreateTime, OperTime, OrganId, HandsPersonId, AccountId, ChangeAmount, AllocationProjectId,
+    TotalPrice, PayType, Remark, Salesman, AccountIdList, AccountMoneyList, Discount,
+    DiscountMoney, DiscountLastMoney, OtherMoney, OtherMoneyList, OtherMoneyItem, AccountDay,
     Status
   </sql>
-    <select id="queryDepotHead" resultType="com.zking.erp.model.cao.DepotHead"
-            parameterType="com.zking.erp.model.cao.DepotHead">
-      SELECT SUM(ChangeAmount) FROM depothead WHERE 1=1
-      <if test="null!=type and ''!=type">
-        and type=#{type}
-      </if>
-      <if test="null!=subtype and ''!=subtype">
-        and subtype=#{subtype}
-      </if>
-      <if test="null!=organid and ''!=organid">
-        and organid=#{organid}
-      </if>
-      <if test="null!=opertime and ''!=opertime">
-        and opertime &lt;= #{type}
-      </if>
+  <select id="queryDepotHead" resultType="com.zking.erp.model.cao.DepotHead"
+          parameterType="com.zking.erp.model.cao.DepotHead">
+    SELECT SUM(ChangeAmount) FROM depothead WHERE 1=1
+    <if test="null!=type and ''!=type">
+      and type=#{type}
+    </if>
+    <if test="null!=subtype and ''!=subtype">
+      and subtype=#{subtype}
+    </if>
+    <if test="null!=organid and ''!=organid">
+      and organid=#{organid}
+    </if>
+    <if test="null!=opertime and ''!=opertime">
+      and opertime &lt;= #{type}
+    </if>
 
-    </select>
+  </select>
 
   <select id="queryDepotHeadPager" resultType="com.zking.erp.model.cao.DepotHead"
           parameterType="com.zking.erp.model.cao.DepotHead">
@@ -108,19 +108,19 @@
     SELECT GROUP_CONCAT(CONCAT(material.`Name`,' ',material.Model)) AS mName FROM depotitem INNER JOIN material
     ON depotitem.MaterialId = material.Id WHERE depotitem.HeaderId = #{depotHeadID}
   </select>
-    <select id="queryAccountSumByAId" resultType="com.zking.erp.model.cao.DepotHead">
-      SELECT <include refid="Base_Column_List"/>
-      from depothead  where 1=1 and AccountId=#{param1} and PayType='预付款'
-      <if test="param2 != null and param2!=''" >
+  <select id="queryAccountSumByAId" resultType="com.zking.erp.model.cao.DepotHead">
+    SELECT <include refid="Base_Column_List"/>
+    from depothead  where 1=1 and AccountId=#{param1} and PayType='预付款'
+    <if test="param2 != null and param2!=''" >
       <if test="param3 eq 'month' " >
         and OperTime &gt;=concat(#{param2},'-01 00:00:00')
         and OperTime &lt;=concat(#{param2},'-31 00:00:00')
       </if>
       <if test="param3 eq 'date' " >
-          and OperTime &lt;=#{param2}
+        and OperTime &lt;=#{param2}
       </if>
-      </if>
-    </select>
+    </if>
+  </select>
   <select id="queryManyAccountSum" resultType="com.zking.erp.model.cao.DepotHead">
     SELECT <include refid="Base_Column_List"/>
     from depothead  where 1=1 and
