@@ -275,6 +275,7 @@ public class AccountCController extends BaseController {
             Account.setRemark(model.getRemark());
             Account.setId(UUID.randomUUID().toString());
             accountService.insertAccount(Account);
+
             //========标识位===========
             flag = true;
             //记录操作日志使用
