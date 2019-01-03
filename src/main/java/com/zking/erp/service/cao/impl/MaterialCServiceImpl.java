@@ -63,4 +63,9 @@ public class MaterialCServiceImpl implements IMaterialCService {
     public int batchSetEnable(Material material) {
         return materialMapperC.batchSetEnable(material);
     }
+
+    @Override
+    public List<Material> queryByOrder(Material material) {
+        return materialMapperC.queryByOrder(material);
+    }
 }

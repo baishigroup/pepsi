@@ -104,6 +104,11 @@
     </if>
     ORDER BY Id ASC
   </select>
+    <select id="queryByOrder" resultType="com.zking.erp.model.cao.Material"
+            parameterType="com.zking.erp.model.cao.Material">
+      SELECT <include refid="Base_Column_List"/>
+      from material where 1=1 GROUP BY name,model asc
+    </select>
 
 
 </mapper>

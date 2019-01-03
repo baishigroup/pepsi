@@ -237,5 +237,200 @@ public class DepotItemCController {
     }
 
 
+    /**
+     * 进货统计
+     *
+     * @return
+     */
+    @ResponseBody
+    @RequestMapping("/buyIn")
+    public Map<String,Object> buyIn(HttpServletRequest request,DepotItem model) {
+        System.out.println("------------------进货统计-------------------");
+        try {
+            PageBean pageBean = new PageBean();
+            pageBean.setRequest(request);
+            List<DepotItem> dataList = depotItemService.queryBuyInPager(model,pageBean);
+            String mpList = model.getMpList(); //商品属性
+            String[] mpArr = mpList.split(",");
+            Map<String,Object> outer = new HashMap<String, Object>();
+            outer.put("total", pageBean.getTotal());
+            //存放数据json数组
+            List dataArray = new ArrayList();
+            if (null != dataList) {
+                for (DepotItem depotItem : dataList) {
+                    Map<String,Object> item = new HashMap<String, Object>();
+                    Integer InSum = sumNumberBuyOrSale("入库", "采购", depotItem.getMaterialid(), model.getMonthTime());
+                    Integer OutSum = sumNumberBuyOrSale("出库", "采购退货", depotItem.getMaterialid(), model.getMonthTime());
+                    Double InSumPrice = sumPriceBuyOrSale("入库", "采购", depotItem.getMaterialid(), model.getMonthTime());
+                    Double OutSumPrice = sumPriceBuyOrSale("出库", "采购退货", depotItem.getMaterialid(), model.getMonthTime());
+                    item.put("Id", depotItem.getId());
+                    item.put("MaterialId", depotItem.getMaterialid() == null ? "" : depotItem.getMaterialid());
+                    item.put("MaterialName", depotItem.getMaterialName());
+                    item.put("MaterialModel", depotItem.getMaterialModel());
+                    //扩展信息
+                    String materialOther = getOtherInfo(mpArr, depotItem);
+                    item.put("MaterialOther", materialOther);
+                    item.put("MaterialColor", depotItem.getMaterialColor());
+                    item.put("MaterialUnit", depotItem.getMaterialUnit());
+                    item.put("InSum", InSum);
+                    item.put("OutSum", OutSum);
+                    item.put("InSumPrice", InSumPrice);
+                    item.put("OutSumPrice", OutSumPrice);
+                    dataArray.add(item);
+                }
+            }
+            outer.put("rows", dataArray);
+            //回写查询结果
+            return outer;
+        } catch (DataAccessException e) {
+            System.out.println(">>>>>>>>>>>>>>>>>>>查找信息异常");
+            e.printStackTrace();
+            throw new RuntimeException(e);
+        }
+    }
+
+    /**
+     * 进、退货 数量统计
+     * @param type
+     * @param subType
+     * @param MId
+     * @param MonthTime
+     * @return
+     */
+    @SuppressWarnings("unchecked")
+    public Integer sumNumberBuyOrSale(String type, String subType, String MId, String MonthTime) {
+        Integer sumNumber = 0;
+        String allNumber = "";
+        String sumType = "Number";
+        try {
+            List<DepotItem> depotItems=depotItemService.buyOrSale(type, subType, MId, MonthTime, sumType);
+            if(null!=depotItems && 0!=depotItems.size()) {
+                for (DepotItem depotItem : depotItems) {
+                    if (null!=depotItem) {
+                        if (null != depotItem.getBasicnumber())
+                            allNumber = depotItem.getBasicnumber().toString();
+                    }
+                }
+            }
+            if (allNumber.equals("null")||allNumber.equals("")) {
+                allNumber = "0";
+            }else {
+                allNumber = allNumber.substring(0, allNumber.length() - 2);
+                allNumber = allNumber.replace(".0", "");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        sumNumber = Integer.parseInt(allNumber);
+        return sumNumber;
+    }
+
+    /**
+     * 进、退货 价钱统计
+     * @param type
+     * @param subType
+     * @param MId
+     * @param MonthTime
+     * @return
+     */
+    @SuppressWarnings("unchecked")
+    public Double sumPriceBuyOrSale(String type, String subType, String MId, String MonthTime) {
+        Double sumPrice = 0.0;
+        String allPrice = "";
+        String sumType = "Price";
+        try {
+            List<DepotItem> depotItems=depotItemService.buyOrSale(type, subType, MId, MonthTime, sumType);
+            if(null!=depotItems && 0!=depotItems.size()) {
+                for (DepotItem depotItem : depotItems) {
+                    if (null!=depotItem) {
+                        if (null != depotItem.getBasicnumber())
+                            allPrice = depotItem.getBasicnumber().toString();
+                    }
+                }
+            }
+            if (allPrice.equals("null")||allPrice.equals("")) {
+                allPrice = "0";
+            }else {
+                allPrice = allPrice.substring(0, allPrice.length() - 2);
+                allPrice = allPrice.replace(".0", "");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        sumPrice = Double.parseDouble(allPrice);
+        return sumPrice;
+    }
+
+    /**
+     * 销售统计
+     *
+     * @return
+     */
+    @ResponseBody
+    @RequestMapping("/saleOut")
+    public Map<String,Object> saleOut(HttpServletRequest request,DepotItem model) {
+        try {
+            PageBean pageBean = new PageBean();
+            pageBean.setRequest(request);
+            List<DepotItem> dataList = depotItemService.queryBuyInPager(model,pageBean);
+            String mpList = model.getMpList(); //商品属性
+            String[] mpArr = mpList.split(",");
+            Map<String,Object> outer = new HashMap<String, Object>();
+            outer.put("total", pageBean.getTotal());
+            //存放数据json数组
+            List dataArray = new ArrayList();
+            if (null != dataList) {
+                for (DepotItem depotItem : dataList) {
+                    Map<String,Object> item = new HashMap<String, Object>();
+                    Integer OutSumRetail = sumNumberBuyOrSale("出库", "零售", depotItem.getMaterialid(), model.getMonthTime());
+                    Integer OutSum = sumNumberBuyOrSale("出库", "销售", depotItem.getMaterialid(), model.getMonthTime());
+                    Integer InSumRetail = sumNumberBuyOrSale("入库", "零售退货", depotItem.getMaterialid(), model.getMonthTime());
+                    Integer InSum = sumNumberBuyOrSale("入库", "销售退货", depotItem.getMaterialid(), model.getMonthTime());
+                    Double OutSumRetailPrice = sumPriceBuyOrSale("出库", "零售", depotItem.getMaterialid(), model.getMonthTime());
+                    Double OutSumPrice = sumPriceBuyOrSale("出库", "销售", depotItem.getMaterialid(), model.getMonthTime());
+                    Double InSumRetailPrice = sumPriceBuyOrSale("入库", "零售退货", depotItem.getMaterialid(), model.getMonthTime());
+                    Double InSumPrice = sumPriceBuyOrSale("入库", "销售退货", depotItem.getMaterialid(), model.getMonthTime());
+                    item.put("Id", depotItem.getId());
+                    item.put("MaterialId", depotItem.getMaterialid() == null ? "" : depotItem.getMaterialid());
+                    item.put("MaterialName", depotItem.getMaterialName());
+                    item.put("MaterialModel", depotItem.getMaterialModel());
+                    //扩展信息
+                    String materialOther = getOtherInfo(mpArr, depotItem);
+                    item.put("MaterialOther", materialOther);
+                    item.put("MaterialColor", depotItem.getMaterialColor());
+                    item.put("MaterialUnit", depotItem.getMaterialUnit());
+                    item.put("OutSum", OutSumRetail + OutSum);
+                    item.put("InSum", InSumRetail + InSum);
+                    item.put("OutSumPrice", OutSumRetailPrice + OutSumPrice);
+                    item.put("InSumPrice", InSumRetailPrice + InSumPrice);
+                    dataArray.add(item);
+                }
+            }
+            outer.put("rows", dataArray);
+            //回写查询结果
+            return outer;
+        } catch (DataAccessException e) {
+            System.out.println(">>>>>>>>>>>>>>>>>>>查找信息异常");
+            e.printStackTrace();
+            throw new RuntimeException(e);
+        }
+    }
+
+
+    @ResponseBody
+    @RequestMapping("/salesTrans")
+    public List<DepotItem> salesTrans(HttpServletRequest request,DepotItem model) {
+        try {
+//            String year = request.getParameter("year");
+            System.out.println("年份："+model.getYear());
+            List<DepotItem> depotItems = depotItemService.salesTrendAnalysis(model.getYear());
+            return depotItems;
+        } catch (DataAccessException e) {
+            System.out.println(">>>>>>>>>>>>>>>>>>>查找信息异常");
+            e.printStackTrace();
+            throw new RuntimeException(e);
+        }
+    }
+
 
 }

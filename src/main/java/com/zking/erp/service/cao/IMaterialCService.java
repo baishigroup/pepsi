@@ -65,4 +65,11 @@ public interface IMaterialCService {
      */
     int batchSetEnable(Material material);
 
+    /**
+     * 查找商品信息-统计排序
+     * @param material
+     * @return
+     */
+    List<Material> queryByOrder(Material material);
+
 }

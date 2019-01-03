@@ -52,11 +52,8 @@ public class Supplier implements Serializable{
     private Double taxrate=0d;
 
     //根据ID批量删除
-    private List<String> supplierIDs;
+    private String[] supplierIDs;
 
-    public List<String> getSupplierIDs() {
-        return supplierIDs;
-    }
 
     /**
      * 用户IP，用户记录操作日志
@@ -179,6 +176,14 @@ public class Supplier implements Serializable{
 
     private String enabledStr;
 
+    public String[] getSupplierIDs() {
+        return supplierIDs;
+    }
+
+    public void setSupplierIDs(String[] supplierIDs) {
+        this.supplierIDs = supplierIDs;
+    }
+
     public Map<Integer, String> getCellInfo() {
         return cellInfo;
     }
@@ -265,10 +270,6 @@ public class Supplier implements Serializable{
 
     public void setExcelStream(InputStream excelStream) {
         this.excelStream = excelStream;
-    }
-
-    public void setSupplierIDs(List<String> supplierIDs) {
-        this.supplierIDs = supplierIDs;
     }
 
     public Supplier(String id, String supplier, String contacts, String phonenum, String email, String description, Integer isystem, String type, Integer enabled, Double advancein, Double beginneedget, Double beginneedpay, Double allneedget, Double allneedpay, String fax, String telephone, String address, String taxnum, String bankname, String accountnumber, Double taxrate) {

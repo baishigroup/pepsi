@@ -17,6 +17,8 @@ public class Unit implements Serializable{
 
     private String[] ids=null;
 
+    private String clientIp;
+
     public String getUnitIDs() {
         return unitIDs;
     }
@@ -44,6 +46,14 @@ public class Unit implements Serializable{
 
     public Unit() {
         super();
+    }
+
+    public String getClientIp() {
+        return clientIp;
+    }
+
+    public void setClientIp(String clientIp) {
+        this.clientIp = clientIp;
     }
 
     public String getId() {

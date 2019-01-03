@@ -21,6 +21,8 @@ public class InoutItem implements Serializable{
 
     private String[] ids=null;
 
+    private String clientIp;
+
     public String getUnitIDs() {
         return unitIDs;
     }
@@ -46,6 +48,14 @@ public class InoutItem implements Serializable{
 
     public InoutItem() {
         super();
+    }
+
+    public String getClientIp() {
+        return clientIp;
+    }
+
+    public void setClientIp(String clientIp) {
+        this.clientIp = clientIp;
     }
 
     public String getId() {

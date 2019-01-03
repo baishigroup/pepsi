@@ -2,6 +2,7 @@ package com.zking.erp.controller.cao;
 
 import com.zking.erp.base.BaseController;
 import com.zking.erp.model.cao.Person;
+import com.zking.erp.model.jhui.Log;
 import com.zking.erp.service.cao.IPersonCService;
 import com.zking.erp.util.PageBean;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
+import java.sql.Timestamp;
 import java.util.*;
 
 @Controller
@@ -37,7 +39,7 @@ public class PersonCController extends BaseController{
 
     @RequestMapping("/create")
     @ResponseBody
-    public Map<String,Object> create(Person model){
+    public Map<String,Object> create(HttpServletRequest request,Person model){
         Map<String,Object> map = new HashMap<String, Object>();
         model.setId(UUID.randomUUID().toString().replace("-"," "));
 
@@ -68,9 +70,9 @@ public class PersonCController extends BaseController{
             }
         }
 
-//        logService.create(new Logdetails(getUser(), "增加经手人", model.getClientIp(),
-//                new Timestamp(System.currentTimeMillis())
-//                , tipType, "增加经手人名称为  " + model.getUName() + " " + tipMsg + "！", "增加经手人" + tipMsg));
+        logService.create(new Log(getUser(request), "增加经手人", model.getClientIp(),
+                new Timestamp(System.currentTimeMillis())
+                , tipType, "增加经手人名称为  " + model.getName() + " " + tipMsg + "！", "增加经手人" + tipMsg));
         System.out.println("==================结束调用增加经手人方法create()===================");
         return map;
     }
@@ -102,7 +104,7 @@ public class PersonCController extends BaseController{
 
     @RequestMapping("/delete")
     @ResponseBody
-    public Map<String,Object> delete(Person model){
+    public Map<String,Object> delete(HttpServletRequest request,Person model){
         Map<String,Object> m = new HashMap<>();
 
         System.out.println("====================开始调用删除经手人方法delete()================");
@@ -120,9 +122,9 @@ public class PersonCController extends BaseController{
             e.printStackTrace();
         }
 
-//        logService.create(new Logdetails(getUser(), "删除经手人", model.getClientIp(),
-//                new Timestamp(System.currentTimeMillis())
-//                , tipType, "删除经手人ID为  " + model.getUnitID() + " " + tipMsg + "！", "删除经手人" + tipMsg));
+        logService.create(new Log(getUser(request), "删除经手人", model.getClientIp(),
+                new Timestamp(System.currentTimeMillis())
+                , tipType, "删除经手人ID为  " + model.getIds() + " " + tipMsg + "！", "删除经手人" + tipMsg));
         System.out.println("====================结束调用删除经手人方法delete()================");
 
         return m;
@@ -130,7 +132,7 @@ public class PersonCController extends BaseController{
 
     @RequestMapping("/batchDelete")
     @ResponseBody
-    public Map<String,Object> batchDelete(Person model){
+    public Map<String,Object> batchDelete(HttpServletRequest request,Person model){
         Map<String,Object> m = new HashMap<>();
 
         String[] split = model.getPersonIDs().split(",");
@@ -151,16 +153,16 @@ public class PersonCController extends BaseController{
             e.printStackTrace();
         }
 
-//        logService.create(new Logdetails(getUser(), "批量删除经手人", model.getClientIp(),
-//                new Timestamp(System.currentTimeMillis())
-//                , tipType, "批量删除经手人ID为  " + model.getUnitIDs() + " " + tipMsg + "！", "批量删除经手人" + tipMsg));
+        logService.create(new Log(getUser(request), "批量删除经手人", model.getClientIp(),
+                new Timestamp(System.currentTimeMillis())
+                , tipType, "批量删除经手人ID为  " + model.getIds() + " " + tipMsg + "！", "批量删除经手人" + tipMsg));
         System.out.println("====================结束调用批量删除经手人方法batchDelete()================");
         return m;
     }
 
     @RequestMapping("/update")
     @ResponseBody
-    public Map<String,Object> update(Person model){
+    public Map<String,Object> update(HttpServletRequest request,Person model){
         Map<String,Object> m = new HashMap<>();
 
         System.out.println("====================开始调用修改经手人方法update()================");
@@ -188,9 +190,9 @@ public class PersonCController extends BaseController{
             }
         }
 
-//        logService.create(new Logdetails(getUser(), "更新经手人", model.getClientIp(),
-//                new Timestamp(System.currentTimeMillis())
-//                , tipType, "更新经手人ID为  " + model.getUnitID() + " " + tipMsg + "！", "更新经手人" + tipMsg));
+        logService.create(new Log(getUser(request), "更新经手人", model.getClientIp(),
+                new Timestamp(System.currentTimeMillis())
+                , tipType, "更新经手人ID为  " + model.getIds() + " " + tipMsg + "！", "更新经手人" + tipMsg));
 
         System.out.println("====================结束调用修改经手人方法update()================");
         return m;

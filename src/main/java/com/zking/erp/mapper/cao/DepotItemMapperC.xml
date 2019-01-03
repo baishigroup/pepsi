@@ -67,5 +67,49 @@
  AND SubType!='调拨' AND SubType!='礼品充值'
   AND MaterialId =#{MId} ORDER BY OperTime DESC
   </select>
+  <select id="buyOrSale" resultType="com.zking.erp.model.cao.DepotItem">
+    select
+    <if test="param5 eq 'Number'">
+      SUM(BasicNumber) AS BasicNumber
+    </if>
+    <if test="param5 eq 'Price'">
+      SUM(AllPrice) AS AllPrice
+    </if>
+    FROM depotitem,depothead
+    WHERE depotitem.HeaderId = depothead.id
+    <if test="null!=param1 and ''!=param1">
+      AND type=#{param1}
+    </if>
+    <if test="null!=param2 and ''!=param2">
+      AND subType=#{param2}
+    </if>
+    <if test="null!=param3 and ''!=param3">
+      AND MaterialId=#{param3}
+    </if>
+    <if test="param4 != null and param4!=''" >
+        and depothead.OperTime &gt;=concat(#{param4},'-01 00:00:00')
+        and depothead.OperTime &lt;=concat(#{param4},'-31 00:00:00')
+    </if>
+
+  </select>
+  <select id="queryBuyInPager" resultType="com.zking.erp.model.cao.DepotItem"
+          parameterType="com.zking.erp.model.cao.DepotItem">
+    SELECT m.name AS MaterialName,m.model AS MaterialModel,m.unit AS MaterialUnit,d.*
+    FROM material m LEFT JOIN depotitem d ON d.MaterialId=m.Id where 1=1
+    <foreach collection="HeadIds" item="hids" open=" and HeaderId in(" close=")" separator="," index="idx">
+      #{hids}
+    </foreach>
+    <foreach collection="MaterialIds" item="mids" open=" and MaterialId in(" close=")" separator="," index="idx">
+      #{mids}
+    </foreach>
+  </select>
+  <select id="salesTrendAnalysis" resultType="com.zking.erp.model.cao.DepotItem">
+    SELECT SUBSTRING(depothead.OperTime,6,2) AS MONTH,SUM(BasicNumber) AS basicnumber
+    FROM depotitem,depothead WHERE depotitem.HeaderId = depothead.id
+    <if test="null!=year and ''!=year">
+      AND SUBSTRING(depothead.OperTime,1,4)=#{year}
+    </if>
+    GROUP BY SUBSTRING(depothead.OperTime,6,2)
+  </select>
 
 </mapper>

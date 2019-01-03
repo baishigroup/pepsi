@@ -5,6 +5,7 @@ import com.zking.erp.model.cao.Account;
 import com.zking.erp.model.cao.AccountHead;
 import com.zking.erp.model.cao.AccountItem;
 import com.zking.erp.model.cao.DepotHead;
+import com.zking.erp.model.jhui.Log;
 import com.zking.erp.service.cao.IAccountCService;
 import com.zking.erp.service.cao.IAccountHeadCService;
 import com.zking.erp.service.cao.IAccountItemCService;
@@ -18,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
+import java.sql.Timestamp;
 import java.text.DecimalFormat;
 import java.util.*;
 
@@ -93,7 +95,7 @@ public class AccountCController extends BaseController {
                 }
             }
             outer.put("rows", dataArray);
-            return outer;
+           return outer;
         } catch (DataAccessException e) {
             System.out.println(">>>>>>>>>查找结算账户信息异常");
             e.printStackTrace();
@@ -275,7 +277,6 @@ public class AccountCController extends BaseController {
             Account.setRemark(model.getRemark());
             Account.setId(UUID.randomUUID().toString());
             accountService.insertAccount(Account);
-
             //========标识位===========
             flag = true;
             //记录操作日志使用
@@ -289,9 +290,9 @@ public class AccountCController extends BaseController {
             e.printStackTrace();
         }
         map.put("flag",flag);
-//        logService.create(new Logdetails(getUser(), "增加结算账户", model.getClientIp(),
-//                new Timestamp(System.currentTimeMillis())
-//                , tipType, "增加结算账户名称为  " + model.getName() + " " + tipMsg + "！", "增加结算账户" + tipMsg));
+        logService.create(new Log(getUser(request), "增加结算账户", model.getClientIp(),
+                new Timestamp(System.currentTimeMillis())
+                , tipType, "增加结算账户名称为  " + model.getName() + " " + tipMsg + "！", "增加结算账户" + tipMsg));
         System.out.println("==================结束调用增加结算账户方法===================");
         return map;
     }
@@ -317,9 +318,9 @@ public class AccountCController extends BaseController {
             e.printStackTrace();
         }
         map.put("message",tipMsg);
-//        logService.create(new Logdetails(getUser(), "删除结算账户", model.getClientIp(),
-//                new Timestamp(System.currentTimeMillis())
-//                , tipType, "删除结算账户ID为  " + model.getAccountID() + ",名称为  " + model.getName() + tipMsg + "！", "删除结算账户" + tipMsg));
+        logService.create(new Log(getUser(request), "删除结算账户", model.getClientIp(),
+                new Timestamp(System.currentTimeMillis())
+                , tipType, "删除结算账户ID为  " + model.getAccountID() + ",名称为  " + model.getName() + tipMsg + "！", "删除结算账户" + tipMsg));
         System.out.println("====================结束调用删除结算账户信息方法delete()================");
         return map;
     }
@@ -354,10 +355,10 @@ public class AccountCController extends BaseController {
             e.printStackTrace();
         }
         map.put("flag",flag);
-//        logService.create(new Logdetails(getUser(), "更新结算账户", model.getClientIp(),
-//                new Timestamp(System.currentTimeMillis())
-//                , tipType, "更新结算账户ID为  " + model.getAccountID() + " " + tipMsg + "！", "更新结算账户" + tipMsg));
-        return map;
+        logService.create(new Log(getUser(request), "更新结算账户", model.getClientIp(),
+                new Timestamp(System.currentTimeMillis())
+                , tipType, "更新结算账户ID为  " + model.getAccountID() + " " + tipMsg + "！", "更新结算账户" + tipMsg));
+    return map;
     }
 
 
@@ -388,10 +389,10 @@ public class AccountCController extends BaseController {
         map.put("flag",flag);
         //如果改为默认账户时记录日志
         if (model.getIsdefault().equals("1")) {
-//            logService.create(new Logdetails(getUser(), "更新默认账户", model.getClientIp(), new Timestamp(System.currentTimeMillis()),
-//                    tipType, "更新账户ID" + model.getAccountID() + "为默认账户" + tipMsg + "！", "更新默认账户" + tipMsg));
+            logService.create(new Log(getUser(request), "更新默认账户", model.getClientIp(), new Timestamp(System.currentTimeMillis()),
+                    tipType, "更新账户ID" + model.getAccountID() + "为默认账户" + tipMsg + "！", "更新默认账户" + tipMsg));
         }
-        return map;
+    return map;
     }
 
     /**
@@ -416,9 +417,9 @@ public class AccountCController extends BaseController {
             e.printStackTrace();
         }
 
-//        logService.create(new Logdetails(getUser(), "批量删除结算账户", model.getClientIp(),
-//                new Timestamp(System.currentTimeMillis())
-//                , tipType, "批量删除结算账户ID为  " + model.getAccountIDs() + " " + tipMsg + "！", "批量删除结算账户" + tipMsg));
+        logService.create(new Log(getUser(request), "批量删除结算账户", model.getClientIp(),
+                new Timestamp(System.currentTimeMillis())
+                , tipType, "批量删除结算账户ID为  " + model.getAccountIDs() + " " + tipMsg + "！", "批量删除结算账户" + tipMsg));
         return map;
     }
 

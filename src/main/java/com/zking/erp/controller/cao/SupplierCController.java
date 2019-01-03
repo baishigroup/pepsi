@@ -2,6 +2,7 @@ package com.zking.erp.controller.cao;
 
 import com.zking.erp.base.BaseController;
 import com.zking.erp.model.cao.Supplier;
+import com.zking.erp.model.jhui.Log;
 import com.zking.erp.service.cao.ISupplierCService;
 import com.zking.erp.util.PageBean;
 import com.zking.erp.util.Tools;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
+import java.sql.Timestamp;
 import java.util.*;
 
 @Controller
@@ -24,18 +26,18 @@ public class SupplierCController extends BaseController{
 
     @RequestMapping("/create")
     @ResponseBody
-    public Map<String,Object> create(Supplier supplier){
+    public Map<String,Object> create(HttpServletRequest request,Supplier model){
         Map<String,Object> map = new HashMap<String, Object>();
-        supplier.setId(UUID.randomUUID().toString().replace("-"," "));
+        model.setId(UUID.randomUUID().toString().replace("-"," "));
         System.out.println("==================开始调用增加供应商方法===================");
         Boolean flag = false;
         try {
-            supplier.setAdvancein(0.0);
-            supplier.setIsystem(1);
+            model.setAdvancein(0.0);
+            model.setIsystem(1);
             //是否启用（1 启用 0不启用）
-            supplier.setEnabled(0);
+            model.setEnabled(0);
 
-            supplierService.insertSupplier(supplier);
+            supplierService.insertSupplier(model);
 
             //========标识位===========
             flag = true;
@@ -59,9 +61,9 @@ public class SupplierCController extends BaseController{
             }
         }
 
-//        logService.create(new Logdetails(getUser(), "增加供应商", model.getClientIp(),
-//                new Timestamp(System.currentTimeMillis())
-//                , tipType, "增加供应商名称为  " + model.getSupplier() + " " + tipMsg + "！", "增加供应商" + tipMsg));
+        logService.create(new Log(getUser(request), "增加供应商", model.getClientIp(),
+                new Timestamp(System.currentTimeMillis())
+                , tipType, "增加供应商名称为  " + model.getSupplier() + " " + tipMsg + "！", "增加供应商" + tipMsg));
         System.out.println("==================结束调用增加供应商方法===================");
 
         return map;
@@ -69,26 +71,26 @@ public class SupplierCController extends BaseController{
 
     @RequestMapping("/delete")
     @ResponseBody
-    public Map<String,Object> delete(Supplier supplier){
+    public Map<String,Object> delete(HttpServletRequest request,Supplier model){
         Map<String,Object> m = new HashMap<>();
 
         System.out.println("====================开始调用删除供应商信息方法delete()================");
         try {
-            supplierService.deleteSupplierById(supplier.getId());
+            supplierService.deleteSupplierById(model.getId());
             m.put("message","成功");
             //tipMsg = "成功";
             tipType = 0;
         } catch (DataAccessException e) {
-            System.out.println(">>>>>>>>>>>删除ID为 " + supplier.getId() + "  的供应商异常");
+            System.out.println(">>>>>>>>>>>删除ID为 " + model.getId() + "  的供应商异常");
             m.put("message","失败");
             //tipMsg = "失败";
             tipType = 1;
             e.printStackTrace();
         }
 
-//        logService.create(new Logdetails(getUser(), "删除供应商", model.getClientIp(),
-//                new Timestamp(System.currentTimeMillis())
-//                , tipType, "删除供应商ID为  " + model.getUnitID() + " " + tipMsg + "！", "删除供应商" + tipMsg));
+        logService.create(new Log(getUser(request), "删除供应商", model.getClientIp(),
+                new Timestamp(System.currentTimeMillis())
+                , tipType, "删除供应商ID为  " + model.getId() + " " + tipMsg + "！", "删除供应商" + tipMsg));
         System.out.println("====================结束调用删除供应商信息方法delete()================");
 
         return m;
@@ -96,20 +98,20 @@ public class SupplierCController extends BaseController{
 
     @RequestMapping("/update")
     @ResponseBody
-    public Map<String,Object> update(Supplier supplier){
+    public Map<String,Object> update(HttpServletRequest request,Supplier model){
         Map<String,Object> m = new HashMap<>();
 
         System.out.println("====================开始调用修改供应商信息方法update()================");
         Boolean flag = false;
         try {
-            supplierService.updateSupplierById(supplier);
+            supplierService.updateSupplierById(model);
 
             flag = true;
             m.put("message","成功");
             //tipMsg = "成功";
             tipType = 0;
         } catch (DataAccessException e) {
-            System.out.println(">>>>>>>>>>>>>修改供应商ID为 ： " + supplier.getId() + "信息失败");
+            System.out.println(">>>>>>>>>>>>>修改供应商ID为 ： " + model.getId() + "信息失败");
             flag = false;
             m.put("message","失败");
             //tipMsg = "失败";
@@ -124,9 +126,9 @@ public class SupplierCController extends BaseController{
             }
         }
 
-//        logService.create(new Logdetails(getUser(), "更新供应商", model.getClientIp(),
-//                new Timestamp(System.currentTimeMillis())
-//                , tipType, "更新供应商ID为  " + model.getUnitID() + " " + tipMsg + "！", "更新供应商" + tipMsg));
+        logService.create(new Log(getUser(request), "更新供应商", model.getClientIp(),
+                new Timestamp(System.currentTimeMillis())
+                , tipType, "更新供应商ID为  " + model.getId() + " " + tipMsg + "！", "更新供应商" + tipMsg));
 
         System.out.println("====================结束调用修改供应商信息方法update()================");
         return m;
@@ -189,26 +191,26 @@ public class SupplierCController extends BaseController{
 
     @RequestMapping("/batchDelete")
     @ResponseBody
-    public Map<String,Object> batchDelete(Supplier supplier){
+    public Map<String,Object> batchDelete(HttpServletRequest request,Supplier model){
         Map<String,Object> m = new HashMap<>();
 
         System.out.println("====================开始调用批量删除供应商信息方法batchDelete()================");
         try {
-            supplierService.deleteSupplierByIds(supplier);
+            supplierService.deleteSupplierByIds(model);
             m.put("message","成功");
             //记录操作日志使用
             tipMsg = "成功";
             tipType = 0;
         } catch (DataAccessException e) {
-            System.out.println(">>>>>>>>>>>批量删除供应商ID为：" + supplier.getSupplierIDs() + "信息异常");
+            System.out.println(">>>>>>>>>>>批量删除供应商ID为：" + model.getSupplierIDs() + "信息异常");
             tipMsg = "失败";
             tipType = 1;
             e.printStackTrace();
         }
 
-//        logService.create(new Logdetails(getUser(), "批量删除供应商信息", model.getClientIp(),
-//                new Timestamp(System.currentTimeMillis())
-//                , tipType, "批量删除供应商ID为  " + model.getUnitIDs() + " " + tipMsg + "！", "批量删除供应商信息" + tipMsg));
+        logService.create(new Log(getUser(request), "批量删除供应商信息", model.getClientIp(),
+                new Timestamp(System.currentTimeMillis())
+                , tipType, "批量删除供应商ID为  " + model.getSupplierIDs() + " " + tipMsg + "！", "批量删除供应商信息" + tipMsg));
         System.out.println("====================结束调用批量删除供应商信息方法batchDelete()================");
         return m;
     }
@@ -237,7 +239,7 @@ public class SupplierCController extends BaseController{
 
     @RequestMapping("/batchSetEnable")
     @ResponseBody
-    public Map<String,Object> batchSetEnable(Supplier model) {
+    public Map<String,Object> batchSetEnable(HttpServletRequest request,Supplier model) {
         System.out.println("====================进入调用批量启用、禁用方法batchSetEnable()================");
         Map<String,Object> map = new HashMap<String,Object>();
         try {
@@ -254,9 +256,9 @@ public class SupplierCController extends BaseController{
             e.printStackTrace();
         }
 
-//        logService.create(new Logdetails(getUser(), "批量修改单位状态", model.getClientIp(),
-//                new Timestamp(System.currentTimeMillis())
-//                , tipType, "批量修改状态，单位ID为  " + model.getSupplierIDs() + " " + tipMsg + "！", "批量修改单位状态" + tipMsg));
+        logService.create(new Log(getUser(request), "批量修改单位状态", model.getClientIp(),
+                new Timestamp(System.currentTimeMillis())
+                , tipType, "批量修改状态，单位ID为  " + model.getSupplierIDs() + " " + tipMsg + "！", "批量修改单位状态" + tipMsg));
         System.out.println("====================结束调用批量启用、禁用方法batchSetEnable()================");
         return map;
     }
