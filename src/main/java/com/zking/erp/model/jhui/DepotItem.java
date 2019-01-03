@@ -55,6 +55,7 @@ public class DepotItem implements Serializable{
     private String MaterialName;
     private String MaterialModel;
     private String MaterialUnit;
+    private String MaterialColor;
 
 
     private String UnitId;
@@ -71,7 +72,9 @@ public class DepotItem implements Serializable{
     private String Updated = "";    //json修改记录
 
     private String HeadIds = "";    //表头集合列表
+    private String[] Hids=null;
     private String MaterialIds = "";    //材料列表
+    private String[] Mids=null;
     private String MonthTime = "";  //月份
     private String ProjectId = null;
     private String browserType = "";
@@ -111,6 +114,30 @@ public class DepotItem implements Serializable{
 
     public DepotItem() {
         super();
+    }
+
+    public String getMaterialColor() {
+        return MaterialColor;
+    }
+
+    public void setMaterialColor(String materialColor) {
+        MaterialColor = materialColor;
+    }
+
+    public String[] getHids() {
+        return Hids;
+    }
+
+    public void setHids(String[] hids) {
+        Hids = hids;
+    }
+
+    public String[] getMids() {
+        return Mids;
+    }
+
+    public void setMids(String[] mids) {
+        Mids = mids;
     }
 
     public String getClientIp() {

@@ -539,11 +539,11 @@
 
     function getAccountInOutList(accountId, initialAmount) {
         var params={
-            accountID: accountId,
-            initialamount: initialAmount,
+            // accountID: accountId,
+            // initialamount: initialAmount,
         };
         var options=$('#accountTableData').datagrid('options');
-        options.url="<%=path %>/cao/account/findAccountInOutList.do";
+        options.url="<%=path %>/cao/account/findAccountInOutList.do?accountID="+accountId+"&initialamount="+initialAmount;
         // console.log(options);
         $("#accountTableData").datagrid('load',params);
     }

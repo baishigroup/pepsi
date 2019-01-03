@@ -62,6 +62,16 @@ public class DepotHeadJController extends BaseController{
             User user=(User) request.getSession().getAttribute("user");
             model.setOperpersonname(user.getUsername());
             model.setCreatetime(new Timestamp(System.currentTimeMillis()));
+            if(model.getAllocationprojectid().equals("")){
+                model.setAllocationprojectid(null);
+            }
+            if(model.getHandspersonid().equals("")){
+                model.setHandspersonid(null);
+            }
+            if(model.getProjectid().equals(""))
+                model.setProjectid(null);
+            if(model.getAccountid().equals(""))
+                model.setAccountid(null);
             try {
                 model.setOpertime(new Timestamp(Tools.parse(model.getStrOpertime(), "yyyy-MM-dd HH:mm:ss").getTime()));
             } catch (ParseException e) {
@@ -83,6 +93,15 @@ public class DepotHeadJController extends BaseController{
 //            if (model.getAllocationprojectid() != null) {
 //                depotHead.setAllocationProjectId(new Depot(model.getAllocationProjectId()));
 //            }
+//            if(model.getOthermoneyitem().indexOf("null")==-1||model.getOthermoneyitem().indexOf("undefined")==-1){
+//                model.setOthermoneyitem(null);
+//            }
+//            if(model.getOthermoneylist().indexOf("null")==-1||model.getOthermoneylist().indexOf("undefined")==-1){
+//                model.setOthermoneylist(null);
+//            }
+            model.setAccountidlist(null);
+            model.setAccountmoneylist(null);
+
             model.setStatus(0);
             depotHeadService.insert(model);
 
@@ -148,6 +167,23 @@ public class DepotHeadJController extends BaseController{
         Map<String,Object> map=new HashMap<String, Object>();
         Boolean flag = false;
         try {
+            if(model.getAllocationprojectid().equals("")){
+                model.setAllocationprojectid(null);
+            }
+            if(model.getHandspersonid().equals("")){
+                model.setHandspersonid(null);
+            }
+            if(model.getProjectid().equals(""))
+                model.setProjectid(null);
+            if(model.getAccountid().equals(""))
+                model.setAccountid(null);
+            if(model.getOthermoneyitem().indexOf("null")==-1||model.getOthermoneyitem().indexOf("undefined")==-1){
+                model.setOthermoneyitem(null);
+            }
+            if(model.getOthermoneylist().indexOf("null")==-1||model.getOthermoneylist().indexOf("undefined")==-1){
+                model.setOthermoneylist(null);
+            }
+
             DepotHead depotHead = depotHeadService.selectById(model.getDepotHeadID());
             depotHead.setType(model.getType());
             depotHead.setSubtype(model.getSubtype());
@@ -186,6 +222,12 @@ public class DepotHeadJController extends BaseController{
             depotHead.setDiscountmoney(model.getDiscountmoney());
             depotHead.setDiscountlastmoney(model.getDiscountlastmoney());
             depotHead.setOthermoney(model.getOthermoney());
+//            if(model.getOthermoneyitem().indexOf("null")==-1||model.getOthermoneyitem().indexOf("undefined")==-1){
+//                model.setOthermoneyitem(null);
+//            }
+//            if(model.getOthermoneylist().indexOf("null")==-1||model.getOthermoneylist().indexOf("undefined")==-1){
+//                model.setOthermoneylist(null);
+//            }
             depotHead.setOthermoneylist(model.getOthermoneylist());
             depotHead.setOthermoneyitem(model.getOthermoneyitem());
             depotHead.setAccountday(model.getAccountday());
@@ -197,6 +239,8 @@ public class DepotHeadJController extends BaseController{
             depotHead.setPaytype(model.getPaytype());
             depotHead.setStatus(0);
             depotHead.setRemark(model.getRemark());
+            depotHead.setAccountidlist(null);
+            depotHead.setAccountmoneylist(null);
             depotHeadService.updateById(depotHead);
 
             flag = true;
@@ -441,8 +485,8 @@ public class DepotHeadJController extends BaseController{
     /**
      * 根据编号查询单据信息
      */
-    @ResponseBody
-    @RequestMapping("/getDetailByNumber")
+//    @ResponseBody
+//    @RequestMapping("/getDetailByNumber")
 //    public Map<String,Object> getDetailByNumber() {
 //        try {
 //            pageUtil.setAdvSearch(getConditionByNumber());
@@ -497,32 +541,29 @@ public class DepotHeadJController extends BaseController{
      *
      * @return
      */
-//    public void findByMonth() {
-//        try {
-//            PageUtil<DepotHead> pageUtil = new PageUtil<DepotHead>();
-//            pageUtil.setPageSize(1000);
-//            pageUtil.setCurPage(1);
-//            pageUtil.setAdvSearch(getConditionHead());
-//            depotHeadService.find(pageUtil);
-//            List<DepotHead> dataList = pageUtil.getPageList();
-//            JSONObject outer = new JSONObject();
-//            String headId = "";
-//            if (null != dataList) {
-//                for (DepotHead depotHead : dataList) {
-//                    headId = headId + depotHead.getId() + ",";
-//                }
-//            }
-//            if (headId != "") {
-//                headId = headId.substring(0, headId.lastIndexOf(","));
-//            }
-//            outer.put("HeadIds", headId);
-//            toClient(outer.toString());
-//        } catch (DataAccessException e) {
-//            Log.errorFileSync(">>>>>>>>>>>>>>>>>>>查找单据信息异常", e);
-//        } catch (IOException e) {
-//            Log.errorFileSync(">>>>>>>>>>>>>>>>>>>回写查询单据信息结果异常", e);
-//        }
-//    }
+    @ResponseBody
+    @RequestMapping("/findByMonth")
+    public Map<String,Object> findByMonth(DepotHead model) {
+        try {
+            List<DepotHead> dataList =depotHeadService.queryDepotHeadByMonth(model);
+            Map<String,Object> outer=new HashMap<String, Object>();
+            String headId = "";
+            if (null != dataList) {
+                for (DepotHead depotHead : dataList) {
+                    headId = headId + depotHead.getId() + ",";
+                }
+            }
+            if (headId != "") {
+                headId = headId.substring(0, headId.lastIndexOf(","));
+            }
+            outer.put("HeadIds", headId);
+            return outer;
+        } catch (DataAccessException e) {
+            System.out.println(">>>>>>>>>>>>>>>>>>>查找单据信息异常");
+            e.printStackTrace();
+            throw new RuntimeException(e);
+        }
+    }
 
     /**
      * 查找统计信息_根据礼品卡(报表)

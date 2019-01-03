@@ -225,15 +225,14 @@
 
 
     function getAccountInOutList(accountId, initialAmount) {
-        alert(accountId+"zzzz"+initialAmount);
-        var params={
-            accountID: accountId,
-            initialamount: initialAmount,
+        var params1={
+            // accountID: accountId,
+            // initialamount: initialAmount,
         };
         var options=$('#accountTableData').datagrid('options');
-        options.url="<%=path %>/cao/account/findAccountInOutList.do";
+        options.url="<%=path %>/cao/account/findAccountInOutList.do?accountID="+accountId+"&initialamount="+initialAmount;
         // console.log(options);
-        $("#accountTableData").datagrid('load',params);
+        $("#accountTableData").datagrid('load',params1);
     }
 
     //报表打印

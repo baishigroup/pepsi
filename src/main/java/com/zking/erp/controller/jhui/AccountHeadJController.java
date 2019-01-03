@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
+import java.io.IOException;
 import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -235,6 +236,39 @@ public class AccountHeadJController extends BaseController {
         System.out.println("====================结束调用删除财务信息方法delete()================");
         return map;
     }
+
+    /**
+     * 根据编号查询单据信息
+     */
+    @RequestMapping("/getDetailByNumber")
+    @ResponseBody
+    public Map<String,Object> getDetailByNumber(HttpServletRequest request,AccountHead model) {
+        try {
+            List<AccountHead> dataList = accountHeadService.queryDetailByNumber(model);
+            Map<String,Object> item=new HashMap<String, Object>();
+            if (dataList != null && dataList.get(0) != null) {
+                AccountHead accountHead = dataList.get(0);
+                item.put("Id", accountHead.getId());
+                item.put("OrganId", accountHead.getOrganid() == null ? "" : accountHead.getOrganid());
+                item.put("OrganName", accountHead.getOrganid() == null ? "" : accountHead.getOrganName());
+                item.put("HandsPersonId", accountHead.getHandspersonid() == null ? "" : accountHead.getHandspersonid());
+                item.put("HandsPersonName", accountHead.getHandspersonid() == null ? "" : accountHead.getHandsPersonName());
+                item.put("AccountId", accountHead.getAccountid() == null ? "" : accountHead.getAccountid());
+                item.put("AccountName", accountHead.getAccountid() == null ? "" : accountHead.getAccountName());
+                item.put("BillNo", accountHead.getBillno());
+                item.put("BillTime", Tools.getCenternTime(accountHead.getBilltime()));
+                item.put("ChangeAmount", accountHead.getChangeamount() == null ? "" : Math.abs(accountHead.getChangeamount()));
+                item.put("TotalPrice", accountHead.getTotalprice() == null ? "" : Math.abs(accountHead.getTotalprice()));
+                item.put("Remark", accountHead.getRemark());
+            }
+           return item;
+        } catch (DataAccessException e) {
+            System.out.println(">>>>>>>>>>>>>>>>>>>查找单据信息异常");
+            e.printStackTrace();
+            throw new RuntimeException(e);
+        }
+    }
+
 
 
 

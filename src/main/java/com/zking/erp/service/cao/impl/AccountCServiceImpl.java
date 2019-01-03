@@ -51,8 +51,10 @@ public class AccountCServiceImpl implements IAccountCService {
 
     @Override
     public List<Account> queryAccountInOutListPager(PageBean pageBean,String accountId) {
-        Account account=new Account();
-        account.setAccountID(accountId);
+        Account account = new Account();
+        if(null!=accountId && ""!=accountId) {
+            account.setAccountID(accountId);
+        }
         return accountMapperC.queryAccountInOutListPager( account);
     }
 

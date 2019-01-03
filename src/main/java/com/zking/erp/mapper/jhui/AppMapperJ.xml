@@ -53,7 +53,11 @@
   <select id="queryAppByfindDesk"
           parameterType="com.zking.erp.model.jhui.App" resultType="com.zking.erp.model.jhui.App">
       select  <include refid="Base_Column_List"/> from
-      app app0_ where 1=1 and app0_.ZL=#{zl} and app0_.Enabled=1 order by app0_.Sort asc
+      app app0_ where 1=1 and app0_.ZL=#{zl} and app0_.Enabled=1
+    <if test="id != null and id!=''" >
+      AND app0_.id =#{id}
+    </if>
+    order by app0_.Sort asc
   </select>
 
   <select id="queryAppByRole" resultType="com.zking.erp.model.jhui.App"

@@ -47,7 +47,7 @@
     <if test="param5==2">
       select sum(BasicNumber) as BasicNumber from depotitem di,depothead dh  where di.HeaderId = dh.id  and
       ((type=#{param1} and DepotId=#{param2})  or (SubType='调拨' and AnotherDepotId=#{param2})  or (SubType='礼品充值' and AnotherDepotId=#{param2}))
-      and MaterialId =#{param3 and dh.OperTime &gt;=concat(#{param4},'-01 00:00:00') and dh.OperTime &lt;=concat(#{param4},'-31 59:59:59')
+      and MaterialId =#{param3} and dh.OperTime &gt;=concat(#{param4},'-01 00:00:00') and dh.OperTime &lt;=concat(#{param4},'-31 59:59:59')
     </if>
   </select>
   <select id="queryDepotJoinTable" resultType="com.zking.erp.model.jhui.DepotItem"
@@ -126,5 +126,50 @@
             </foreach>
         </if>
     </select>
+
+  <select id="queryByPrice" resultType="com.zking.erp.model.jhui.DepotItem">
+    <if test="param5==1">
+      select sum(AllPrice) as allprice from depotitem di,depothead dh where di.HeaderId = dh.id  and
+      ((type=#{param1} and DepotId=#{param2})  or (SubType='调拨' and AnotherDepotId=#{param2})  or (SubType='礼品充值' and AnotherDepotId=#{param2}))
+      and MaterialId =#{param3} and dh.OperTime &lt;concat(#{param4},'-01 00:00:00')
+    </if>
+    <if test="param5==2">
+      select sum(AllPrice) as allprice from depotitem di,depothead dh  where di.HeaderId = dh.id  and
+      ((type=#{param1} and DepotId=#{param2})  or (SubType='调拨' and AnotherDepotId=#{param2})  or (SubType='礼品充值' and AnotherDepotId=#{param2}))
+      and MaterialId =#{param3} and dh.OperTime &gt;=concat(#{param4},'-01 00:00:00') and dh.OperTime &lt;=concat(#{param4},'-31 59:59:59')
+    </if>
+  </select>
+  <select id="totalCountMoney" resultType="com.zking.erp.model.jhui.DepotItem">
+      SELECT <include refid="Base_Column_List"/>
+    from depotitem where 1=1
+    <if test="mids != null and mids!=''" >
+      <foreach collection="mids" item="id" open=" and MaterialId in(" close=")" separator="," index="idx">
+        #{id}
+      </foreach>
+    </if>
+    <if test="hids != null and hids!=''" >
+      <foreach collection="hids" item="id" open=" and HeaderId in(" close=")" separator="," index="idx">
+        #{id}
+      </foreach>
+    </if>
+    group by MaterialId
+  </select>
+  <select id="queryByAllPager" resultType="com.zking.erp.model.jhui.DepotItem"
+          parameterType="com.zking.erp.model.jhui.DepotItem">
+     SELECT m.Name MaterialName,m.Model MaterialModel,m.color MaterialColor,m.unit MaterialUnit,d.* FROM depotitem d LEFT JOIN material m
+    ON d.MaterialId=m.id  left join depothead d1 on d.HeaderId=d1.id  WHERE 1=1 and d1.Status=1
+    <if test="mids != null and mids!=''" >
+      <foreach collection="mids" item="id" open=" and d.MaterialId in(" close=")" separator="," index="idx">
+        #{id}
+      </foreach>
+    </if>
+    <if test="hids != null and hids!=''" >
+      <foreach collection="hids" item="id" open=" and d.HeaderId in(" close=")" separator="," index="idx">
+        #{id}
+      </foreach>
+    </if>
+      GROUP BY MaterialId
+
+  </select>
 
 </mapper>

@@ -297,9 +297,9 @@
         //如果是财务单据
         else if(billType == "account"){
             $.ajax({
-                url: path + "/cao/accountHead/getDetailByNumber.do",
+                url: path + "/accountHead/getDetailByNumber.do",
                 data: {
-                    BillNo: number
+                    Billno: number
                 },
                 type: "get",
                 success: function (res) {

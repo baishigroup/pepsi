@@ -52,4 +52,9 @@ public class AccountHeadJServiceImpl implements IAccountHeadJService {
     public int deleteById(String id) {
         return accountHeadMapperJ.deleteById(id);
     }
+
+    @Override
+    public List<AccountHead> queryDetailByNumber(AccountHead accountHead) {
+        return accountHeadMapperJ.queryDetailByNumber(accountHead);
+    }
 }

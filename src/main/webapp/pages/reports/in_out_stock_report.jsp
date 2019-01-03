@@ -22,7 +22,7 @@
     <script type="text/javascript" src="<%=path %>/js/My97DatePicker/WdatePicker.js"></script>
     <script type="text/javascript" src="<%=path %>/js/common/common.js"></script>
     <script>
-        var kid = ${sessionScope.user.id};
+        var kid = '${sessionScope.user.id}';
     </script>
 </head>
 <body>
@@ -76,7 +76,6 @@
         initSelectInfo_depot();
         initMProperty(); //初始化商品属性
         initTableData();
-        ininPager();
         search();
         exportExcel();
         print();
@@ -89,7 +88,7 @@
                 $.messager.alert('导出提示', '请先选择月份再进行查询！', 'error');
             }
             else {
-                showEachDetails(1, 3000);
+                showEachDetails();
                 //此处直接去做get请求，用下面的查询每月统计的方法，去获取list，参数长度虽长，但还是可以用get
                 //window.location.href = "<%=path%>/depotItem/exportExcel.action?browserType=" + getOs();
             }
@@ -100,9 +99,9 @@
     function initSystemData_UB() {
         $.ajax({
             type: "post",
-            url: "<%=path %>/userBusiness/getBasicData.action",
+            url: "<%=path %>/userBusiness/getBasicData.do",
             data: ({
-                KeyId: kid,
+                Keyid: kid,
                 Type: "UserDepot"
             }),
             //设置为同步
@@ -110,8 +109,8 @@
             dataType: "json",
             success: function (systemInfo) {
                 if (systemInfo) {
-                    userBusinessList = systemInfo.showModel.map.userBusinessList;
-                    var msgTip = systemInfo.showModel.msgTip;
+                    userBusinessList = systemInfo.userBusinessList;
+                    var msgTip = systemInfo.message;
                     if (msgTip == "exceptoin") {
                         $.messager.alert('提示', '查找UserBusiness异常,请与管理员联系！', 'error');
                         return;
@@ -127,7 +126,6 @@
 
     //初始化页面选项卡
     function initSelectInfo_UB() {
-
         if (userBusinessList != null) {
             if (userBusinessList.length > 0) {
                 //用户对应的仓库列表 [1][2][3]...
@@ -141,13 +139,13 @@
     function initSystemData_depot() {
         $.ajax({
             type: "post",
-            url: "<%=path %>/depot/getBasicData.action",
+            url: "<%=path %>/depot/getBasicData.do",
             //设置为同步
             async: false,
             dataType: "json",
             success: function (systemInfo) {
-                depotList = systemInfo.showModel.map.depotList;
-                var msgTip = systemInfo.showModel.msgTip;
+                depotList = systemInfo.depotList;
+                var msgTip = systemInfo.message;
                 if (msgTip == "exceptoin") {
                     $.messager.alert('提示', '查找系统基础信息异常,请与管理员联系！', 'error');
                     return;
@@ -179,7 +177,7 @@
     function initMProperty() {
         $.ajax({
             type: "post",
-            url: "<%=path %>/materialProperty/findBy.action",
+            url: "<%=path %>/materialProperty/findBy.do",
             dataType: "json",
             success: function (res) {
                 if (res && res.rows) {
@@ -217,7 +215,8 @@
             striped: true,
             //loadFilter: pagerFilter,
             pageSize: 10,
-            pageList: [10, 50, 100],
+            pageList: [2,10, 50, 100],
+            pageNumber:1,
             columns: [[
                 {title: '名称', field: 'MaterialName', width: 60},
                 {title: '型号', field: 'MaterialModel', width: 80},
@@ -263,28 +262,7 @@
         }
     });
 
-    //分页信息处理
-    function ininPager() {
-        try {
-            var opts = $("#tableData").datagrid('options');
-            var pager = $("#tableData").datagrid('getPager');
-            pager.pagination({
-                onSelectPage: function (pageNum, pageSize) {
-                    opts.pageNumber = pageNum;
-                    opts.pageSize = pageSize;
-                    pager.pagination('refresh',
-                        {
-                            pageNumber: pageNum,
-                            pageSize: pageSize
-                        });
-                    showEachDetails(pageNum, pageSize);
-                }
-            });
-        }
-        catch (e) {
-            $.messager.alert('异常处理提示', "分页信息异常 :  " + e.name + ": " + e.message, 'error');
-        }
-    }
+
 
     //增加
     var url;
@@ -294,16 +272,8 @@
 
     //搜索处理
     function search() {
-        showEachDetails(1, initPageSize);
+        showEachDetails();
         var opts = $("#tableData").datagrid('options');
-        var pager = $("#tableData").datagrid('getPager');
-        opts.pageNumber = 1;
-        opts.pageSize = initPageSize;
-        pager.pagination('refresh',
-            {
-                pageNumber: 1,
-                pageSize: initPageSize
-            });
     }
 
     $("#searchBtn").unbind().bind({
@@ -312,10 +282,10 @@
         }
     });
 
-    function showEachDetails(pageNo, pageSize) {
+    function showEachDetails() {
         $.ajax({
             type: "post",
-            url: "<%=path %>/depotHead/findByMonth.action",
+            url: "<%=path %>/depotHead/findByMonth.do",
             dataType: "json",
             data: ({
                 MonthTime: $("#searchMonth").val()
@@ -326,43 +296,31 @@
                     //获取排序后的产品ID
                     $.ajax({
                         type: "post",
-                        url: "<%=path %>/material/findByOrder.action",
+                        url: "<%=path %>/material/findByOrder.do",
                         dataType: "json",
                         success: function (resNew) {
                             var MIds = resNew.mIds;
                             if (MIds) {
-                                if (pageSize === 3000) {
-                                    window.location.href = "<%=path%>/depotItem/exportExcel.action?browserType=" + getOs() + "&pageNo=" + pageNo + "&pageSize=" + pageSize + "&ProjectId=" + $.trim($("#searchProjectId").val()) + "&MonthTime=" + $("#searchMonth").val() + "&HeadIds=" + HeadIds + "&MaterialIds=" + MIds;
-                                }
-                                else {
-                                    $.ajax({
-                                        type: "post",
-                                        url: "<%=path %>/depotItem/findByAll.action",
-                                        dataType: "json",
-                                        data: ({
-                                            pageNo: pageNo,
-                                            pageSize: pageSize,
-                                            ProjectId: $.trim($("#searchProjectId").val()),
-                                            MonthTime: $("#searchMonth").val(),
-                                            HeadIds: HeadIds,
-                                            MaterialIds: MIds,
-                                            mpList: mPropertyList
-                                        }),
-                                        success: function (data) {
-                                            $("#tableData").datagrid('loadData', data);
-
-                                        },
-                                        //此处添加错误处理
-                                        error: function () {
-                                            $.messager.alert('查询提示', '查询数据后台异常，请稍后再试！', 'error');
-                                            return;
-                                        }
-                                    });
+                                <%--if (pageSize === 3000) {--%>
+                                    <%--&lt;%&ndash;window.location.href = "<%=path%>/depotItem/exportExcel.action?browserType=" + getOs() + "&pageNo=" + pageNo + "&pageSize=" + pageSize + "&ProjectId=" + $.trim($("#searchProjectId").val()) + "&MonthTime=" + $("#searchMonth").val() + "&HeadIds=" + HeadIds + "&MaterialIds=" + MIds;&ndash;%&gt;--%>
+                                <%--}--%>
+                                <%--else {--%>
+                                    var params={
+                                        ProjectId: $.trim($("#searchProjectId").val()),
+                                        MonthTime: $("#searchMonth").val(),
+                                        HeadIds: HeadIds,
+                                        MaterialIds: MIds,
+                                        mpList: mPropertyList
+                                    };
+                                    var options=$('#tableData').datagrid('options');
+                                    options.url="<%=path %>/depotItem/findByAll.do";
+                                    // console.log(options);
+                                    $("#tableData").datagrid('load',params);
 
                                     //总金额
                                     $.ajax({
                                         type: "post",
-                                        url: "<%=path %>/depotItem/totalCountMoney.action",
+                                        url: "<%=path %>/depotItem/totalCountMoney.do",
                                         dataType: "json",
                                         data: ({
                                             ProjectId: $.trim($("#searchProjectId").val()),
@@ -385,7 +343,7 @@
                                             return;
                                         }
                                     });
-                                }
+                                // }
                             }
                             else {
                                 $.messager.alert('查询提示', '本月无数据！', 'error');

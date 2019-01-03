@@ -30,5 +30,11 @@ public interface DepotItemMapperJ {
      */
     List<DepotItem> queryHeaderIdByMaterial(String materialParam, String[] depotIds);
 
+    List<DepotItem> queryByPrice(String type, String ProjectId, String MId, String MonthTime, Integer isPrev);
+
+    List<DepotItem> totalCountMoney(DepotItem depotItem);
+
+    List<DepotItem> queryByAllPager(DepotItem depotItem);
+
 
 }

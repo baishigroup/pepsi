@@ -3,6 +3,7 @@ package com.zking.erp.service.jhui.impl;
 import com.zking.erp.mapper.jhui.DepotItemMapperJ;
 import com.zking.erp.model.jhui.DepotItem;
 import com.zking.erp.service.jhui.IDepotItemJService;
+import com.zking.erp.util.PageBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -48,5 +49,36 @@ public class DepotItemJServiceImpl implements IDepotItemJService {
     @Override
     public int deleteById(String id) {
         return depotItemMapperJ.deleteById(id);
+    }
+
+    @Override
+    public List<DepotItem> queryByPrice(String type, String ProjectId, String MId, String MonthTime, Integer isPrev) {
+        return depotItemMapperJ.queryByPrice(type,ProjectId,MId,MonthTime,isPrev);
+    }
+
+    @Override
+    public List<DepotItem> totalCountMoney(DepotItem depotItem) {
+        if(null!=depotItem.getMaterialIds()&&""!=depotItem.getMaterialIds()) {
+            String[] split = depotItem.getMaterialIds().toString().split(",");
+            depotItem.setMids(split);
+        }
+        if(null!=depotItem.getHeadIds()&&""!=depotItem.getHeadIds()) {
+            String[] split = depotItem.getHeadIds().toString().split(",");
+            depotItem.setHids(split);
+        }
+        return depotItemMapperJ.totalCountMoney(depotItem);
+    }
+
+    @Override
+    public List<DepotItem> queryByAllPager(PageBean pageBean, DepotItem depotItem) {
+        if(null!=depotItem.getMaterialIds()&&""!=depotItem.getMaterialIds()) {
+            String[] split = depotItem.getMaterialIds().toString().split(",");
+            depotItem.setMids(split);
+        }
+        if(null!=depotItem.getHeadIds()&&""!=depotItem.getHeadIds()) {
+            String[] split = depotItem.getHeadIds().toString().split(",");
+            depotItem.setHids(split);
+        }
+        return depotItemMapperJ.queryByAllPager(depotItem);
     }
 }

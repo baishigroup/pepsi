@@ -134,5 +134,36 @@ public class MaterialJController extends BaseController{
         }
     }
 
+    /**
+     * 查找商品信息-统计排序
+     *
+     * @return
+     */
+    @RequestMapping("/findByOrder")
+    @ResponseBody
+    public Map<String,Object> findByOrder(Material model) {
+        try {
+            List<Material> dataList =materialService.queryMaterialByOrder();
+            //存放数据json数组
+            Map<String, Object> outer = new HashMap<String, Object>();
+            String mId = "";
+            if (null != dataList) {
+                for (Material material : dataList) {
+                    mId = mId + material.getId() + ",";
+                }
+            }
+            if (mId != "") {
+                mId = mId.substring(0, mId.lastIndexOf(","));
+            }
+            outer.put("mIds", mId);
+            //回写查询结果
+            return outer;
+        } catch (DataAccessException e) {
+            System.out.println(">>>>>>>>>查找供应商信息异常");
+            e.printStackTrace();
+            throw new RuntimeException(e);
+        }
+    }
+
 
 }

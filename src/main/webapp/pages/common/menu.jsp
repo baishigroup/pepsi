@@ -29,8 +29,8 @@
 <body class="easyui-layout" style="overflow-y: hidden" scroll="no">
 <script>
     var pageid = getUrlParam('id');  //获取传值id
-    var id=63;
-    <%--var id =${sessionScope.user.id};--%>
+    // var id=63;
+    var id ='${sessionScope.user.id}';
     //alert(pageid);
 
     var userBusinessList = null;

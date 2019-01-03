@@ -550,7 +550,7 @@ function bindEvent(){
         }
     });
 
-    $("#searchBtn").click();
+    // $("#searchBtn").click();
 
     //重置按钮
     $("#searchResetBtn").unbind().bind({
@@ -667,7 +667,6 @@ function editSupplier(supplierTotalInfo) {
 //检查单位名称是否存在 ++ 重名无法提示问题需要跟进
 function checkSupplierName() {
     var supplierName = $.trim($("#supplier").val());
-    alert(supplierName);
     //表示是否存在 true == 存在 false = 不存在
     var flag = false;
     //开始ajax名称检验，不能重名

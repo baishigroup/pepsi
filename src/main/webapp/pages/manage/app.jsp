@@ -78,7 +78,7 @@
                 <td style="padding:1px"><input name="Type" id="Type" class="easyui-textbox"
                                                style="width: 150px;height: 20px"/></td>
                 <td>链接</td>
-                <td style="padding:1px"><input name="URL" id="URL" class="easyui-textbox"
+                <td style="padding:1px"><input name="url" id="URL" class="easyui-textbox"
                                                style="width: 150px;height: 20px"/></td>
                 <td>最大化</td>
                 <td style="padding:1px"><input name="OpenMax" id="OpenMax" type="checkbox"
@@ -100,7 +100,7 @@
                 <td style="padding:1px"><input name="Sort" id="Sort" class="easyui-textbox"
                                                style="width: 150px;height: 20px"/></td>
                 <td>种类</td>
-                <td style="padding:1px"><input name="ZL" id="ZL" class="easyui-textbox"
+                <td style="padding:1px"><input name="zl" id="ZL" class="easyui-textbox"
                                                style="width: 150px;height: 20px"/></td>
                 <td>启用</td>
                 <td style="padding:1px"><input name="Enabled" id="Enabled" type="checkbox"
@@ -400,13 +400,13 @@
                         Name: $.trim($("#Name").val()),
                         Type: $.trim($("#Type").val()),
                         Icon: $.trim($("#Icon .fileItem .fileName").text()),
-                        URL: $.trim($("#URL").val()),
+                        url: $.trim($("#URL").val()),
                         Width: $.trim($("#Width").val()),
                         Height: $.trim($("#Height").val()),
-                        ReSize: $("#ReSize").is(':checked'),
-                        OpenMax: $("#OpenMax").is(':checked'),
+                        Resize: $("#ReSize").is(':checked'),
+                        Openmax: $("#OpenMax").is(':checked'),
                         Flash: $("#Flash").is(':checked'),
-                        ZL: $.trim($("#ZL").val()),
+                        zl: $.trim($("#ZL").val()),
                         Sort: $.trim($("#Sort").val()),
                         Remark: $.trim($("#Remark").val()),
                         Enabled: $("#Enabled").is(':checked'),

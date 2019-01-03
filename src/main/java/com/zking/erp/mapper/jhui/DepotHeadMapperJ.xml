@@ -135,7 +135,7 @@
     <select id="queryNumberByTypeByTime" resultType="com.zking.erp.model.jhui.DepotHead"
             parameterType="com.zking.erp.model.jhui.DepotHead">
         SELECT <include refid="Base_Column_List"/>
-        from depothead where 1=1 AND depothead0_.Type=#{type} AND depothead0_.OperTime &gt;=#{beginTime}
+        from depothead depothead0_ where 1=1 AND depothead0_.Type=#{type} AND depothead0_.OperTime &gt;=#{beginTime}
         AND depothead0_.OperTime &lt;=#{endTime} AND depothead0_.SubType=#{subtype} ORDER BY depothead0_.Id DESC
     </select>
    
@@ -172,6 +172,11 @@
             parameterType="com.zking.erp.model.jhui.DepotHead">
         SELECT GROUP_CONCAT(CONCAT(material.`Name`,' ',material.Model)) AS mName FROM depotitem INNER JOIN material
                  ON depotitem.MaterialId = material.Id WHERE depotitem.HeaderId = #{depotHeadID}
+    </select>
+    <select id="queryDepotHeadByMonth" resultType="com.zking.erp.model.jhui.DepotHead"
+            parameterType="com.zking.erp.model.jhui.DepotHead">
+        SELECT <include refid="Base_Column_List"/>
+        from  depothead where 1=1 and OperTime &lt;=concat(#{MonthTime},'-31 00:00:00');
     </select>
 
     <update id="updatebatchStatus" parameterType="com.zking.erp.model.jhui.DepotHead">

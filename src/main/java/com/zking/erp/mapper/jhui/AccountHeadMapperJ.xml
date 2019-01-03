@@ -144,4 +144,17 @@
     </trim>
   </insert>
 
+  <select id="queryDetailByNumber" resultType="com.zking.erp.model.jhui.AccountHead"
+          parameterType="com.zking.erp.model.jhui.AccountHead">
+    SELECT  accounthea0_.Id, accounthea0_.Type, accounthea0_.OrganId,supplier_0.supplier OrganName,
+    accounthea0_.HandsPersonId,person_0.Name HandsPersonName, accounthea0_.ChangeAmount, accounthea0_.TotalPrice,
+    accounthea0_.AccountId,account0_.Name AccountName,accounthea0_. BillNo, accounthea0_.BillTime,accounthea0_.Remark
+    FROM accounthead accounthea0_ LEFT JOIN account account0_
+    ON accounthea0_.AccountId=account0_.id  LEFT JOIN person person_0 ON accounthea0_.HandsPersonId=person_0.Id
+    LEFT JOIN  supplier supplier_0 ON accounthea0_.OrganId=supplier_0.id WHERE 1=1
+    <if test="billno!= null and billno!=''" >
+      AND accounthea0_.BillNo=#{billno}
+    </if>
+  </select>
+
 </mapper>

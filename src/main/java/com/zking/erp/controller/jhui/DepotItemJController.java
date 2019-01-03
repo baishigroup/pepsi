@@ -1,12 +1,14 @@
 package com.zking.erp.controller.jhui;
 
 import com.zking.erp.base.BaseController;
+import com.zking.erp.model.jhui.DepotHead;
 import com.zking.erp.model.jhui.DepotItem;
 import com.zking.erp.model.jhui.Log;
 import com.zking.erp.model.jhui.Material;
 import com.zking.erp.service.jhui.IDepotItemJService;
 import com.zking.erp.service.jhui.IDepotJService;
 import com.zking.erp.service.jhui.IMaterialJService;
+import com.zking.erp.util.PageBean;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import org.apache.commons.lang.StringUtils;
@@ -20,10 +22,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.sound.midi.Soundbank;
 import java.io.IOException;
 import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Controller
 @RequestMapping("/depotItem")
@@ -45,7 +44,6 @@ public class DepotItemJController extends BaseController{
         try {
             List<DepotItem> dataList=depotItemService.queryDepotItemByMaterialId(model);
             Map<String, Object> outer = new HashMap<String, Object>();
-            //存放数据json数组
             String pid = model.getProjectId();
             List dataArray = new ArrayList();
             if (null != dataList) {
@@ -85,18 +83,85 @@ public class DepotItemJController extends BaseController{
         Integer sumNumber = 0;
         String allNumber = "";
         try {
-
-            allNumber = depotItemService.queryByType(type, ProjectId, MId, MonthTime, isPrev).toString();
-            allNumber = allNumber.substring(1, allNumber.length() - 1);
-            if (allNumber.equals("null")) {
-                allNumber = "0";
+            List<DepotItem> depotItems = depotItemService.queryByType(type, ProjectId, MId, MonthTime, isPrev);
+            if (depotItems != null) {
+                for (DepotItem depotItem : depotItems) {
+                    if(depotItem!=null) {
+                        Object dl = depotItem.getBasicnumber(); //获取对象
+                        allNumber = allNumber + dl.toString() + ",";
+                    }
+                }
             }
-            allNumber = allNumber.replace(".0", "");
+
+            if (allNumber.equals("null")||allNumber.equals("")) {
+                allNumber = "0";
+            }else {
+                allNumber = allNumber.substring(0, allNumber.length() - 1);
+                allNumber = allNumber.replace(".0", "");
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
         sumNumber = Integer.parseInt(allNumber);
         return sumNumber;
+    }
+
+    /**
+     * 查找所有的明细
+     *
+     * @return
+     */
+    @ResponseBody
+    @RequestMapping("/findByAll")
+    public Map<String,Object> findByAll(HttpServletRequest request,DepotItem model) {
+        try {
+            PageBean pageBean=new PageBean();
+            pageBean.setRequest(request);
+            List<DepotItem> dataList = depotItemService.queryByAllPager(pageBean,model);
+            String mpList = model.getMpList(); //商品属性
+            String[] mpArr = mpList.split(",");
+            Map<String, Object> outer = new HashMap<String, Object>();
+            outer.put("total", pageBean.getTotal());
+            String pid = model.getProjectId();
+            List dataArray = new ArrayList();
+            if (null != dataList) {
+                for (DepotItem depotItem : dataList) {
+                    Map<String, Object> item = new HashMap<String, Object>();
+                    Integer prevSum = sumNumber("入库", pid, depotItem.getMaterialid(), model.getMonthTime(), 1) - sumNumber("出库", pid, depotItem.getMaterialid(), model.getMonthTime(), 1);
+                    Integer InSum = sumNumber("入库", pid, depotItem.getMaterialid(), model.getMonthTime(), 2);
+                    Integer OutSum = sumNumber("出库", pid, depotItem.getMaterialid(), model.getMonthTime(), 2);
+                    Double prevPrice = sumPrice("入库", pid, depotItem.getMaterialid(), model.getMonthTime(), 1) - sumPrice("出库", pid, depotItem.getMaterialid(), model.getMonthTime(), 1);
+                    Double InPrice = sumPrice("入库", pid, depotItem.getMaterialid(), model.getMonthTime(), 2);
+                    Double OutPrice = sumPrice("出库", pid, depotItem.getMaterialid(), model.getMonthTime(), 2);
+                    item.put("Id", depotItem.getId());
+                    item.put("MaterialId", depotItem.getMaterialid() == null ? "" : depotItem.getMaterialid());
+                    item.put("MaterialName", depotItem.getMaterialName());
+                    item.put("MaterialModel", depotItem.getMaterialModel());
+                    //扩展信息
+                    String materialOther = getOtherInfo(mpArr, depotItem);
+                    item.put("MaterialOther", materialOther);
+                    item.put("MaterialColor", depotItem.getMaterialColor());
+                    item.put("MaterialUnit", depotItem.getMaterialUnit());
+                    Double unitPrice = 0.0;
+                    if (prevSum + InSum - OutSum != 0.0) {
+                        unitPrice = (prevPrice + InPrice - OutPrice) / (prevSum + InSum - OutSum);
+                    }
+                    item.put("UnitPrice", unitPrice);
+                    item.put("prevSum", prevSum);
+                    item.put("InSum", InSum);
+                    item.put("OutSum", OutSum);
+                    item.put("thisSum", prevSum + InSum - OutSum);
+                    item.put("thisAllPrice", prevPrice + InPrice - OutPrice);
+                    dataArray.add(item);
+                }
+            }
+            outer.put("rows", dataArray);
+            return outer;
+        } catch (DataAccessException e) {
+            System.out.println(">>>>>>>>>>>>>>>>>>>查找信息异常");
+            e.printStackTrace();
+            throw new RuntimeException(e);
+        }
     }
 
     /**
@@ -112,7 +177,6 @@ public class DepotItemJController extends BaseController{
             String mpList = model.getMpList(); //商品属性
             String[] mpArr = mpList.split(",");
             Map<String, Object> outer = new HashMap<String, Object>();
-            //存放数据json数组
             List dataArray = new ArrayList();
             if (null != dataList) {
                 for (DepotItem depotItem : dataList) {
@@ -299,6 +363,7 @@ public class DepotItemJController extends BaseController{
                     if (tempInsertedJson.get("MType") != null) {
                         depotItem.setMtype(tempInsertedJson.getString("MType"));
                     }
+                    depotItem.setId(UUID.randomUUID().toString());
                     depotItemService.insert(depotItem);
                 }
             }
@@ -417,6 +482,74 @@ public class DepotItemJController extends BaseController{
         }
         return unitName;
     }
+
+
+    /**
+     * 统计总计金额
+     *
+     * @return
+     */
+    @ResponseBody
+    @RequestMapping("/totalCountMoney")
+    public Map<String,Object> totalCountMoney(DepotItem model) {
+        try {
+            List<DepotItem> dataList = depotItemService.totalCountMoney(model);
+            Map<String, Object> outer = new HashMap<String, Object>();
+            String pid = model.getProjectId();
+            Double thisAllPrice = 0.0;
+            if (null != dataList) {
+                for (DepotItem depotItem : dataList) {
+                    Double prevPrice = sumPrice("入库", pid, depotItem.getMaterialid(), model.getMonthTime(), 1) - sumPrice("出库", pid, depotItem.getMaterialid(), model.getMonthTime(), 1);
+                    Double InPrice = sumPrice("入库", pid, depotItem.getMaterialid(), model.getMonthTime(), 2);
+                    Double OutPrice = sumPrice("出库", pid, depotItem.getMaterialid(), model.getMonthTime(), 2);
+                    thisAllPrice = thisAllPrice + (prevPrice + InPrice - OutPrice);
+                }
+            }
+            outer.put("totalCount", thisAllPrice);
+            return outer;
+        } catch (DataAccessException e) {
+            System.out.println(">>>>>>>>>>>>>>>>>>>查找信息异常");
+            e.printStackTrace();
+            throw new RuntimeException(e);
+        }
+    }
+
+
+    /**
+     * 价格合计
+     *
+     * @param type
+     * @param MId
+     * @param MonthTime
+     * @param isPrev
+     * @return
+     */
+    public Double sumPrice(String type, String ProjectId, String  MId, String MonthTime, int isPrev) {
+        Double sumPrice = 0.0;
+        String allPrice = "";
+        try {
+            List<DepotItem> depotItems = depotItemService.queryByPrice(type, ProjectId, MId, MonthTime, isPrev);
+            if (depotItems != null) {
+                for (DepotItem depotItem : depotItems) {
+                    if(depotItem!=null) {
+                        Object dl = depotItem.getAllprice(); //获取对象
+                        allPrice = allPrice + dl.toString() + ",";
+                    }
+                }
+            }
+            if (allPrice.equals("null")|| allPrice.equals("")) {
+                allPrice = "0";
+            }else {
+                allPrice = allPrice.substring(0,allPrice.length() - 1);
+                allPrice = allPrice.replace(".0", "");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        sumPrice =  Double.parseDouble(allPrice);
+        return sumPrice;
+    }
+
 
 
 

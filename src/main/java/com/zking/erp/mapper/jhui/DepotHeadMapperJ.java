@@ -40,4 +40,11 @@ public interface DepotHeadMapperJ {
 
     List<DepotHead> queryMaterialsListByHeaderId(DepotHead depotHead);
 
+    /**
+     * 查找单据_根据月份(报表)
+     *
+     * @return
+     */
+    List<DepotHead> queryDepotHeadByMonth(DepotHead depotHead);
+
 }

@@ -12,5 +12,12 @@ public interface IMaterialJService {
 
     List<Material> queryUnitName(String mId);
 
+    /**
+     * 查找商品信息-统计排序
+     *
+     * @return
+     */
+    List<Material> queryMaterialByOrder();
+
 
 }

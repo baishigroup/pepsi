@@ -3,6 +3,7 @@ package com.zking.erp.controller.jhui;
 import com.zking.erp.base.BaseController;
 import com.zking.erp.model.jhui.App;
 import com.zking.erp.model.jhui.Log;
+import com.zking.erp.model.jhui.UserBusiness;
 import com.zking.erp.service.jhui.IAppJService;
 import com.zking.erp.service.jhui.IUserBusinessJService;
 import com.zking.erp.util.PageBean;
@@ -25,6 +26,7 @@ public class AppJController extends BaseController {
     @Autowired
     private IUserBusinessJService userBusinessService;
 
+
     /**
      * 桌面应用显示
      *
@@ -35,54 +37,72 @@ public class AppJController extends BaseController {
     public Map<String,Object> findDesk(HttpServletRequest req ,App App) {
         Map<String, Object> outer = new HashMap<String, Object>();
         try {
-            //下面是dock
-            App app1 = new App();
-            app1.setZl("dock");
-            List<App> dataList1 = appService.queryAppByfindDesk(app1);
-            System.out.println(dataList1);
-            List dataArray1 = new ArrayList();
-            if (null != dataList1) {
-                for (App app : dataList1) {
-                    Map<String, Object> item = new HashMap<String, Object>();
-                    item.put("id", app.getId());
-                    item.put("title", app.getName());
-                    item.put("type", app.getType());
-                    item.put("icon", "../../upload/images/deskIcon/" + app.getIcon());
-                    item.put("url", app.getUrl());
-                    item.put("width", app.getWidth());
-                    item.put("height", app.getHeight());
-                    item.put("isresize", app.getResize());
-                    item.put("isopenmax", app.getOpenmax());
-                    item.put("isflash", app.getFlash());
-                    dataArray1.add(item);
-
-
+            UserBusiness userBusiness=new UserBusiness();
+            userBusiness.setKeyid(getUser(req));
+            userBusiness.setType("UserRole");
+            List<UserBusiness> userBusinesses = userBusinessService.queryUserBusinessByTypeByKeyId(userBusiness);
+            String value = userBusinesses.get(0).getValue();
+            value=value.substring(1, value.length() - 1);
+            value=value.replace("][",",");
+            String[] split = value.split(",");
+            UserBusiness userBusiness1=new UserBusiness();
+            userBusiness1.setKeyid(split[0]);
+            userBusiness1.setType("RoleAPP");
+            List<UserBusiness> userBusinesses2 = userBusinessService.queryUserBusinessByTypeByKeyId(userBusiness1);
+            String value1 = userBusinesses2.get(0).getValue();//角色对应的app
+            value1=value1.substring(1, value1.length() - 1);
+            value1=value1.replace("][",",");
+            String[] split1 = value1.split(",");
+            List dataArray1 = new ArrayList();//dock
+            List dataArray2 = new ArrayList();//desk
+            for (String s : split1) {
+                //下面是dock
+                App app1 = new App();
+                app1.setZl("dock");
+                app1.setId(s);
+                List<App> dataList1 = appService.queryAppByfindDesk(app1);
+                System.out.println(dataList1);
+                if (null != dataList1) {
+                    for (App app : dataList1) {
+                        Map<String, Object> item = new HashMap<String, Object>();
+                        item.put("id", app.getId());
+                        item.put("title", app.getName());
+                        item.put("type", app.getType());
+                        item.put("icon", "../../upload/images/deskIcon/" + app.getIcon());
+                        item.put("url", app.getUrl());
+                        item.put("width", app.getWidth());
+                        item.put("height", app.getHeight());
+                        item.put("isresize", app.getResize());
+                        item.put("isopenmax", app.getOpenmax());
+                        item.put("isflash", app.getFlash());
+                        dataArray1.add(item);
+                    }
                 }
-            }
-            outer.put("dock", dataArray1);
+                outer.put("dock", dataArray1);
 
-            //下面是desk
-            App app2 = new App();
-            app2.setZl("desk");
-            List<App> dataList2 = appService.queryAppByfindDesk(app2);
-            List dataArray2 = new ArrayList();
-            if (null != dataList2) {
-                for (App app : dataList2) {
-                    Map<String, Object> item = new HashMap<String, Object>();
-                    item.put("id", app.getId());
-                    item.put("title", app.getName());
-                    item.put("type", app.getType());
-                    item.put("icon", "../../upload/images/deskIcon/" + app.getIcon());
-                    item.put("url", "../../pages/common/menu.jsp?appID=" + app.getNumber() + "&id=" + app.getId());
-                    item.put("width", app.getWidth());
-                    item.put("height", app.getHeight());
-                    item.put("isresize", app.getResize());
-                    item.put("isopenmax", app.getOpenmax());
-                    item.put("isflash", app.getFlash());
-                    dataArray2.add(item);
+                //下面是desk
+                App app2 = new App();
+                app2.setZl("desk");
+                app2.setId(s);
+                List<App> dataList2 = appService.queryAppByfindDesk(app2);
+                if (null != dataList2) {
+                    for (App app : dataList2) {
+                        Map<String, Object> item = new HashMap<String, Object>();
+                        item.put("id", app.getId());
+                        item.put("title", app.getName());
+                        item.put("type", app.getType());
+                        item.put("icon", "../../upload/images/deskIcon/" + app.getIcon());
+                        item.put("url", "../../pages/common/menu.jsp?appID=" + app.getNumber() + "&id=" + app.getId());
+                        item.put("width", app.getWidth());
+                        item.put("height", app.getHeight());
+                        item.put("isresize", app.getResize());
+                        item.put("isopenmax", app.getOpenmax());
+                        item.put("isflash", app.getFlash());
+                        dataArray2.add(item);
+                    }
                 }
+                outer.put("desk", dataArray2);
             }
-            outer.put("desk", dataArray2);
             return outer;
         } catch (Exception e) {
             e.printStackTrace();

@@ -21,5 +21,7 @@ public interface AccountHeadMapperJ {
 
     int deleteById(String id);
 
+    List<AccountHead>  queryDetailByNumber(AccountHead accountHead);
+
 
 }

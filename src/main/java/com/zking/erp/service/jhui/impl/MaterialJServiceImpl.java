@@ -31,4 +31,9 @@ public class MaterialJServiceImpl implements IMaterialJService {
     public List<Material> queryUnitName(String mId) {
         return materialMapperJ.queryUnitName(mId);
     }
+
+    @Override
+    public List<Material> queryMaterialByOrder() {
+        return materialMapperJ.queryMaterialByOrder();
+    }
 }

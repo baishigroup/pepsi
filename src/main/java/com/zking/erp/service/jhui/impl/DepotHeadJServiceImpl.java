@@ -77,14 +77,21 @@ public class DepotHeadJServiceImpl implements IDepotHeadJService {
 
     @Override
     public List<DepotHead> queryDepotHeadPager(PageBean pageBean, DepotHead depotHead) {
-        String[] split = depotHead.getDhIds().split(",");
-        depotHead.setIds(split);
+        if(null!=depotHead.getDhIds()&&""!=depotHead.getDhIds()) {
+            String[] split = depotHead.getDhIds().split(",");
+            depotHead.setIds(split);
+        }
         return depotHeadMapperJ.queryDepotHeadPager(depotHead);
     }
 
     @Override
     public List<DepotHead> queryMaterialsListByHeaderId(DepotHead depotHead) {
         return depotHeadMapperJ.queryMaterialsListByHeaderId(depotHead);
+    }
+
+    @Override
+    public List<DepotHead> queryDepotHeadByMonth(DepotHead depotHead) {
+        return depotHeadMapperJ.queryDepotHeadByMonth(depotHead);
     }
 
 
