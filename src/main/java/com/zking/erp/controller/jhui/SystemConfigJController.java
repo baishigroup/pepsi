@@ -40,7 +40,6 @@ public class SystemConfigJController extends BaseController{
             sysConfig.setType(sysConfig.getType());
             sysConfig.setName(sysConfig.getName());
             sysConfig.setValue(model.getValue());
-
             sysConfig.setDescription(sysConfig.getDescription());
             systemConfigService.updateById(sysConfig);
 
