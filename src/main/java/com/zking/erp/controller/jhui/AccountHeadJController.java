@@ -247,6 +247,7 @@ public class AccountHeadJController extends BaseController {
             List<AccountHead> dataList = accountHeadService.queryDetailByNumber(model);
             Map<String,Object> item=new HashMap<String, Object>();
             if (dataList != null && dataList.get(0) != null) {
+
                 AccountHead accountHead = dataList.get(0);
                 item.put("Id", accountHead.getId());
                 item.put("OrganId", accountHead.getOrganid() == null ? "" : accountHead.getOrganid());
